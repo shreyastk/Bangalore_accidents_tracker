@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — Bangalore Accidents Tracker</title>
+  <meta name="description" content="View your submitted accident reports, geotagged locations, and verification status.">
+  <link rel="stylesheet" href="css/main.css">
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    .profile-page {
+      padding: calc(65px + var(--space-xl)) var(--space-xl) var(--space-xl);
+    }
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    /* Profile Card */
+    .profile-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      text-align: center;
+      position: sticky;
+      top: calc(65px + var(--space-lg));
+    }
+    .profile-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: white;
+      margin: 0 auto var(--space-md);
+      box-shadow: 0 0 30px var(--color-primary-glow);
+    }
+    .profile-name {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .profile-email {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+    }
+    .profile-stat {
+      display: flex;
+      justify-content: space-around;
+      margin: var(--space-lg) 0;
+      padding: var(--space-md) 0;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .profile-stat-item { text-align: center; }
+    .profile-stat-num { font-size: var(--font-size-xl); font-weight: 800; color: var(--color-primary); }
+    .profile-stat-label { font-size: var(--font-size-xs); color: var(--text-muted); }
+
+    /* Mini Map */
+    #profile-mini-map {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-top: var(--space-md);
+    }
+
+    /* Reports List */
+    .reports-panel { display: flex; flex-direction: column; gap: var(--space-md); }
+    .reports-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+    }
+    .reports-header h2 { font-size: var(--font-size-2xl); }
+    .report-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .report-card:hover { border-color: var(--color-border-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .report-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+    }
+    .report-card.fatal::before { background: var(--color-fatal); }
+    .report-card.serious::before { background: var(--color-serious); }
+    .report-card.minor::before { background: var(--color-minor); }
+    .report-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+    .report-location-name { font-size: var(--font-size-base); font-weight: 700; }
+    .report-area { font-size: var(--font-size-sm); color: var(--text-muted); }
+    .report-badges { display: flex; gap: var(--space-sm); flex-wrap: wrap; justify-content: flex-end; }
+    .report-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      padding: var(--space-md) 0;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      margin: var(--space-md) 0;
+    }
+    .report-meta-item { text-align: center; }
+    .report-meta-label { font-size: var(--font-size-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .report-meta-value { font-size: var(--font-size-sm); font-weight: 600; color: var(--text-primary); }
+    .report-desc { font-size: var(--font-size-sm); color: var(--text-secondary); line-height: 1.5; }
+    .report-proof {
+      margin-top: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .report-proof img {
+      width: 60px; height: 80px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+    .report-proof img:hover { transform: scale(1.05); }
+    .report-proof-label { font-size: var(--font-size-xs); color: var(--text-muted); }
+
+    .no-reports {
+      text-align: center;
+      padding: var(--space-2xl);
+      color: var(--text-muted);
+    }
+    .no-reports-icon { font-size: 3rem; margin-bottom: var(--space-md); }
+    .no-reports h3 { font-size: var(--font-size-xl); color: var(--text-secondary); margin-bottom: var(--space-md); }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      animation: fadeInUp 0.2s ease;
+    }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius-md); object-fit: contain; }
+    .lightbox-close { position: absolute; top: var(--space-xl); right: var(--space-xl); color: white; font-size: 2rem; cursor: pointer; }
+
+    @media (max-width: 900px) {
+      .profile-layout { grid-template-columns: 1fr; }
+      .profile-card { position: relative; top: auto; }
+    }
+    @media (max-width: 768px) {
+      .profile-page { padding: calc(65px + var(--space-md)) var(--space-md) var(--space-md); }
+      .report-meta { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="navbar scrolled" id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="BAT Logo" style="height: 48px; width: auto; object-fit: contain;">
+    
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    <li><a href="report.html" class="nav-link">Report Accident</a></li>
+    <li><a href="profile.html" class="nav-link active">My Profile</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth-links"></div>
+  <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="profile-page" id="page-content"></div>
+
+  <footer style="margin-top: var(--space-xl);">
+    <p><strong>Copyright &copy; Students of DSATM CSE</strong></p>
+    <p style="margin-bottom:var(--space-md); color: var(--text-muted); font-size: 14px;">Samarth, Shivkumar, Shreyas, Shreejith</p>
+    <div class="footer-links" style="margin-bottom:var(--space-md);">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+      <a href="login.html">Login</a>
+    </div>
+    <div style="text-align:center;">
+      <a href="admin.html" style="
+      font-size:11px;
+      color:var(--text-muted);
+      text-decoration:none;
+      padding:5px 12px;
+      border:1px solid var(--color-border);
+      border-radius:20px;
+      transition:all 0.15s;
+      display:inline-block;
+    " onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--color-primary)'"
+        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--color-border)'">
+         Admin Portal
+      </a>
+    </div>
+  </footer>
+
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  window.Auth.updateNavAuth();
+  document.getElementById('nav-toggle').addEventListener('click', () => {
+    document.getElementById('nav-links').classList.toggle('open');
+  });
+
+  const session = window.DB.getSession();
+  const page = document.getElementById('page-content');
+
+  if (!session) {
+    page.innerHTML = `
+      <div style="text-align:center;padding:var(--space-2xl);">
+        <div style="font-size:3rem;margin-bottom:var(--space-lg);"></div>
+        <h2 style="margin-bottom:var(--space-md);">Login Required</h2>
+        <p style="margin-bottom:var(--space-xl);">Please log in to view your profile and accident reports.</p>
+        <a href="login.html?returnTo=profile.html" class="btn btn-primary">Login</a>
+      </div>
+    `;
+  } else {
+    const reports = window.DB.getUserReports(session.userId);
+    const memberSince = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+
+    page.innerHTML = `
+      <div class="profile-layout">
+
+        <!-- ── Profile Card ── -->
+        <div class="profile-card">
+          <div class="profile-avatar">${session.name.charAt(0).toUpperCase()}</div>
+          <div class="profile-name">${session.name}</div>
+          <div class="profile-email">${session.email}</div>
+          <div class="profile-stat">
+            <div class="profile-stat-item">
+              <div class="profile-stat-num" id="p-total">${reports.length}</div>
+              <div class="profile-stat-label">Reports</div>
+            </div>
+            <div class="profile-stat-item">
+              <div class="profile-stat-num" id="p-verified">${reports.filter(r=>r.verified).length}</div>
+              <div class="profile-stat-label">Verified</div>
+            </div>
+            <div class="profile-stat-item">
+              <div class="profile-stat-num" id="p-pending">${reports.filter(r=>!r.verified).length}</div>
+              <div class="profile-stat-label">Pending</div>
+            </div>
+          </div>
+          <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:var(--space-md);">
+            Member since ${memberSince}
+          </div>
+          <a href="report.html" class="btn btn-primary" style="width:100%;margin-bottom:var(--space-sm);">+ Report Accident</a>
+          <button class="btn btn-outline" style="width:100%;font-size:var(--font-size-sm);" id="logout-btn-profile">Logout</button>
+
+          <!-- Mini Map -->
+          <div style="margin-top:var(--space-lg);text-align:left;">
+            <div style="font-size:var(--font-size-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:var(--space-sm);">Your Reported Locations</div>
+            <div id="profile-mini-map"></div>
+            ${reports.length === 0 ? '<p style="font-size:var(--font-size-xs);color:var(--text-muted);text-align:center;margin-top:8px;">No pins yet</p>' : ''}
+          </div>
+        </div>
+
+        <!-- ── Reports Panel ── -->
+        <div class="reports-panel">
+          <div class="reports-header">
+            <h2>My Reports</h2>
+            <span class="badge badge-${reports.length > 0 ? 'verified' : 'pending'}">${reports.length} submitted</span>
+          </div>
+
+          ${reports.length === 0 ? `
+            <div class="no-reports card">
+              <div class="no-reports-icon"></div>
+              <h3>No Reports Yet</h3>
+              <p style="margin-bottom:var(--space-xl);">You haven't submitted any accident reports. Help improve Bangalore's road safety data by reporting accidents you witness.</p>
+              <a href="report.html" class="btn btn-primary">Report Your First Accident</a>
+            </div>
+          ` : reports.map(r => {
+            const sev = r.severity;
+            const sevLabel = sev.charAt(0).toUpperCase() + sev.slice(1);
+            const status = r.verified ? 'verified' : (r.status || 'pending');
+            const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+            const proofHtml = r.proof ? `
+              <div class="report-proof">
+                <img src="${r.proof}" alt="Proof" onclick="openLightbox('${r.proof}')">
+                <div class="report-proof-label"> Proof uploaded — ${r.proofName || 'Image'}</div>
+              </div>
+            ` : `<div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--space-sm);">No proof file uploaded</div>`;
+
+            return `
+              <div class="report-card ${sev}">
+                <div class="report-top">
+                  <div>
+                    <div class="report-location-name"> ${r.location}</div>
+                    <div class="report-area">${r.area}</div>
+                  </div>
+                  <div class="report-badges">
+                    <span class="badge badge-${sev}">${sevLabel}</span>
+                    <span class="badge badge-${status}">${statusLabel}</span>
+                  </div>
+                </div>
+                <div class="report-meta">
+                  <div class="report-meta-item">
+                    <div class="report-meta-label">Date</div>
+                    <div class="report-meta-value">${r.date}</div>
+                  </div>
+                  <div class="report-meta-item">
+                    <div class="report-meta-label">Time</div>
+                    <div class="report-meta-value">${r.time}</div>
+                  </div>
+                  <div class="report-meta-item">
+                    <div class="report-meta-label">Coords</div>
+                    <div class="report-meta-value">${r.lat}, ${r.lng}</div>
+                  </div>
+                </div>
+                <div class="report-desc">${r.description}</div>
+                ${proofHtml}
+                <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--space-sm);">
+                  Submitted: ${new Date(r.submittedAt).toLocaleString('en-IN')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+      </div>
+    `;
+
+    // Logout
+    document.getElementById('logout-btn-profile').addEventListener('click', () => {
+      window.DB.logout();
+      window.location.href = 'index.html';
+    });
+
+    // Mini Map
+    const miniMap = L.map('profile-mini-map', {
+      center: [12.9716, 77.5946],
+      zoom: 11,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      attributionControl: false
+    });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(miniMap);
+
+    if (reports.length > 0) {
+      const pinIcon = L.divIcon({
+        className: '',
+        html: `<div style="width:10px;height:10px;border-radius:50%;background:var(--color-primary);border:2px solid white;box-shadow:0 0 8px var(--color-primary);"></div>`,
+        iconSize: [10,10], iconAnchor: [5,5]
+      });
+      const bounds = [];
+      reports.forEach(r => {
+        L.marker([r.lat, r.lng], { icon: pinIcon }).addTo(miniMap).bindPopup(r.location);
+        bounds.push([r.lat, r.lng]);
+      });
+      if (bounds.length > 0) miniMap.fitBounds(bounds, { padding: [20, 20] });
+    }
+  }
+
+  // Lightbox
+  function openLightbox(src) {
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.innerHTML = `<span class="lightbox-close"></span><img src="${src}" alt="Proof">`;
+    lb.addEventListener('click', () => lb.remove());
+    document.body.appendChild(lb);
+  }
+</script>
+</body>
+</html>

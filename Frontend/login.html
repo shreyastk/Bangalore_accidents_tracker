@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Bangalore Accidents Tracker</title>
+  <meta name="description" content="Login or register to submit accident reports and track your contributions to Bangalore road safety.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<!-- Floating back link -->
+<a href="index.html" style="
+  position:fixed;top:var(--space-lg);left:var(--space-lg);
+  display:flex;align-items:center;gap:6px;
+  background:var(--glass-bg);backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);border-radius:var(--radius-full);
+  padding:8px 16px;font-size:var(--font-size-sm);color:var(--text-secondary);
+  text-decoration:none;transition:all var(--transition-fast);z-index:100;
+" id="back-link" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+  ← Back to Home
+</a>
+
+<main class="auth-page">
+  <div class="auth-container">
+
+    <!-- Header -->
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">
+        <img src="logo.png" alt="BAT Logo" style="height: 72px; width: auto; object-fit: contain;">
+      </a>
+      <h1>Welcome Back</h1>
+      <p>Sign in to continue to Bangalore Accidents Tracker</p>
+    </div>
+
+    <!-- Alert -->
+    <div id="auth-alert"></div>
+
+    <!-- Card -->
+    <div class="auth-card">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" data-target="panel-login">Login</button>
+        <button class="auth-tab" id="tab-register" data-target="panel-register">Register</button>
+      </div>
+
+      <!-- ── Login Panel ── -->
+      <div class="auth-panel active" id="panel-login">
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="email" class="form-control" id="login-email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-error" id="login-email-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="password-wrapper input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="password" class="form-control" id="login-password" placeholder="Your password" autocomplete="current-password" required>
+              <button type="button" class="password-toggle" id="pw-toggle-login" title="Show/hide password"></button>
+            </div>
+            <div class="form-error" id="login-pw-err"></div>
+          </div>
+          <div class="remember-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="remember-me">
+              Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+          <button type="submit" class="auth-btn" id="login-btn">
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <!-- Demo Account Tip -->
+        <div class="alert alert-info" style="margin-top:var(--space-lg);">
+           <strong>Demo:</strong> Create a free account to try accident reporting.
+        </div>
+      </div>
+
+      <!-- ── Register Panel ── -->
+      <div class="auth-panel" id="panel-register">
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="text" class="form-control" id="reg-name" placeholder="Shreyas Kumar" autocomplete="name" required minlength="2">
+            </div>
+            <div class="form-error" id="reg-name-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="email" class="form-control" id="reg-email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-error" id="reg-email-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <div class="password-wrapper input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="password" class="form-control" id="reg-password" placeholder="At least 6 characters" autocomplete="new-password" required minlength="6">
+              <button type="button" class="password-toggle" id="pw-toggle-reg" title="Show/hide password"></button>
+            </div>
+            <div class="form-error" id="reg-pw-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-confirm">Confirm Password</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon"></span>
+              <input type="password" class="form-control" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password" required>
+            </div>
+            <div class="form-error" id="reg-confirm-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label" style="margin-top:4px;">
+              <input type="checkbox" id="terms" required>
+              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            </label>
+            <div class="form-error" id="terms-err"></div>
+          </div>
+          <button type="submit" class="auth-btn" id="register-btn">
+            <span>Create Account</span>
+          </button>
+        </form>
+      </div>
+
+    </div><!-- /auth-card -->
+
+    <div class="auth-footer">
+      Need help? <a href="dashboard.html">Explore the dashboard</a> without logging in.
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="admin.html" style="
+        font-size:11px;
+        color:#94a3b8;
+        text-decoration:none;
+        padding:5px 12px;
+        border:1px solid #e2e8f0;
+        border-radius:20px;
+        transition:all 0.15s;
+        display:inline-block;
+      " onmouseover="this.style.color='#475569';this.style.borderColor='#94a3b8'" onmouseout="this.style.color='#94a3b8';this.style.borderColor='#e2e8f0'">
+         Admin Portal
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // If already logged in, redirect to dashboard
+  if (window.DB.isLoggedIn()) {
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = params.get('returnTo') || 'dashboard.html';
+  }
+
+  // Tab switching
+  const tabs = document.querySelectorAll('.auth-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(this.dataset.target).classList.add('active');
+    });
+  });
+
+  // Check URL param for tab
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('tab') === 'register') {
+    document.getElementById('tab-login').click()   // reset
+    document.getElementById('tab-register').click();
+  }
+
+  // Password toggle
+  function setupToggle(inputId, toggleId) {
+    document.getElementById(toggleId).addEventListener('click', () => {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  }
+  setupToggle('login-password', 'pw-toggle-login');
+  setupToggle('reg-password', 'pw-toggle-reg');
+
+  function showAlert(type, msg) {
+    document.getElementById('auth-alert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  }
+
+  // ── Login ──
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearErrors();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    let valid = true;
+
+    if (!email) { showFieldError('login-email-err', 'Email is required.'); valid = false; }
+    if (!password) { showFieldError('login-pw-err', 'Password is required.'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Signing in...';
+
+    setTimeout(() => {
+      const result = window.DB.login(email, password);
+      if (result.success) {
+        showAlert('success', ' Logged in! Redirecting...');
+        setTimeout(() => {
+          window.location.href = params.get('returnTo') || 'dashboard.html';
+        }, 800);
+      } else {
+        showAlert('error', ' ' + result.error);
+        btn.disabled = false;
+        btn.innerHTML = '<span>Sign In</span>';
+      }
+    }, 600);
+  });
+
+  // ── Register ──
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearErrors();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pw = document.getElementById('reg-password').value;
+    const confirm = document.getElementById('reg-confirm').value;
+    const terms = document.getElementById('terms').checked;
+    let valid = true;
+
+    if (name.length < 2) { showFieldError('reg-name-err', 'Name must be at least 2 characters.'); valid = false; }
+    if (!email || !email.includes('@')) { showFieldError('reg-email-err', 'Enter a valid email.'); valid = false; }
+    if (pw.length < 6) { showFieldError('reg-pw-err', 'Password must be at least 6 characters.'); valid = false; }
+    if (pw !== confirm) { showFieldError('reg-confirm-err', 'Passwords do not match.'); valid = false; }
+    if (!terms) { showFieldError('terms-err', 'You must agree to the terms.'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('register-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Creating account...';
+
+    setTimeout(() => {
+      const result = window.DB.register(name, email, pw);
+      if (result.success) {
+        // Auto-login
+        window.DB.login(email, pw);
+        showAlert('success', ' Account created! Redirecting...');
+        setTimeout(() => {
+          window.location.href = params.get('returnTo') || 'dashboard.html';
+        }, 1000);
+      } else {
+        showAlert('error', ' ' + result.error);
+        btn.disabled = false;
+        btn.innerHTML = '<span>Create Account</span>';
+      }
+    }, 600);
+  });
+
+  function showFieldError(id, msg) {
+    document.getElementById(id).textContent = msg;
+  }
+  function clearErrors() {
+    document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+    document.getElementById('auth-alert').innerHTML = '';
+  }
+</script>
+</body>
+</html>

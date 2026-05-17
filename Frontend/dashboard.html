@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Bangalore Accidents Tracker</title>
+  <meta name="description" content="Live accident map for Bangalore. View hotspots, filter by area, severity and date.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Leaflet (free, no token) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- ── Top Navbar ─────────────────────────────────────────────── -->
+<nav class="topbar" id="main-nav">
+  <a href="index.html" class="topbar-brand">
+    <img src="logo.png" alt="BAT Logo" style="height: 48px; width: auto; object-fit: contain;">
+    
+    
+  </a>
+  <ul class="topbar-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+    <li><a href="report.html">Report</a></li>
+  </ul>
+  <div class="topbar-right" id="nav-auth-links"></div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
+</nav>
+
+<!-- ── App Layout ─────────────────────────────────────────────── -->
+<div class="app-layout">
+
+  <!-- ── LEFT SIDEBAR ──────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Header row -->
+    <div class="sidebar-hd">
+      <div>
+        <div class="sidebar-title">Accident Map</div>
+        <div class="sidebar-sub" id="last-updated"></div>
+      </div>
+      
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip">
+      <div class="stat-cell">
+        <div class="stat-val" id="stat-total">—</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+      <div class="stat-cell stat-cell--fatal">
+        <div class="stat-val" id="stat-fatal">—</div>
+        <div class="stat-lbl">Critical</div>
+      </div>
+      <div class="stat-cell stat-cell--serious">
+        <div class="stat-val" id="stat-serious">—</div>
+        <div class="stat-lbl">Moderate</div>
+      </div>
+      <div class="stat-cell stat-cell--minor">
+        <div class="stat-val" id="stat-minor">—</div>
+        <div class="stat-lbl">Minor</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="sidebar-card">
+      <div class="card-label">Filters</div>
+      <select class="f-select" id="filter-severity">
+        <option value="all">All Severities</option>
+        <option value="fatal">Critical (Fatal)</option>
+        <option value="serious">Moderate (Serious)</option>
+        <option value="minor">Minor</option>
+      </select>
+      <select class="f-select" id="filter-zone">
+        <option value="all">All Zones</option>
+      </select>
+      <select class="f-select" id="filter-area">
+        <option value="all">All Areas</option>
+      </select>
+      <div class="date-row">
+        <input type="date" class="f-select" id="filter-from" title="From date">
+        <input type="date" class="f-select" id="filter-to"   title="To date">
+      </div>
+      <div class="filter-btns">
+        <button class="btn-apply" id="apply-filters-btn">Apply</button>
+        <button class="btn-reset" id="reset-filters-btn">Reset</button>
+      </div>
+    </div>
+
+    <!-- Top Hotspots -->
+    <div class="sidebar-card sidebar-card--grow">
+      <div class="card-label">
+        Top Hotspots
+        <span class="zone-pill" id="hotspot-count-badge"></span>
+      </div>
+      <ul class="hotspot-list" id="hotspot-list">
+        <li class="hotspot-empty">Loading data…</li>
+      </ul>
+    </div>
+
+    <!-- Report CTA -->
+    <a href="report.html" class="report-cta">
+      <span> Report an Accident</span>
+      <span class="cta-arrow">→</span>
+    </a>
+
+  </aside>
+
+  <!-- ── MAP AREA ───────────────────────────────────────────────── -->
+  <div class="map-area">
+    <div id="accident-map"></div>
+
+    <!-- Bottom-left overlay: heatmap + legend -->
+    <div class="map-overlay">
+      <label class="heat-toggle">
+        <input type="checkbox" id="toggle-heatmap">
+        <span class="heat-label">Heatmap</span>
+      </label>
+      <div class="map-legend">
+        <span class="leg-dot" style="background:#dc2626"></span>Critical
+        <span class="leg-dot" style="background:#d97706;margin-left:10px"></span>Moderate
+        <span class="leg-dot" style="background:#3b82f6;margin-left:10px"></span>Minor
+      </div>
+    </div>
+
+    <!-- Slide-in detail panel -->
+    <aside id="detail-panel" class="detail-panel" aria-hidden="true">
+      <div class="dp-header">
+        <span class="dp-title">Incident</span>
+        <button class="dp-close" id="detail-panel-close" aria-label="Close"></button>
+      </div>
+      <div class="dp-body" id="detail-panel-body"></div>
+    </aside>
+  </div>
+
+</div><!-- /.app-layout -->
+
+<script src="js/db.js"></script>
+<script src="js/bat-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard-app.js"></script>
+<script>
+  window.Auth?.updateNavAuth?.();
+  document.getElementById('last-updated').textContent =
+    'Bangalore · ' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  document.getElementById('nav-toggle').addEventListener('click', () => {
+    document.getElementById('nav-links').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

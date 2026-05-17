@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangalore Accidents Tracker — AI-Driven Road Safety Intelligence</title>
+  <meta name="description"
+    content="Real-time accident heatmap, hotspot rankings, and community reporting for Bangalore road safety. Track, report, and analyze road accidents across Bangalore.">
+  <link rel="stylesheet" href="css/main.css">
+
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 0 var(--space-xl);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 65% 50%, rgba(16, 185, 129, 0.07), transparent),
+        radial-gradient(ellipse 50% 40% at 20% 70%, rgba(239, 68, 68, 0.06), transparent),
+        linear-gradient(180deg, var(--color-bg-deep) 0%, #ffffff 100%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-content {
+      text-align: center;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--color-fatal-bg);
+      border: 1px solid var(--color-fatal-border);
+      border-radius: var(--radius-full);
+      padding: 6px 16px;
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: var(--color-fatal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-lg);
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .hero-badge::before {
+      content: '';
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: var(--space-lg);
+      animation: fadeInUp 0.6s ease 0.1s both;
+      color: var(--text-primary);
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, var(--color-fatal) 0%, var(--color-serious) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: var(--font-size-lg);
+      line-height: 1.7;
+      margin-bottom: var(--space-xl);
+      animation: fadeInUp 0.6s ease 0.2s both;
+      max-width: 560px;
+      color: var(--text-secondary);
+    }
+
+    .hero-cta {
+      justify-content: center;
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      animation: fadeInUp 0.6s ease 0.3s both;
+    }
+
+    .hero-visual {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50%;
+      max-width: 700px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-map-preview {
+      position: relative;
+      width: 600px;
+      height: 420px;
+      margin-left: auto;
+    }
+
+    .mock-map {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-xl);
+      background: #f8fafc;
+      border: 1px solid var(--color-border);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .mock-map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .heat-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(25px);
+      animation: heatPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes heatPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    .mock-pin {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      animation: pinPulse 2s ease infinite;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes pinPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+      }
+    }
+
+    .mock-map-label {
+      position: absolute;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      font-size: var(--font-size-xs);
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      font-weight: 600;
+    }
+
+    .mock-map-badge {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: #fff;
+      border: 1px solid var(--color-fatal-border);
+      border-radius: var(--radius-full);
+      padding: 5px 12px;
+      font-size: var(--font-size-xs);
+      color: var(--color-fatal);
+      font-weight: 700;
+    }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      padding: var(--space-2xl) var(--space-xl);
+      background: #f1f5f9;
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    /* ── Features ── */
+    .features {
+      padding: var(--space-2xl) var(--space-xl);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--color-primary);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+
+    .feature-card:hover {
+      border-color: var(--color-border-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .feature-icon-red {
+      background: var(--color-fatal-bg);
+      border: 1px solid var(--color-fatal-border);
+    }
+
+    .feature-icon-amber {
+      background: var(--color-serious-bg);
+      border: 1px solid var(--color-serious-border);
+    }
+
+    .feature-icon-green {
+      background: var(--color-minor-bg);
+      border: 1px solid var(--color-minor-border);
+    }
+
+    .feature-icon-slate {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+    }
+
+    .feature-card h5 {
+      margin-bottom: var(--space-sm);
+      font-size: var(--font-size-lg);
+    }
+
+    .feature-card p {
+      font-size: var(--font-size-sm);
+    }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      margin: 0 var(--space-xl) var(--space-2xl);
+      background: #f8fafc;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl) var(--space-xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner h2 {
+      font-size: var(--font-size-3xl);
+      margin-bottom: var(--space-md);
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-banner p {
+      margin-bottom: var(--space-xl);
+      font-size: var(--font-size-lg);
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-visual {
+        display: none;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding-top: 90px;
+        align-items: flex-start;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="navbar" id="main-nav">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="BAT Logo" style="height: 48px; width: auto; object-fit: contain;">
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="report.html" class="nav-link">Report Accident</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth-links"></div>
+    <div class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ── -->
+  <main>
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Bangalore's<br>
+          <span class="highlight">Accident Tracker</span>
+        </h1>
+        <p class="hero-desc">
+          Track every accident which occured. Make Bangalore Safe again
+        </p>
+        <div class="hero-cta">
+          <a href="dashboard.html" class="btn btn-primary btn-lg" id="hero-dashboard-btn">
+            ️ View Accidents
+          </a>
+          <a href="report.html" class="btn btn-outline btn-lg" id="hero-report-btn">
+            Report Accident
+          </a>
+        </div>
+      </div>
+
+      <!-- Decorative mock map -->
+
+      </div>
+    </section>
+
+    <!-- ── Live Stats Strip ── -->
+    <section class="stats-strip">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card stat-card-total" style="animation-delay:0s;" id="stat-total">
+            <div class="stat-icon"></div>
+            <div class="stat-number" id="stat-total-num">55</div>
+            <div class="stat-label">Total Incidents Tracked</div>
+          </div>
+          <div class="stat-card stat-card-fatal" style="animation-delay:0.1s;" id="stat-fatal">
+            <div class="stat-icon"></div>
+            <div class="stat-number" id="stat-fatal-num">14</div>
+            <div class="stat-label">Fatal Accidents</div>
+          </div>
+          <div class="stat-card stat-card-serious" style="animation-delay:0.2s;" id="stat-serious">
+            <div class="stat-icon"></div>
+            <div class="stat-number" id="stat-serious-num">22</div>
+            <div class="stat-label">Serious Injuries</div>
+          </div>
+          <div class="stat-card stat-card-minor" style="animation-delay:0.3s;" id="stat-minor">
+            <div class="stat-icon">️</div>
+            <div class="stat-number" id="stat-minor-num">13</div>
+            <div class="stat-label">High-Risk Zones</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <!-- ── Top Hotspots Rankings ── -->
+    <section class="rankings-section" style="padding: var(--space-2xl) var(--space-xl); background: #ffffff;">
+      <div class="container" style="max-width: 800px;">
+        <div style="text-align:center; margin-bottom: var(--space-xl);">
+          <h2 class="section-title">Top Accident Hotspots</h2>
+          <p class="section-subtitle">Real-time ranking of the most dangerous intersections and roads</p>
+        </div>
+        <div id="index-hotspots-container">
+          <div style="text-align:center; padding: 40px; color: var(--text-muted);">Loading rankings...</div>
+        </div>
+        <div style="text-align:center; margin-top: var(--space-lg);">
+          <a href="dashboard.html" class="btn btn-outline">View Full Analytics Dashboard</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA Banner ── -->
+    <div class="cta-banner">
+      <h2>Help Make Bangalore Roads Safer</h2>
+      <p>Join the community. Report accidents. Improve road safety for everyone.</p>
+      <div class="cta-btns">
+        <a href="login.html?tab=register" class="btn btn-primary btn-lg" id="cta-signup-btn">Create Free Account</a>
+        <a href="dashboard.html" class="btn btn-outline btn-lg" id="cta-dashboard-btn">Explore Dashboard</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer style="margin-top: var(--space-xl);">
+    <p><strong>Copyright &copy; Students of DSATM CSE</strong></p>
+    <p style="margin-bottom:var(--space-md); color: var(--text-muted); font-size: 14px;">Samarth, Shivkumar, Shreyas,
+      Shreejith</p>
+    <div class="footer-links" style="margin-bottom:var(--space-md);">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+      <a href="login.html">Login</a>
+    </div>
+    <div style="text-align:center;">
+      <a href="admin.html" style="
+      font-size:11px;
+      color:var(--text-muted);
+      text-decoration:none;
+      padding:5px 12px;
+      border:1px solid var(--color-border);
+      border-radius:20px;
+      transition:all 0.15s;
+      display:inline-block;
+    " onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--color-primary)'"
+        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--color-border)'">
+        Admin Portal
+      </a>
+    </div>
+  </footer>
+
+  <script src="js/bat-config.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile nav toggle
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav-links').classList.toggle('open');
+    });
+
+    // Update nav auth
+    window.Auth.updateNavAuth();
+
+    // Populate stats from PostgreSQL
+    async function loadLiveStats() {
+      try {
+        const API = (window.BAT_CONFIG?.apiBase || 'http://localhost:3000').replace(/\/$/, '');
+        const res = await fetch(`${API}/api/meta`);
+        if (res.ok) {
+          const data = await res.json();
+          const counts = data.counts || { total: 0, fatal: 0, serious: 0, minor: 0 };
+          document.getElementById('stat-total-num').textContent = counts.total;
+          document.getElementById('stat-fatal-num').textContent = counts.fatal;
+          document.getElementById('stat-serious-num').textContent = counts.serious;
+          document.getElementById('stat-minor-num').textContent = data.areas?.length || 0;
+
+          // Trigger animations
+          const counters = document.querySelectorAll('.stat-number');
+          counters.forEach(c => animateCounter(c, parseInt(c.textContent)));
+        }
+      } catch (e) {
+        console.error('Failed to load live stats', e);
+      }
+    }
+
+    loadLiveStats();
+
+    function animateCounter(el, target) {
+      if (isNaN(target) || target === 0) return;
+      let start = 0;
+      const duration = 1200;
+      const step = (timestamp) => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        el.textContent = Math.floor(progress * target);
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      };
+      requestAnimationFrame(step);
+    }
+
+    async function loadRankings() {
+      try {
+        const API = (window.BAT_CONFIG?.apiBase || 'http://localhost:3000').replace(/\/$/, '');
+        const res = await fetch(`${API}/api/accidents`);
+        if (res.ok) {
+          const fc = await res.json();
+          const areaMap = {};
+          fc.features.forEach(f => {
+            const p = f.properties;
+            if (!areaMap[p.area]) areaMap[p.area] = { area: p.area, total: 0, fatal: 0, serious: 0, minor: 0 };
+            areaMap[p.area].total++;
+            areaMap[p.area][p.severity]++;
+          });
+          const hotspots = Object.values(areaMap)
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 5);
+
+          const container = document.getElementById('index-hotspots-container');
+          container.innerHTML = hotspots.map((h, i) => `
+            <div style="display:flex; align-items:center; justify-content:space-between; padding: 16px; background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 12px; box-shadow: var(--shadow-sm); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+              <div style="display:flex; align-items:center; gap: 16px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display:flex; align-items:center; justify-content:center; font-weight: 700; font-size: 14px;">${i + 1}</div>
+                <div>
+                  <div style="font-weight: 700; color: var(--text-primary); font-size: 16px;">${h.area || 'Unknown Area'}</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; display: flex; gap: 8px;">
+                    <span style="background: var(--color-fatal-bg); color: var(--color-fatal); padding: 2px 6px; border-radius: 4px; font-weight: 600;">${h.fatal} Fatal</span>
+                    <span style="background: var(--color-serious-bg); color: var(--color-serious); padding: 2px 6px; border-radius: 4px; font-weight: 600;">${h.serious} Serious</span>
+                  </div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size: 24px; font-weight: 900; color: var(--text-primary); line-height: 1;">${h.total}</div>
+                <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform:uppercase; margin-top: 4px;">Incidents</div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Failed to load rankings', e);
+      }
+    }
+    loadRankings();
+  </script>
+</body>
+
+</html>

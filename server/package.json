@@ -1,0 +1,17 @@
+{
+  "name": "bat-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "seed": "node seed.mjs",
+    "import:xlsx": "node import-from-xlsx.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "pg": "^8.13.0",
+    "xlsx": "^0.18.5"
+  }
+}

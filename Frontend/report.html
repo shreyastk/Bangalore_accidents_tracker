@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Accident — Bangalore Accidents Tracker</title>
+  <meta name="description" content="Submit a geotagged accident report for Bangalore. Upload proof and help improve road safety data.">
+  <link rel="stylesheet" href="css/main.css">
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    .report-page {
+      padding: calc(65px + var(--space-xl)) var(--space-xl) var(--space-xl);
+    }
+    .report-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .report-map-panel { position: sticky; top: calc(65px + var(--space-lg)); }
+    .report-map-wrap {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    #report-map {
+      width: 100%; height: 360px;
+      cursor: crosshair;
+    }
+    .map-pick-hint {
+      padding: var(--space-md) var(--space-lg);
+      background: rgba(59,130,246,0.06);
+      border-top: 1px solid rgba(59,130,246,0.12);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .selected-coords {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-minor-bg);
+      border-top: 1px solid var(--color-minor-border);
+      font-size: var(--font-size-sm);
+      color: var(--color-minor);
+      display: none;
+    }
+    .report-form-panel {}
+    .report-header { margin-bottom: var(--space-xl); }
+    .report-header h1 { font-size: var(--font-size-2xl); margin-bottom: var(--space-sm); }
+    .report-header p { font-size: var(--font-size-sm); }
+
+    /* Proof Upload */
+    .upload-area {
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: pointer;
+    }
+    .upload-icon { font-size: 2.5rem; margin-bottom: var(--space-sm); }
+    .upload-title { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .upload-sub { font-size: var(--font-size-xs); color: var(--text-muted); }
+    .upload-preview {
+      margin-top: var(--space-md);
+      display: none;
+    }
+    .upload-preview img {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+      object-fit: cover;
+    }
+    .upload-preview-name {
+      margin-top: var(--space-sm);
+      font-size: var(--font-size-sm);
+      color: var(--color-minor);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Steps indicator */
+    .steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: var(--space-xl);
+    }
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    .step::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      right: 0;
+      left: 50%;
+      height: 2px;
+      background: var(--glass-border);
+      z-index: 0;
+    }
+    .step:last-child::after { display: none; }
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      margin: 0 auto var(--space-xs);
+      position: relative;
+      z-index: 1;
+      color: var(--text-muted);
+      transition: all var(--transition-normal);
+    }
+    .step.done .step-circle { background: var(--color-minor); border-color: var(--color-minor); color: #fff; }
+    .step.active .step-circle { border-color: var(--color-primary); color: var(--color-primary); box-shadow: 0 0 12px var(--color-primary-glow); }
+    .step-label { font-size: var(--font-size-xs); color: var(--text-muted); }
+    .step.active .step-label { color: var(--color-primary); font-weight: 600; }
+    .step.done .step-label { color: var(--color-minor); }
+
+    /* Auth gate */
+    .auth-gate {
+      text-align: center;
+      padding: var(--space-2xl) var(--space-xl);
+    }
+    .auth-gate-icon { font-size: 3rem; margin-bottom: var(--space-lg); }
+    .auth-gate h2 { margin-bottom: var(--space-md); }
+    .auth-gate p { margin-bottom: var(--space-xl); }
+
+    @media (max-width: 900px) {
+      .report-layout { grid-template-columns: 1fr; }
+      .report-map-panel { position: relative; top: auto; }
+    }
+    @media (max-width: 768px) {
+      .report-page { padding: calc(65px + var(--space-md)) var(--space-md) var(--space-md); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="navbar scrolled" id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="BAT Logo" style="height: 48px; width: auto; object-fit: contain;">
+    
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    <li><a href="report.html" class="nav-link active">Report Accident</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth-links"></div>
+  <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="report-page" id="page-content">
+  <!-- Content injected by JS based on auth state -->
+</div>
+
+  <footer style="margin-top: var(--space-xl);">
+    <p><strong>Copyright &copy; Students of DSATM CSE</strong></p>
+    <p style="margin-bottom:var(--space-md); color: var(--text-muted); font-size: 14px;">Samarth, Shivkumar, Shreyas, Shreejith</p>
+    <div class="footer-links" style="margin-bottom:var(--space-md);">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+      <a href="login.html">Login</a>
+    </div>
+    <div style="text-align:center;">
+      <a href="admin.html" style="
+      font-size:11px;
+      color:var(--text-muted);
+      text-decoration:none;
+      padding:5px 12px;
+      border:1px solid var(--color-border);
+      border-radius:20px;
+      transition:all 0.15s;
+      display:inline-block;
+    " onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--color-primary)'"
+        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--color-border)'">
+         Admin Portal
+      </a>
+    </div>
+  </footer>
+
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  window.Auth.updateNavAuth();
+  document.getElementById('nav-toggle').addEventListener('click', () => {
+    document.getElementById('nav-links').classList.toggle('open');
+  });
+
+  const page = document.getElementById('page-content');
+  const session = window.DB.getSession();
+
+  if (!session) {
+    // Show auth gate
+    page.innerHTML = `
+      <div class="auth-gate">
+        <div class="auth-gate-icon"></div>
+        <h2>Login to Report an Accident</h2>
+        <p>You need to be signed in to geotag and submit accident reports. Your submissions help improve road safety for everyone in Bangalore.</p>
+        <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
+          <a href="login.html?returnTo=report.html" class="btn btn-primary btn-lg">Login</a>
+          <a href="login.html?tab=register&returnTo=report.html" class="btn btn-outline btn-lg">Create Account</a>
+        </div>
+        <div class="divider"></div>
+        <p style="font-size:var(--font-size-sm);">Want to see existing accident data? <a href="dashboard.html">View the Dashboard →</a></p>
+      </div>
+    `;
+  } else {
+    // Render form
+    page.innerHTML = `
+      <div class="report-header">
+        <h1> Report an Accident</h1>
+        <p>Geotagging as <strong style="color:var(--color-primary);">${session.name}</strong>. Click the map to place accident location.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step done" id="step1">
+          <div class="step-circle"></div>
+          <div class="step-label">Logged In</div>
+        </div>
+        <div class="step active" id="step2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Pin Location</div>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Fill Details</div>
+        </div>
+        <div class="step" id="step4">
+          <div class="step-circle">4</div>
+          <div class="step-label">Upload Proof</div>
+        </div>
+        <div class="step" id="step5">
+          <div class="step-circle">5</div>
+          <div class="step-label">Submit</div>
+        </div>
+      </div>
+
+      <div class="report-layout">
+        <!-- Form Panel -->
+        <div class="report-form-panel">
+          <div id="form-alert"></div>
+
+          <form id="report-form">
+            <!-- Location -->
+            <div class="card" style="margin-bottom:var(--space-lg);">
+              <h6 class="card-title"> Location Details</h6>
+              <div id="pin-warning" class="alert alert-warning">
+                ️ Please click the map on the right to pin the accident location before filling the form.
+              </div>
+              <div class="form-group">
+                <label class="form-label">Latitude</label>
+                <input type="text" class="form-control" id="field-lat" readonly placeholder="Click map to set..." required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Longitude</label>
+                <input type="text" class="form-control" id="field-lng" readonly placeholder="Click map to set..." required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location Name / Description *</label>
+                <input type="text" class="form-control" id="field-location" placeholder="e.g. Silk Board Junction, Hosur Road" required maxlength="100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Area / Neighbourhood *</label>
+                <input type="text" class="form-control" id="field-area" placeholder="e.g. Silk Board, Koramangala" required maxlength="60">
+              </div>
+            </div>
+
+            <!-- Accident Info -->
+            <div class="card" style="margin-bottom:var(--space-lg);">
+              <h6 class="card-title"> Accident Information</h6>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);">
+                <div class="form-group">
+                  <label class="form-label">Date *</label>
+                  <input type="date" class="form-control" id="field-date" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Time *</label>
+                  <input type="time" class="form-control" id="field-time" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Severity *</label>
+                <select class="form-control" id="field-severity" required>
+                  <option value="">Select severity...</option>
+                  <option value="fatal"> Fatal — Loss of life</option>
+                  <option value="serious">🟡 Serious — Major injuries</option>
+                  <option value="minor">🟢 Minor — Light injuries / property damage</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description *</label>
+                <textarea class="form-control" id="field-description" placeholder="Describe what happened, vehicles involved, approximate number of casualties..." required minlength="20" maxlength="500"></textarea>
+                <div class="form-hint"><span id="desc-count">0</span>/500 characters</div>
+              </div>
+            </div>
+
+            <!-- Proof Upload -->
+            <div class="card" style="margin-bottom:var(--space-lg);">
+              <h6 class="card-title"> Proof of Accident</h6>
+              <p style="font-size:var(--font-size-sm);margin-bottom:var(--space-md);">Upload a photo or video as proof. Accepted: JPG, PNG, MP4, MOV (max 10MB).</p>
+              <div class="upload-area" id="upload-area">
+                <input type="file" id="field-proof" accept="image/*,video/*" capture="environment">
+                <div class="upload-icon"></div>
+                <div class="upload-title">Click or drag &amp; drop proof</div>
+                <div class="upload-sub">JPG, PNG up to 10MB — Video files accepted</div>
+              </div>
+              <div class="upload-preview" id="upload-preview">
+                <img id="preview-img" src="" alt="Proof preview">
+                <div class="upload-preview-name" id="preview-name"></div>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-danger btn-lg" id="submit-btn" style="width:100%;" disabled>
+               Submit Accident Report
+            </button>
+            <p style="text-align:center;font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--space-sm);">
+              Your report will be reviewed before appearing on the public map.
+            </p>
+          </form>
+        </div>
+
+        <!-- Map Panel -->
+        <div class="report-map-panel">
+          <div class="report-map-wrap">
+            <div id="report-map"></div>
+            <div class="map-pick-hint">
+              ️ Click anywhere on the map to drop a pin at the accident location
+            </div>
+            <div class="selected-coords" id="selected-coords"></div>
+          </div>
+          <div style="margin-top:var(--space-md);font-size:var(--font-size-xs);color:var(--text-muted);text-align:center;">
+            Tip: Zoom in for more precise placement
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Set default date/time to now
+    const now = new Date();
+    document.getElementById('field-date').value = now.toISOString().substr(0, 10);
+    document.getElementById('field-time').value = now.toTimeString().substr(0, 5);
+
+    // Desc counter
+    document.getElementById('field-description').addEventListener('input', function() {
+      document.getElementById('desc-count').textContent = this.value.length;
+    });
+
+    // ── Map ──
+    const reportMap = L.map('report-map', { center: [12.9716, 77.5946], zoom: 12 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(reportMap);
+
+    let pinMarker = null;
+    let selectedLat = null, selectedLng = null;
+
+    const pinIcon = L.divIcon({
+      className: '',
+      html: `<div style="
+        font-size:28px;
+        filter: drop-shadow(0 0 8px rgba(239,68,68,0.8));
+        transform: translateX(-50%) translateY(-90%);
+        cursor:pointer;
+      "></div>`,
+      iconSize: [0, 0], iconAnchor: [0, 0]
+    });
+
+    reportMap.on('click', function(e) {
+      selectedLat = e.latlng.lat.toFixed(6);
+      selectedLng = e.latlng.lng.toFixed(6);
+      document.getElementById('field-lat').value = selectedLat;
+      document.getElementById('field-lng').value = selectedLng;
+      document.getElementById('selected-coords').style.display = 'block';
+      document.getElementById('selected-coords').textContent = ` Pinned: ${selectedLat}, ${selectedLng}`;
+      document.getElementById('pin-warning').style.display = 'none';
+      if (pinMarker) reportMap.removeLayer(pinMarker);
+      pinMarker = L.marker([selectedLat, selectedLng], { icon: pinIcon }).addTo(reportMap);
+      enableSubmitIfReady();
+      // Update steps
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.add('done');
+      document.getElementById('step2').querySelector('.step-circle').textContent = '';
+      document.getElementById('step3').classList.add('active');
+    });
+
+    // ── File Upload ──
+    const fileInput = document.getElementById('field-proof');
+    const uploadArea = document.getElementById('upload-area');
+    const preview = document.getElementById('upload-preview');
+    const previewImg = document.getElementById('preview-img');
+    const previewName = document.getElementById('preview-name');
+
+    fileInput.addEventListener('change', handleFile);
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault(); uploadArea.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) { fileInput.files = e.dataTransfer.files; handleFile(); }
+    });
+
+    function handleFile() {
+      const file = fileInput.files[0];
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) {
+        showAlert('error', '️ File too large. Maximum 10MB allowed.');
+        return;
+      }
+      previewName.innerHTML = ` <strong>${file.name}</strong> (${(file.size/1024/1024).toFixed(2)}MB)`;
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => { previewImg.src = e.target.result; previewImg.style.display = 'block'; };
+        reader.readAsDataURL(file);
+      } else {
+        previewImg.style.display = 'none';
+      }
+      preview.style.display = 'block';
+      // Update steps
+      document.getElementById('step4').classList.add('done');
+      document.getElementById('step4').querySelector('.step-circle').textContent = '';
+    }
+
+    // ── Form Enable Logic ──
+    function enableSubmitIfReady() {
+      const hasPin = selectedLat && selectedLng;
+      document.getElementById('submit-btn').disabled = !hasPin;
+    }
+
+    // Form field changes: update steps
+    document.getElementById('field-severity').addEventListener('change', () => {
+      document.getElementById('step3').classList.remove('active');
+      document.getElementById('step3').classList.add('done');
+      document.getElementById('step3').querySelector('.step-circle').textContent = '';
+      document.getElementById('step4').classList.add('active');
+    });
+
+    // ── Form Submit ──
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      // Read proof as base64 (demo only)
+      const file = fileInput.files[0];
+      function submit(proofData) {
+        const result = window.DB.addAccident({
+          lat: parseFloat(selectedLat),
+          lng: parseFloat(selectedLng),
+          location: document.getElementById('field-location').value,
+          area: document.getElementById('field-area').value,
+          severity: document.getElementById('field-severity').value,
+          date: document.getElementById('field-date').value,
+          time: document.getElementById('field-time').value,
+          description: document.getElementById('field-description').value,
+          proof: proofData || null,
+          proofName: file ? file.name : null
+        });
+
+        if (result.success) {
+          // Update steps
+          document.getElementById('step5').classList.add('done');
+          document.getElementById('step5').querySelector('.step-circle').textContent = '';
+          showAlert('success', ` Report submitted successfully! It will appear on the map after verification. <a href="profile.html" style="color:inherit;font-weight:700;">View in your profile →</a>`);
+          setTimeout(() => { window.location.href = 'profile.html'; }, 2500);
+        } else {
+          showAlert('error', ' ' + result.error);
+          btn.disabled = false;
+          btn.innerHTML = ' Submit Accident Report';
+        }
+      }
+
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => submit(e.target.result);
+        reader.readAsDataURL(file);
+      } else {
+        submit(null);
+      }
+    });
+
+    function showAlert(type, msg) {
+      const el = document.getElementById('form-alert');
+      el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+</script>
+</body>
+</html>
