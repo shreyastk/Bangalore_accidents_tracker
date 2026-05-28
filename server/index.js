@@ -358,7 +358,9 @@ The JSON object must have exactly these keys:
   "is_in_bangalore": true,
   "date": "The accident date in ISO format 'YYYY-MM-DD'. If not explicitly mentioned, try to estimate relative to the publication info or context. Use 'Unknown' if you cannot determine it.",
   "severity": "Must be exactly one of: 'fatal' (if someone died/killed), 'serious' (if severe injuries), or 'minor' (minor injuries or general traffic announcements). Default to 'minor' if unsure.",
-  "time": "The time of the accident (e.g. '22:15' or '03:30') if mentioned, otherwise null."
+  "time": "The time of the accident (e.g. '22:15' or '03:30') if mentioned, otherwise null.",
+  "lat": 12.9716, // A number representing the estimated latitude of the accident location in Bangalore (must be between 12.7 and 13.25). You must estimate this coordinate based on the location landmark name, even if approximate. Do not leave this null under any circumstance if the location is in Bangalore.
+  "lng": 77.5946  // A number representing the estimated longitude of the accident location in Bangalore (must be between 77.35 and 77.85). You must estimate this coordinate based on the location landmark name, even if approximate. Do not leave this null under any circumstance if the location is in Bangalore.
 }`;
 
   try {
@@ -382,9 +384,12 @@ The JSON object must have exactly these keys:
       source: parsed.source || null,
       location: parsed.location || title || null,
       area: parsed.area || 'Bangalore',
+      is_in_bangalore: parsed.is_in_bangalore ?? true,
       date: parsed.date || 'Unknown',
       severity: ['fatal', 'serious', 'minor'].includes(parsed.severity) ? parsed.severity : 'minor',
-      time: parsed.time || null
+      time: parsed.time || null,
+      lat: typeof parsed.lat === 'number' ? parsed.lat : null,
+      lng: typeof parsed.lng === 'number' ? parsed.lng : null
     };
   } catch (e) {
     if (e.statusCode === 429 || (e.message && e.message.includes('rate-limited'))) {
@@ -430,21 +435,50 @@ app.post('/api/admin/accidents', adminAuth, async (req, res) => {
     // 1. LLM Verification & Extraction
     const extracted = await verifyAndExtractArticle(title, link, content);
     if (!extracted.is_in_bangalore) {
-  return res.status(400).json({ error: 'Accident not in Bangalore' });
-}
-console.log('LLM Extracted:', extracted);
+      return res.status(400).json({ error: 'Accident not in Bangalore' });
+    }
+    console.log('LLM Extracted:', extracted);
 
     const finalTitle = title || extracted.title || 'Untitled Accident';
     const finalSource = source || extracted.source || 'News Article';
 
-    // 2. Geocoding via Bounded Nominatim
-    const coords = await geocodeLocation(extracted.location, extracted.area);
-    console.log('Geocoding:', coords);
+    // 2. Geocoding: Use LLM-extracted coordinates, fall back to Nominatim if missing/invalid
+    let lat = extracted.lat;
+    let lng = extracted.lng;
+    
+    if (!lat || !lng) {
+      console.log('LLM coordinates missing/invalid. Falling back to Nominatim geocoding...');
+      const coords = await geocodeLocation(extracted.location, extracted.area);
+      lat = coords.lat;
+      lng = coords.lng;
+      console.log('Geocoding fallback result:', coords);
+    } else {
+      console.log('Using LLM-extracted coordinates:', { lat, lng });
+    }
 
     // 3. Save to Supabase
-    const id = `art_${Date.now()}`;
-    const wkt = coords.lat && coords.lng ? `SRID=4326;POINT(${coords.lng} ${coords.lat})` : null;
-    const has_coords = coords.lat != null && coords.lng != null;
+    // Compute next numeric ID based on current max ID in the table
+    let nextId;
+    try {
+      const { data: maxRows, error: maxErr } = await supabase
+        .from('accidents')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1);
+      if (!maxErr && maxRows && maxRows.length) {
+        const maxIdStr = maxRows[0].id;
+        const maxIdNum = parseInt(maxIdStr, 10);
+        nextId = Number.isNaN(maxIdNum) ? `art_${Date.now()}` : (maxIdNum + 1).toString();
+      } else {
+        nextId = `art_${Date.now()}`;
+      }
+    } catch (e) {
+      console.error('Failed to compute next ID:', e);
+      nextId = `art_${Date.now()}`;
+    }
+    const id = nextId;
+    const wkt = lat && lng ? `SRID=4326;POINT(${lng} ${lat})` : null;
+    const has_coords = lat != null && lng != null;
 
     const newRecord = {
       id,
@@ -477,8 +511,8 @@ console.log('LLM Extracted:', extracted);
           link: newRecord.link,
           location: newRecord.location,
           area: newRecord.area,
-          lat: coords.lat,
-          lng: coords.lng,
+          lat,
+          lng,
           score: newRecord.score,
           severity: newRecord.severity,
           date: extracted.date,

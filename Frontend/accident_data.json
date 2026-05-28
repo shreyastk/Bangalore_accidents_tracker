@@ -1,6 +1,48 @@
 [
   {
-    "id": "art_1779978466672",
+    "id": "art_1779987198863",
+    "title": "Woman and 8-year-old son killed in road accident in Bengaluru",
+    "source": "The Hindu",
+    "link": "https://www.thehindu.com/news/national/karnataka/woman-8-year-old-son-killed-in-road-accident-in-bengaluru/article70524489.ece",
+    "location": "Viveknagar Main Road",
+    "area": "Ejipura",
+    "lat": 12.950416,
+    "lng": 77.625103,
+    "score": 10,
+    "severity": "fatal",
+    "date": "2026-01-19",
+    "hasCoords": true
+  },
+  {
+    "id": "330",
+    "title": "Horrific accident in Bengaluru: 5 dead as speeding car crashes into divider, topples, collides head-on with bus coming from opposite direction",
+    "source": "Times of India",
+    "link": "https://timesofindia.indiatimes.com/city/bengaluru/horrific-accident-in-bengaluru-5-dead-as-speeding-car-crashes-into-divider-topples-collides-head-on-with-bus-coming-from-opposite-direction/articleshow/128369479.cms",
+    "location": "Jindal on Tumakuru Road",
+    "area": "Yeshwanthpur",
+    "lat": 13.04685,
+    "lng": 77.502617,
+    "score": 10,
+    "severity": "fatal",
+    "date": "2026-02-14",
+    "hasCoords": true
+  },
+  {
+    "id": "334",
+    "title": "Three killed in separate road accidents in Bengaluru's Yelahanka",
+    "source": "Deccan Herald",
+    "link": "https://www.deccanherald.com/india/karnataka/bengaluru/three-killed-in-separate-road-accidents-in-bengalurus-yelahanka-3988992",
+    "location": "Three killed in separate road accidents in Bengaluru's Yelahanka",
+    "area": "Yelahanka",
+    "lat": 13.1006982,
+    "lng": 77.5963454,
+    "score": 10,
+    "severity": "fatal",
+    "date": "2026-05-02",
+    "hasCoords": true
+  },
+  {
+    "id": "320",
     "title": "BMW bike collides with car at Ashoka Pillar junction, rider dies",
     "source": "Times of India",
     "link": "https://timesofindia.indiatimes.com/city/bengaluru/bmw-bike-collides-with-car-in-bengaluru-rider-dies/articleshow/106173415.cms",
@@ -14,7 +56,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx001",
+    "id": "4",
     "title": "Drunk exec knocks down pedestrian",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPWUl4ejRSemhjMVkyazFmek9oVDVFc2p1OTlIS0MtcWRqZUJ0UlV5ejRfanM1a1RiVWxLM2FaaHVfQ1NlZW5ESTk0MERhdWdFNy1rQW5fNXZnc3Vfamh5ZXN0dm5wOHFLSjJUekYwZ0NIdmdNUDh6NjR2NzRSdWgzeFRCa3gzSWdHdWJZZVdjVjNXUm5UZTN4SFpld1IzU0Exd1dRRjd5czV5elEzZVFYTk83N04?oc=5",
@@ -28,7 +70,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx002",
+    "id": "6",
     "title": "Accidents during New Year revelry kills 4 in Bangalore",
     "source": "The Hindu",
     "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPeHFQODhWS1czYmtiX1U1RHFKV1AyeTd1enFRV25sN2V2bkJwSnh2QUtFYXFjZ05WLVR4MnNNNmdUbVhnZlRlbFdwSlBZWHhJSjlLTGdCM09YQXQzblBBN0xNS1NtNW55UGJGNENoQkpvM0dibkdaTzhUUnU4ZUR1MndSUC1WMWVHVkFLWlo3QjZWOEJ5Z29lajVRc2U0VDBTZi0zRTJBTU1adF8tc1pMcTFlMmRhQU9NZFdNakd30gHEAUFVX3lxTE1hR3ZwMTkyemI2SGlfTUVXWTZ4VzNKRG1udXdkSm43ZW9DUGpGbmpKMURYWGdlVU1QNnRDR2hxTm9YY2tiWmV4MnFSaTFtRUlHSDBXS2VOY3NmRDFOYWt2Qm9RQTlVS2RNeDhlMGZIVk1rNXhCRzdJR3FZTWhyODQ3b2xGbUxsc3JYbER6czdla1Z1QlVXMGtwbE5UUnJKR2NNS0UxTWhrRVdwUlBOeUNaQWdTS3RlOUJhNG9hNWxkcENleFI?oc=5",
@@ -42,7 +84,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx003",
+    "id": "8",
     "title": "Bangalore cops search for woman SUV driver in hit-and-run",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPanZULU83M2J1MkZxWkNJWGg4LVFxRmFvYVlyQnlNVlN2a1ZybEloeXc3TEtRUklsR19waXhFSzRnM3VBSU5TalNrVjdrZUp0UXUzUkZrSnRjSWZKOUFNSHFpSzRuSmwtemptRVF0MXgtd0JkVGpILUY3cjI5M0hQVHNqOXl4X1RWd0o4bVE0cWd2czE3d3ZCaC0xR3FLYjBDQ0E?oc=5",
@@ -56,7 +98,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx004",
+    "id": "10",
     "title": "Hit-and-run driver a call girl?",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQU2ZJd0lvZkxudWVvMjJic2d6ck5Va2VXV0pycExrdk4yRVZpNVZ1QkhKSDNsakw3S3V1NnhwZ3IxWGZjRTRXMkE5YlZtRHJkTGZDc2szb1h5a1RST3J1YndGQ1g3YjZpWjFnX1ozdWpKR1hhSmROR3hDYUlKNWNUUWM4d2Z2alRSckI0SlhWV3I0Q2dUMmhuNHMzTVozNTBldW9VWVFzQ1pPRVhRVGozYQ?oc=5",
@@ -70,7 +112,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx005",
+    "id": "12",
     "title": "Karnataka MLA’s nephew involved in accident",
     "source": "The Hindu",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxONjdNUnBySGZRN1l0UlQ0WlRYbV91enF4cDljTVF3cENlSmk3ZFpjYlZtaDJabUcwRm1QWmdrRUF5QkFMMjVMWGU3MThaVDNEeGhZR3pXTVEwU2ZhbTlnRi1TZGdmZGxPY0hPeXNCV3VjR3N5bjR5SnlrLXZqZXFON0JIc2hReTFRZmNBNUNJLWlqc0FtZURHT3Y3WHdVU3YzTDFueXpBU2tiRkVj0gGzAUFVX3lxTFBjSXl6VHJWdVZsLTJidF9EdDE5TUhKeG1aSGU3MUVUQ292UVg3dkpVMTcxZUUyX01oQVVoZ0I3X2o2ZzRqRzJkMVZwSndsNTlvcDMzSnUweXBhcnhLV0FPa2o0X01WYUxPcS1BR1YyVG40d2E0U2FGQk5ESUh6MU94VHc3UzBQRHc4cU5tbDdXZ2R1MWs4YTFvblpFNU9wVjlfb05ZZVZNU2NoYURVU1kzVlg4?oc=5",
@@ -84,7 +126,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx006",
+    "id": "14",
     "title": "Three students die in after-party crash",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPNmZaTDRtTnZQTDNubWQ5NHVmdHREOE9SWVBHR1A5SE1INlI0MzcxRGdPblFRdFNhRlVTdHRHRnNTTV9IOUVqQy1tdkduZ3lrQ185TXJJS0F5RnR4dk14dVpQTk9mb0pUUXh2NTB5OVBUQ3RrZFdxdHBHQ2Z2SGxvVDRRcHhFMnFRYkQ0c0ZMSUJZUC1qUFJ0Q2t3Vk9oM0dWM2RPdWJmNHN4Ni1QbkRqQVo2U3BWZ18wNm9OMA?oc=5",
@@ -98,7 +140,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx007",
+    "id": "16",
     "title": "Bad condition of Neeladri road in Electronic City",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxOLWV4Rm1CdmtPcFVnaVNyNC11eDVueWo3aXF1RmF6MkhqUkRyeVpWMTVFaW1tYU83a2U0RWdOM1hncktFWnFMdEtIa2s1T1RJdVJJZnJiRVNESVlRcHFLZXR2NC1jSHhNNVhYUm4yRUxkaDRHbjNzcjAxb1JkLWFYZmllOFBkNlROX1J2SmpvdUNuOW5rbFhfWGpFeWNVNDI5ZzlmYnpyVDQtNVk1TDVyS2pudG5SaDlfUk5QbFpDamROS1R6WHk0cTdORlcwWkhHc29lci11clFvODJkb2xoTlNxMi1fZFpBRXBZRkF3?oc=5",
@@ -112,7 +154,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx008",
+    "id": "18",
     "title": "Bangalore: Five youth killed as speeding car rams BMTC bus",
     "source": "DNA India",
     "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZXdmdXd0amU1cHZoaWtENWtEY1ZsN05yUGlhU1RST2k1b2g2RTZkYVFQeVRKcFYwZ3dBYVRIZFVUZThaMm82WWFqOE1nWE9aLTlaWEZPVHhyTXh2OUphX3g1VkxxMDBoVlFib2tSQjlMaW1yQ003X0JRcHVlbnNxTjd6c3NYSERmbkRIV09wekJWVWQwdzIzdUNPTUw4cE90Q2FyeVRsS3oteGPSAbABQVVfeXFMTXdfSk8xUzVta0l5aFBtd0RoUWQ4UU9KSy1NdlJxV1B1RGhHb0FMM3luVE9ucktvSVNac2lOS1FoNXh0TXZfOXhGM2FVVzFVOG1USnN4ZDNKNTRQRW9KSHJkNnlzY2ljcUhSZTBYa2EyeEpudThCLXdfMTFuSmR3WWcxdHFtLWFoOFU2SkdzZm44SGQxeXVyUk93OFBWQ2M2akVqcTRmQjc1V21rWktDdVQ?oc=5",
@@ -126,7 +168,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx010",
+    "id": "336",
     "title": "Bangalore: Nine-year-old girl run over by BMTC bus",
     "source": "Oneindia",
     "link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQNXR6b0tPcm1PMzBfTDFmVnU3Sm13T002UUYwUThqRlNMVUVpaExHSEJQTmRYOUNMZW1qcy1Ma2RGSjZRNDc1aXF0enM4R3ItX3FnMFlRQ2RRT0UxdVk2MDhudWFVQjFGbEdWVEExQVhkWkFQN2hibzRxaUhrYmpVX01oeVFGQl9lMTJ3NGMtNWloQldX?oc=5",
@@ -140,7 +182,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx011",
+    "id": "340",
     "title": "Video | 9-Year-Old Girl Run Over by Public Bus in Bangalore",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNMlhsTmtjTzFHUUxvQkpTLWVxYlp5Wko5eEV6akpQbkhqSXB6Yk0tVXY0MlF6aU1kY2VDVWo3TE4wT2dkMU9XekJKUWpZSTdGU011anVCclk5Q3BYWmhzU2szU1RuTTNKMnJUSjBZMlJHWUc5dXZfbjd4SDlKQnNqZzY0bFk3R0hGNkQ1bG13?oc=5",
@@ -154,7 +196,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx013",
+    "id": "20",
     "title": "School bus mishap: 7-yr-old undergoes plastic surgery",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxNY0Y3V0FEWk9Sc1piTE80MUlrdkduaUxMaGJRZElOQzJiaFgyRGdzZ1AxMHhobkFiMWo3Nk95bjFXQXRBZjB4Y1lUTEhBd2hia2dxRjdmRlpadUw3Ny14dm1yOGFLMHJ4a1RSeFJST0U4bFVVN3V5eHRiVnc5UHZRc3pmVGpJNmx4Y2kybWFXYW9jenNsbS1tOGR2dkNTRmN4QnBtUnB3M1V6ckVncjZvS19mZ2ZkazB6Y0xpdzdObG9GQlAtWEc0c2laZ1hqQzhHUWdpNU9VYzJkSUwwZHFRN1kzVDN4a1FoMjhKZw?oc=5",
@@ -168,7 +210,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx014",
+    "id": "358",
     "title": "Video: Water tanker kills two in a horrifying road accident in Bangalore",
     "source": "The Indian Express",
     "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOZTBuWVItMUVDQjZsZEp1QUNkZjQ1NldIUV9abVR1RFNhR2dGUTMtak05eHMwZXpxYTItaGlLaGpzQUlTejBaaGVqenc3RkpHX2pVVVFaWTc0b2wwZDdaRVZCT2dCOU9yVDJiQ3hQV2d4N3hOMVE1aUY1WHIwaWxwazFpRU1URWNMaUxyOHZtbWJlVjROQlIzWVhQNHNGYWJIaEZOaG5DTlBkcU5pYjFwYUw4OGRmanluaGxsYVhsSdIBxgFBVV95cUxOVjc2RjdxbUhqdklVbUVXbHBVQjNqZ0FHdnhPTFozOTl5YUxxLTBsLVJEOG9zemNOZll6QmR4d05VeTJVMEdhOTJ4ZVFoOTJWSUJPUkdteUk4a3ByTEVfWEtpd2oxdWZ3LTJkeEI2cTdMYmNQWEVMRi1scGxwaTNnUkd2dktxZ3g2cEI1RFFGWmktT0JNb3lJTWY2MFpqb2lHVExBV3JhVkMxcEhySTlLVEp6WEJ5QVhlN09aMG5neFBObnBxV0E?oc=5",
@@ -182,7 +224,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx015",
+    "id": "22",
     "title": "CCTV images of deadly accident trigger massive student protest",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQa3d5YlRNaEJpdmt5NDh0Z2Fxb0puWmpRX01oNUgwRnBka09heTlPcE9JYnpFenQwUVNpbEwwWVF2NGRVYzhpSGNmeUhJdkVqeTRhQ2x1SVNxaEJtUlFsbDRzQU9JeFg4V1EzQWlpS1lSTWVaQmFuME9wTVpLSThrX3QyRnp3YTk1TFpGR0ZxSHBVS3I3dkZsTWxUcU9jcDlIb1E?oc=5",
@@ -196,7 +238,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx016",
+    "id": "306",
     "title": "Musician Raghu Dixit fractures fingers after pothole accident",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNZXlMbDFZOWx6aC1IT181Ui1QRzYySzFKZWJOdjVjUEhLR3JhbmJNaXBfLUdHUDRHMU00ZTJERHJHb0R2cENBWUJ0OGExTklrcTZzZ19rLVh0TmVtUDAzNElIcUpkRE5QQ05QWWJWYkZSZHV2RmZEM1VmX1Ntb3FwcjRHalhmNG5qR29aQ1pJd3BwVlVjUHFv?oc=5",
@@ -210,7 +252,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx017",
+    "id": "350",
     "title": "Bengaluru: KSRTC bus-lorry crash kills one",
     "source": "Deccan Chronicle",
     "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxObmxuTVdRMTBXSDc3X0V6YTR3aFNRR1p1NlJtakFHZG5sRkJTV0MwbkRXcjN4c29yUmN4TjBtSnRSZXM5X2duclhBYXk5Z2I5TGxOTHFrRnk1R002QWJsM3p5Z0VEVVFzcTJuV2Y5bG9NQ1J2dlVpSXhiNnVqOGpqZUJYb051NDBVeHl0Y29jNER5TjB1cVFkTHBfVEtrY0JvMEZSQWJFclpaRjRpbFp6NdIBtgFBVV95cUxObUdremFQOEtjbUFjNEx5TG1mVF9RdnpCTXZaLWhFVnNjRkpFaEhOSHZEaUtnNHdiaEF3NHZ3c2s0NkF0dFZPRkdpemRzZFV4OUU3LTFSUXMxX2xudUtpRFRvUUtQOXEyRDloRjRRRWM1QjQ5U2VlNEtPNTRSTnBlaHB0VDBjWEwtbDRwMnc4QVJDTVJGMjVlVENaRWZIUWM5cVc1LXRURkloTk01QnptNS1NS2Vsdw?oc=5",
@@ -224,7 +266,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx018",
+    "id": "24",
     "title": "Bengaluru Student, on Trial for Drunk Hit-and-Run, Now in Road Rage Case",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNQjJJdFlQWlRfd2Y4T1FONXY3MVJLcEtiTldfWFBEbkhiWHZPazlfMTBaUUNPSlhja3l0UFhhWVBRdG8yR0I2aTV3MUthb212Q0E3b2xicmhjZFk4NDVLTDZZaks4UEQyem9DUEk5MU5qcEQ1WE41dHhTZmNfSXhEWTRYem1kYkNJWU1SQVVEOVVCU2pqbFV5OGYxa1ZZMzAt?oc=5",
@@ -238,7 +280,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx019",
+    "id": "352",
     "title": "Bengaluru: Speeding Tata Sumo hits parked lorry, four dead",
     "source": "Deccan Chronicle",
     "link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQX3Fkc1RmMTUxYlNTbkpoVXRMZWdBTHZ1elhlWTk0ajdGN3lSTjZGZ3NoakZiR2lhNlJ1SlRHdHMtVF85U0FiY1RVdWZqbllWQjM3elpOcm92XzdPZkV5dWJMbC1tRGdRQ3JVQ2hGOEZOaU5xakp4WUVmYzJ6aS04Si1xcVN2eGEyZEppZlQzXzVCWEZPNUpJUXo4clphSlVuSHRpNU03SE1qMEhYcDFHUWFXZFBVVm14NGg0cGZLMDZzcWVk0gHKAUFVX3lxTE8zVDg2bktDei1oQVJWMU5TOWtRRFVvcU9zREpNZVlKWVc0MkxGOVE2Tm9OdTNpLTRDYmpxZ0otSDJQTHhmMkpkZHppaVR4MmdSNGtmOFl6UFJnbFdkcmxRa01GZVNMMjEtSG1YdklVRHdIUFRrZ2ZyN3lGMXM0VnhHaU1RV2ZGZ1lmZndyZmtFQXpxT21hMjU3b1NMbVV2NzdJRkt6UlYwcWhsaDNad3lfU2RoNzJHUmxYeU1ob2V1X0lvLTV4TmZxSUE?oc=5",
@@ -252,7 +294,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx020",
+    "id": "356",
     "title": "Speeding Honda Kills One, Injures Six in Bengaluru",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPLW5Db2EteGJpWW5CNVg5Qmp3UHdSUU5mYjNRbmRlMXRveFdwbmxmVFhzbkEteTF2bzBHMU56TVhGLXBFTGlxN1BWOXUwbmZ0bDB0anFnV0xTRHg0eXFNZ3Z5c3dMcnhjR2RpNnF6YjhwemcwS0d6X21wWm9sSFg2eVFLYkMzWjJIV3o1aEpYRTVENmM?oc=5",
@@ -266,7 +308,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx021",
+    "id": "346",
     "title": "Mishap almost took his right leg, but sheer grit will put him back on his feet",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPeWZmd0Y1ZzJtR001eDRORVFUSm9KbHBPcEdzREN1azk4S2p3Z1BZMVBVWDdtMllhdC1JLXliREx4MVM0UUxGTHQ0dTRzdl9iVzRkbmpLOUprc24xdlBuVkQ1aEYtNkZKSDVuRFJoV1NDR0lnS2hsZFU1RC1DVnc2LVE2TlBWNUFrZDBKQV8tSEVUbjNORnpHcDJfRGwyTElwRS1XenZoYnZ4QzcweWlUMi1zYjhha0YwYW1qclhBYmFtTTdtc1JJaU9OQVJOUmh3TzNXampVQm1NS2NEcS1zNHlwZGcxUHpfM05XVWdZVQ?oc=5",
@@ -280,7 +322,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx022",
+    "id": "338",
     "title": "Why Bengaluru Techie Was Charged For Wife's Death in Pothole Accident",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOUHNPUDJjWnVLT29JX3VYWWpRcnlLcUpVVzZ0WnhkR0FLdThQQjMtYjhnNldWbjNOejdBbHFUbnQ2ejJqYlp6dEd3djAtWHhiR0c5dFRHRW5fcnhuRTlLQXNxc3hfc1dPY2FoU3I1Wkt3OWpFalN1eDdOMmc5VE9sQzZ1cm9HOWg4ZG5UYURYZzdPSFZFTURGUDdVTDF0aHRROUZCRUpMaDVvZzloSmVwNVpR?oc=5",
@@ -294,7 +336,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx023",
+    "id": "354",
     "title": "Two including doctor killed in road accidents in Bengaluru",
     "source": "Deccan Chronicle",
     "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxOQ1d0ckdUT1dwMjlNeENXb21Qc0RVODJaWWRYTmZLMkJDUE5fd3Z3NHdpdElQbmI3MWtlbXp5NmNoMmVTdTdqanRMRDVxSFhRc2RQbV9CYmU3clFYTy1DR0NjdWN5dE0tblMwYkd2NkxMakFDRE91Vk53VF9uYy1BRl90UzBKN2dMeG9RUzlyM1VfMHREMEQ4T2JTdjIzbXB4R0Y5OFo2UmM2Zi1QMTRIeldmZzlFd19DU2R2OFFWWdIBxAFBVV95cUxNUnNaUHRudjFwSWxVMmQ2X2VSTHpsVU1lTUJtQkJwTjNBTnhnbDFHaFktMGlzNFYtNW1xci1JY21SVEtXU1ZJWG90RWtsNE1aVFY4bEJ3X0pYckI1YmdzNTFvMFA1RUhDeG14cmhBVExzSkhBb0JOZHc2ZjNMN25ZVEQ2SWtYOFpLamJQS3N4OHNhdWZBdFlqWV92YUdMeUxMNG9pZFV0QUxZMmhyQ2swMzRVX29JTHZKTnFoVllfMElWTFNk?oc=5",
@@ -308,7 +350,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx024",
+    "id": "342",
     "title": "Bengaluru college student dies after being mowed down by BMTC bus",
     "source": "The News Minute",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOYnJmSlNFQ19vaGhsdDhhc0I4RmJIUFVDRlB5V19kVExGOUJCREd4R0UzeGJHOEQtaEFpVjNYQ040UkhnUHZSdHc3RXVIWVR6aldETENaYnMzTEVQSzV4eXcwU2x5N0lWbDRJTU0tWHJOTlFCVE0wNmVFU1JrMmtsanRtR2hRV09lZVBsSTVLVE1IWDZPX25faHgxSFg4NnFobklsQlRoSHJWSTdx0gG6AUFVX3lxTE16VWhQcjR3YUtsQWdjTElmUDJEZDNPelByRGN2Xy1WSV9uYU9rQ1NYQWs2LXJETHMzNmItM2VqV1ZKMWNDOTRYaFZlbzY1djk5alJBZHh6T1QwSlZkSnZZY0hmeWJGZTNJMF9ZY0FndjFSQl80VllfS0ppSThmZWNIYUxPc09Vc1hVdGhmUjJ5bE5TbUhYQU5xTGhVRzlUWXo5a3Q3X2F4MWhnZkZMNkJUN0c0U1dBVlBoZw?oc=5",
@@ -322,7 +364,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx025",
+    "id": "272",
     "title": "Bengaluru bus accident: BMTC to provide compensation to girl's family",
     "source": "Oneindia",
     "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOZEVQTE40M1dyZkI3cHZlTllZS3htVnpvMjRYM1ladmFLNjlGQzQwY1Yyd1RpNk9CRTNYRWd6R2JZd2RwY1NFNm1COGhjdkFldWxtMFN5RS1fMjg0U2FIdWRZR2JiWWNwUzEtMXB0SmFjdDJmYldUeUFxd21uTEg4Z3lNalFQcFBZSFpHOXFRVlFJTjBYUUt3WTI0bThqVW1QeWRNWFhpQldjT2tZTFRxdU5vdTBnQQ?oc=5",
@@ -336,7 +378,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx026",
+    "id": "348",
     "title": "Bengaluru: Speeding BMTC bus hits seven vehicles, injures seven",
     "source": "DNA India",
     "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNMVF3VzZOLWQ5Yi1KQXdjUGN2dnAzc3NBd3ZpZGYtQllzbnp1NzB5VEdLS3MyTk1TZ3UxLWZPbWpMN1gxbjFoNlZKRUZnei1lN0tGNlhDNTR6eFpNNW1ldDlMMzFhcGlraHIyRGlqUnE2TFpsYUZhVm5RWjFtRndCWS0tQmluQUxMUXhEY3JVVjNEVTFLbG14dWdYNVJ3QU1BMS1RcEtiUW5XTi1vcm1jVtIBtgFBVV95cUxQMmZjWktKdXhwTXlwaTlsVFlIV25mOUlmdElxUzQ0YXJFYzNnUW92cGFWZWd1U0E3Y1JJMHluOVpiSV9HOVJscDh6Qk5KUXNyYS1hZ2FxX0lYTW9tTDRRTFlBejdUenIybXdUVU5RdzdvaFhsUnBKTFRNREF2SlJMQ1pLWjhuVmZ3X3NxWVF6ZzVXRFV4TlJWQlQ4aGI4ZDB1Mk5tVUF4RWE0RWh2dF9aYVpmVnpRUQ?oc=5",
@@ -350,7 +392,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx027",
+    "id": "2",
     "title": "Bengaluru: Car number plate mix-up sends police into a tizzy",
     "source": "Deccan Chronicle",
     "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPQVZ0SWIxdUhBVnVaYXFfcTE2M1VNT1NKUFpoMkxWMXhyMVRyeU9Cc0F6aFJCUWNTZUJuNUhrVFJZbElFck1Ob1ZJV3k5UWRqMXAzS1hfU2RjVXV3d2R3aTdMRzBaTDFpcUlybjBlelNyNHRvOUZNQ2ExMC1RUDZOc1NiNGlROWNHYW5oU3ZEbHYzTktic2pFa0xSbjB2cTUwQW8zRkpBYkUtU2dzdzZhYndieThrN0NuVVBV?oc=5",
@@ -364,7 +406,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx028",
+    "id": "344",
     "title": "PUC student takes out dad’s car at night, killed in accident",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQLTV6X2F4dWNWYnRRVldKSTFZelZUWUdBenNEY1UzOHViU1U1NXJoQTJOZ0lqaG1nTmdxTjhfRFlEUkdyYl93dXVVWDUzaENLbGU3M3F2RjhfM3kxV29pc2Q0aWZUY2t0b0VXTDlNSG9VaU5kVzFOeFc3V1U3bFViTEo2LVE4R0NLclF6N1NOZHNiaHlKUzliS0dZeG9JOEY4b1l3RmN5ejdMcDRuQThMVUEtUXNQZWhCUDY4M29ySFlZdEFzSm1RR0tOa3ZyVHZiZ1ZWQQ?oc=5",
@@ -378,7 +420,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx029",
+    "id": "26",
     "title": "Bengaluru bus accident: BMTC to provide compensation to girl's family",
     "source": "Oneindia",
     "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOZEVQTE40M1dyZkI3cHZlTllZS3htVnpvMjRYM1ladmFLNjlGQzQwY1Yyd1RpNk9CRTNYRWd6R2JZd2RwY1NFNm1COGhjdkFldWxtMFN5RS1fMjg0U2FIdWRZR2JiWWNwUzEtMXB0SmFjdDJmYldUeUFxd21uTEg4Z3lNalFQcFBZSFpHOXFRVlFJTjBYUUt3WTI0bThqVW1QeWRNWFhpQldjT2tZTFRxdU5vdTBnQQ?oc=5",
@@ -392,7 +434,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx030",
+    "id": "28",
     "title": "Bengaluru: Woman techie dies in accident",
     "source": "Deccan Chronicle",
     "link": "https://www.deccanchronicle.com/current-affairs/290116/bengaluru-woman-techie-dies-in-accident.html",
@@ -406,7 +448,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx031",
+    "id": "30",
     "title": "Bengaluru residents set car ablaze after African students allegedly run over a woman",
     "source": "The News Minute",
     "link": "https://www.thenewsminute.com/karnataka/bengaluru-residents-set-car-ablaze-after-african-students-allegedly-run-over-woman-38379",
@@ -420,7 +462,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx035",
+    "id": "32",
     "title": "Split in half after road mishap, Bengaluru youth pleads for his organs to be donated",
     "source": "India Today",
     "link": "https://www.indiatoday.in/india/karnataka/story/bengaluru-youth-who-was-cut-in-two-by-lorry-begs-to-donate-his-eyes-309598-2016-02-19",
@@ -434,7 +476,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx036",
+    "id": "36",
     "title": "Bengaluru Doctor Crashes Mercedes Into 6 Cars, One Dead",
     "source": "NDTV",
     "link": "https://www.ndtv.com/bangalore-news/bengaluru-doctor-crashes-mercedes-into-6-cars-one-dead-1280000",
@@ -448,7 +490,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx037",
+    "id": "38",
     "title": "Bangalore Doctor Crashes Mercedes-Benz Injuring 5 & Killing 1: Video",
     "source": "Drivespark",
     "link": "https://www.drivespark.com/four-wheelers/bangalore-doctor-crashes-mercedes-benz-injuring-5-killing-1-video-012345.html",
@@ -462,7 +504,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx038",
+    "id": "34",
     "title": "Bengaluru: Drunk doctor in overspeeding Mercedes kills 1, injures 4",
     "source": "India Today",
     "link": "https://www.indiatoday.in/india/story/bengaluru-drunk-doctor-in-overspeeding-mercedes-kills-1-injures-4-312345-2016-03-28",
@@ -476,7 +518,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx039",
+    "id": "40",
     "title": "Bengaluru: Biocon employee dies in bus accident",
     "source": "Deccan Chronicle",
     "link": "https://www.deccanchronicle.com/nation/current-affairs/310316/bengaluru-biocon-employee-dies-in-bus-accident.html",
@@ -490,7 +532,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx040",
+    "id": "42",
     "title": "Biocon scientist killed in accident on NICE road",
     "source": "Bangalore Mirror",
     "link": "https://bangaloremirror.indiatimes.com/bangalore/others/biocon-scientist-killed-in-accident-on-nice-road/articleshow/51017593.cms",
@@ -504,7 +546,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx041",
+    "id": "44",
     "title": "Speeding Car Driver Claims Life of 18-year-old in Bengaluru",
     "source": "New Indian Express",
     "link": "https://www.newindianexpress.com/cities/bengaluru/2016/apr/15/speeding-car-driver-claims-life-of-18-year-old-in-bengaluru-919234.html",
@@ -518,7 +560,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx042",
+    "id": "46",
     "title": "Bengaluru: Speeding BMW rams autorickshaw, injures 4",
     "source": "India Today",
     "link": "https://www.indiatoday.in/india/story/bengaluru-speeding-bmw-rams-autorickshaw-injures-4-312345-2016-05-17",
@@ -532,7 +574,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx043",
+    "id": "48",
     "title": "Bengaluru: Shiny Kiran lay dead on road, while friends fled",
     "source": "Deccan Chronicle",
     "link": "https://www.deccanchronicle.com/nation/current-affairs/030916/bengaluru-shiny-kiran-lay-dead-on-road-while-friends-fled.html",
@@ -546,7 +588,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx044",
+    "id": "50",
     "title": "Scorcher! Bengaluru women crash, burn",
     "source": "Deccan Chronicle",
     "link": "https://www.deccanchronicle.com/nation/current-affairs/200916/scorcher-bengaluru-women-crash-burn.html",
@@ -560,7 +602,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx045",
+    "id": "52",
     "title": "Two engineering students die in road accident in Bengaluru",
     "source": "New Indian Express",
     "link": "https://www.newindianexpress.com/cities/bengaluru/2016/nov/23/two-engineering-students-die-in-road-accident-in-bengaluru-1540000.html",
@@ -574,7 +616,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx047",
+    "id": "62",
     "title": "Here’s why roads are turning into a livewire",
     "source": "Bangalore Mirror",
     "link": "https://bangaloremirror.indiatimes.com/bangalore/others/heres-why-roads-are-turning-into-a-livewire/articleshow/51017593.cms",
@@ -588,7 +630,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx048",
+    "id": "54",
     "title": "Consumer Court Awards Rs 22L Compensation to victim of killer Bengaluru road hump",
     "source": "Economictimes",
     "link": "https://economictimes.indiatimes.com/news/politics-and-nation/consumer-court-awards-rs-22l-compensation-to-victim-of-killer-bengaluru-road-hump/articleshow/58900000.cms",
@@ -602,7 +644,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx049",
+    "id": "64",
     "title": "Brand New Lamborghini Huracan Crashes Into A Tata Indica In Bangalore",
     "source": "DriveSpark",
     "link": "#",
@@ -616,7 +658,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx050",
+    "id": "66",
     "title": "Brand New Ford Mustang GT Crashes In Bangalore — Devastating Damage Caught On Camera",
     "source": "DriveSpark",
     "link": "#",
@@ -630,7 +672,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx051",
+    "id": "68",
     "title": "Jeep Compass Crashes In Bangalore | Shows Good Build Quality And Safety Features",
     "source": "DriveSpark",
     "link": "#",
@@ -644,7 +686,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx052",
+    "id": "56",
     "title": "Three die in serial accident on Airport Road in Bengaluru",
     "source": "The New Indian Express",
     "link": "#",
@@ -658,7 +700,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx053",
+    "id": "70",
     "title": "3 Crushed To Death As Tree Falls On Car During Thunderstorm In Bengaluru",
     "source": "NDTV",
     "link": "#",
@@ -672,7 +714,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx054",
+    "id": "72",
     "title": "3 Bengaluru Schoolboys In Late Night Car Race, 1 Dead. Fathers Arrested",
     "source": "NDTV",
     "link": "#",
@@ -686,7 +728,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx055",
+    "id": "74",
     "title": "Bengaluru: Racing with friends, teen killed after car collides with divider",
     "source": "India Today",
     "link": "#",
@@ -700,7 +742,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx056",
+    "id": "80",
     "title": "3 Bengaluru teens racing in dads' cars crash, boy dies",
     "source": "The Times of India",
     "link": "#",
@@ -714,7 +756,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx057",
+    "id": "84",
     "title": "Bengaluru teen's head gets severed in car crash, parents arrested for letting minors drive",
     "source": "The News Minute",
     "link": "#",
@@ -728,7 +770,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx058",
+    "id": "76",
     "title": "Parents Booked After Bengaluru Teen Driver Dies in Car Crash",
     "source": "The Quint",
     "link": "#",
@@ -742,7 +784,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx059",
+    "id": "78",
     "title": "Bengaluru: Teen's head severed in joyride accident",
     "source": "Deccan Chronicle",
     "link": "#",
@@ -756,7 +798,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx060",
+    "id": "86",
     "title": "17-Year-Old Boy In Bengaluru, Racing At 150km/hr In Parents' Car, Killed In Crash",
     "source": "HuffPost",
     "link": "#",
@@ -770,7 +812,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx061",
+    "id": "82",
     "title": "Bengaluru: 1 Teen Dead, 2 Others Injured in Late-night Car Race",
     "source": "India.Com",
     "link": "#",
@@ -784,7 +826,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx062",
+    "id": "88",
     "title": "Bengaluru bus loses wheel while passengers on board, second accident in less than a month",
     "source": "The News Minute",
     "link": "#",
@@ -798,7 +840,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx063",
+    "id": "58",
     "title": "Bengaluru drunk driving case: Liquor baron’s family helps grandson escape, brother-in-law held",
     "source": "The News Minute",
     "link": "#",
@@ -812,7 +854,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx064",
+    "id": "60",
     "title": "Killer potholes: Couple rushing their sick grandchild to hospital dies in accident in Bengaluru",
     "source": "The News Minute",
     "link": "#",
@@ -826,7 +868,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx065",
+    "id": "98",
     "title": "Bengaluru potholes claim fourth victim this month: A 21-year-old woman on scooter",
     "source": "The Indian Express",
     "link": "#",
@@ -840,7 +882,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx066",
+    "id": "96",
     "title": "Bengaluru techie was victim of road rage",
     "source": "The Times of India",
     "link": "#",
@@ -854,7 +896,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx067",
+    "id": "92",
     "title": "Two men thrown off a Bengaluru flyover and killed after their bike was hit by speeding cab",
     "source": "The News Minute",
     "link": "#",
@@ -868,7 +910,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx068",
+    "id": "90",
     "title": "Bengaluru: Flung from flyover, 2 fall to death",
     "source": "Bangalore Mirror",
     "link": "#",
@@ -882,7 +924,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx069",
+    "id": "94",
     "title": "Bangalore: 20-year old dies after rash driving accident at Kodigehalli",
     "source": "The New Indian Express",
     "link": "#",
@@ -896,7 +938,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx070",
+    "id": "100",
     "title": "Horror on Hosur Road: Crash-and-burn kills 2",
     "source": "Bangalore Mirror",
     "link": "#",
@@ -910,7 +952,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx071",
+    "id": "104",
     "title": "3 MBBS students killed in horrific crash as car rams stationary truck in Bengaluru",
     "source": "The News Minute",
     "link": "#",
@@ -924,7 +966,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx073",
+    "id": "102",
     "title": "3 medicos die in car crash",
     "source": "Bangalore Mirror",
     "link": "#",
@@ -938,7 +980,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx074",
+    "id": "106",
     "title": "Bengaluru: Family of four killed in head-on collision",
     "source": "Deccan Chronicle",
     "link": "#",
@@ -966,7 +1008,7 @@
     "hasCoords": false
   },
   {
-    "id": "xlsx076",
+    "id": "108",
     "title": "BMTC bus knocks down biker; mayor writes to MD",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQZzJXenFoc3BEdUhyMWQzN0U0ZTdXTzhZdFVnMUFvd3NhN3JEMG9vQmdLNXNrM012OFZtUHBJdVYyVU9vdjRtNjBqaGlsbDB2X0J0TjI3aEtlLVpxU0E0OXJjWlRqaF9SYU5nZmJ3RTlIWHNKRFY3VzRaUG84OW9YNnFyVE80aFNKa2M4ZkhnQTJzMFZ3dERwUnJHOFM5RkxEaGxwOV9hOGZ3d2ZESEtqZkhRX3NlN3dCU0dqQlJBd2x5cjZU0gHKAUFVX3lxTE5jMGN2X0NJQ3ZEYXA3Z1BRblZvOHItTzhicWJtXzhDUl9TQk1ELTAzT0F3bnNyT3l3MmI5U0lXNkRXc1VZUGhyX1UwYS1tNUNtZ2lmeEdYMC0xdkRoaV94RlVuQ1ROS3lKOEVlejZZbTItVW43ajlHZFhPNlhYWjFyZ1NTeEpXVmYySnFWLUxpWU5KMWRIRFhMcEN6U1FvVVhVVnYyQzZCLVVBaGFZbGdWWlcxenZEMm0tNFg1QXU0emF0Q21oSkxzRkE?oc=5",
@@ -980,7 +1022,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx077",
+    "id": "148",
     "title": "Gas pipeline leak reported on Bengaluru's Sarjapur Road during BBMP excavation work",
     "source": "The News Minute",
     "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPWTFvUDVxZUlzUGtaaGxwYkhOOUQwWDk4LWVYcmZuemVtMGxyM3IzRlR6QUFFRkJnMTFtXzFZaERMUVFlZlg4cllqQVdsSEREeFdmbmpEQzNXTWdWcUR4MmgydVlOYndRT3FDSUc5MjFjemlJamFlNFNwdDJsNHhHSVRidVVVRkhJVGFSTzkyY1p5V0JuSHNKbWpjeWJycVRVY0xsVkpKb3NnNGVVZElLM1Z2V2xDcUFKcnpmdV9sZ3pFVFXSAdABQVVfeXFMUF9TVmRwYmNBRlZjVm9KTHo0TWQxaHVpemxUczhFWjNkc2VvMk5vbzh0UVFHdHdIOVhRbXlDVlAweklYaVlodTdGN3JFb1gxRWdfcXB4OENfNDl0NXFkZDRCbWdmUWNHZUlGc2NJTmZKMFhycmItYlo4Wk1ZVGdsTHJ5UDdjQ2UtYm1tOTVaZWNlVkQxakI0RnRBVHhhVzNpTkpzdUM4d2pob0lHSHE5WVh3TEJaYXVJWVFvcXhfV3l0WE1oRE5iWWQ3aXBpV0N5Mg?oc=5",
@@ -994,7 +1036,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx078",
+    "id": "110",
     "title": "Motorists break divider to escape flyover traffic trap",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxPRU5iZE1zNElKdTZSekNSRXAzQWlZVURwN1lsVlNQeThKS0dkekVuZWtXdzVQNTRCRXM0cEUtN3VBVDk0dWN1XzBlUXlRZDJJbTRJZ1NKdEVFaDdjUzhhSjVhTERodFZqNkhvSXJSczBMajg4SFFjTkZOek02SHRFQkpscUg0V3BZSk1BYnZEOVlJZWRMNkZaSWJyc3dRMnNSUHdWbHRRV2o0VmtIcVdZOEZ1ZGo2R3UtUktzWHgxMnNnbzlKRWhaYXBtbzMxZ2Ux0gHWAUFVX3lxTFBZVjF4Y1ZOVjFlcjBrS18zM1BFeDd3dDEyVzMta0lLcmNHLUhFVmF1WUFCaHgtVkVHOU56VkNFUzJ1UTYwZEZrQ25menkxNXpvWUc2cVdpMUt3dUdHd280MUtfeHZTWmNidktBVFE4ZWUxdmFpaHFMM0FLWTlOd2c4MEN4cUZ6ZHpiVzRLYW8ta3NaUjJ0WFNORE9wUlZuQ2dSRUtQblhTQmV5QkZNVkJzaHBuMEQ1VHdiQ201cmN4Q3FIZllVcnRwRjR2UllheG53b3FjcWc?oc=5",
@@ -1008,7 +1050,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx079",
+    "id": "114",
     "title": "Video: Mercedes-Benz & Six Other Cars Damaged In Multiple-Vehicle Crash In Bangalore",
     "source": "DriveSpark",
     "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQWTl4N0J0QTR6aTdkT2hZd3NaOG11eGNKRkRRUzBncTl3UVBDdTBIdmljZHpLYWNFQmk4WjhZaVh1TmdsR2hYaFBuMlIzaU5fd0ZwWUE2LS1UMVl1QXFEdkNGZGd5dGpKX0Q3ZjFfTGxmN2dJWGtWeF9hcEtLaF9ZWFNSOEVST1pXenNPMjBtSldjYjlnM0h1b29JLTVYa0ttTndaV1REZzdRVzVvQXBZWWZoQVF2UVRMYmYycVM3WHVPcS15MlBPWHpyQnVad0RMWjJR?oc=5",
@@ -1022,7 +1064,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx080",
+    "id": "112",
     "title": "Karnataka: Four of family die as car rams into public toilet",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPZGZ3TXBQRmVTd1FqajBaczFHbFdJVFQ0VWlNZ1RYV3J4aWRsNU0zOGhOS09FMGRUdFNESWV2S0tBTGNPVkQ4WE12cE5sbXNwc1VVVng3NzVMOUpXdTJkOWJnYnU4eXRud09WVGR4dmpHMWlJOWc5ZjRQS1M2U3BwTTh2bkwtWDBEeFZrSUhndVJkXzVxNkNIUldRYUR3WUZTRWlFb3dTM1I0bEkxbzBwQ1N5ZWpzSEhNMW5MLVhxZEZyQdIBzwFBVV95cUxPYkJkdzV4YlQ5ZFNDNDFfai1vZHFTZkUzY0hTbk5GWFhid2ZjRG5BWFdkLXNESDdEbW0zVXVmbEZCWE90U1FvQ05XbHlZSkEzOVoxLVNuV1kyYUttcFNXU1NvajBaTFQ5RkxpeThNcTZaVVg3VUdaQXpDVnFzS0liWWJaSW5CVXdaY01BYnM3UHhERDBFdms1TklvSGFVMHhYMjdhZ3dESW02eWd3ckxPVzBRdmc0ZjdVSk5CY0doLXBjZEMzNzhlcVNyRXQxQ0k?oc=5",
@@ -1036,7 +1078,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx081",
+    "id": "126",
     "title": "Five of a family killed in road accident in Bengaluru",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQWDlvSkRsMVNxd0ZkeUtHNUMtRGF1d3YyTjhMTzR3VUNzNWo1a0I1UmVNTFlFcExMNUVYalF2dmtoSExsQnQycnEyemxhZnd3Q2NJdTViMjlBSkprcjIzTlJrcFlfMjNDUldlRFNQM2JRZ2ZLNmhCb1FEWmRLZVlZYlNhYmI5aWQtemhzRFBFMDA5dUhOMTRGVy02dGx2dFg5d3BTQnFSN2gwaEtCek96aWdKbWdHaUNFMlFoUjZTNGgyNlNsaVHSAcsBQVVfeXFMTV9VanhscHZRVzdmcV9LRmFnbjlZZmdtYW1Id2lMRWMtLXpVeFpaSDNkVGNLMlpfdzBJMy1oTk1FOElYdl9qbTZkMW44b1YtaWJuTkk3YVVUWEVKV1pnVGFrZFJXdWI4X0g5aGx0TE9UeUJGQndTNGhtZ3MzeHFmNDZHMzRFbTdGV3JRVURxU0tJVF9kaTdkdmtDWmo3WnpVWDNBMnBWaU5vQUNIbEhYTkVJMDlFdUpwZXFPN05YU1dfUE80azRhcFUtNzg?oc=5",
@@ -1050,7 +1092,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx082",
+    "id": "132",
     "title": "Couple, 3 kids killed in car-bus crash in Nelamangala",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNOThsWDJfTlA4S1o5Y3VUNlVLcG1SemdZOTlYNXg2OXZwd1FnbG5GYUJXeUZhZW9vOUVjTndZd2hsdFJNMnBKekcteGxzdWVCU0NyM2MwSDhvNThIazB4QTM5bm9SSVR6M3lQcm1YMDEtQUFWSTJvdUd1RHg1QWFscDlwRV9PdzhxNEhIV1BmMndub05QRjRkZE43RTFrS2ZtVHgxMHIyeUo0TGtQRW5UeGhTbVcyRnhBSjJwbDFGbmFBcUJsSngzRjRHd1nSAdIBQVVfeXFMUGRyQkxPakFnelZ4NmctTlpnV3ZuNlI1X09hVEMyeU9JTEktNEZDQ2UtTmZDVlZOYU1SdGs0dWh3RGVhS0M3MlVlWmcxMERMWXFOOEhRckxScUxjdFBCUE9wTmZCTlQ2bjhHUDRjV0ZyMjI0aXJKUU1RSkdBUERJLVRhSEVnU0RiVDdYblE3dWFCX1lOZ0gzcXlIUllYQXl2VnBrSm1mQ2d4LTFZQzlqTThmUWk3WkdlS2E5d2QwTFo0M2oxQy01a19tNHVYbUYzQUlB?oc=5",
@@ -1064,7 +1106,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx083",
+    "id": "118",
     "title": "Bengaluru businessman test-driving Range Rover crashes into railings, killed",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxQU1YtUjktQUlEMUlzRXBYQjV6X1RLRnRvV3pVTkVITXU1Qm96bVY2cXFmY0x3TkpnNURXLXhJbTN3RzhCMy0yZWtBT3p6ZGNjWWItaVhSOHFuZHNEYXE2Vk5mZFVoeE5sR2JLOURmQnJKZUJEcHNJMDJCcGVraHFlNFAwajliM01EamlnX1VSakZxa3lfM0ZKdG1TcW1QX1pTUS1UVnBIVUhfZUdjVUtFZkR3d1VZOE5QQU8tT1FCb0FaRlV1bDBNcmE1OHlvNjlZeFRXS21yRXRkRldKN0dvSU1ISE51Z9IB6wFBVV95cUxObzR4RnJNMkI4ZjdaV2tfeFU4Nm9PNlZYR3lmYTJncFo3WmhIVzFEMm96ZWtPSV9UM0hQVG5XVDFLYmZzR0REb3ZPNURQSmRwbW0zZUdodUY3TldJN1ZNS0VXbXRVV08wbUhxMXA2VDBGRzBNc2hCeXE1QnJGV3A5eTJiRG93YTJzSUlIQTZ1dkZjbnFlTE1GcXBVTmFoMVlSdzlUZjlpblFLY3BubzdXejgtUW1SbUstZ1U2Q1JxS3R6WGlJblI2b3pPcWg1bG90V01SaEJzZk13OVZudHJSY0I1YThJVE9Ua2pn?oc=5",
@@ -1078,7 +1120,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx084",
+    "id": "120",
     "title": "Bengaluru: BMTC bus topples on flyover, leaves 13 injured",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxPeFJnMVpxbXd0RE1fTEMzWGdfTzdfRV85bzZGZHBuU1NQclB5Qy1TdUtVVFV0ajF0YWIzUU9jMlc0YjF3LUFaVVJrN1cta21EU2pVQXdwY1MxbzlpR0VhSzdoVHkyU09Uc1FLYXRRR2hOQWFBMXYwZFpxZk56bWhPcFd2MUdMTkZ2TTZJTU9fN3BhbEN6bWx0V0NpZE5rLVBjR05zRS1VeTVfUGIwYlhQSGF1dzVpcHhWcnA0X1RxQUJUSjJOSF9CMFNR0gHXAUFVX3lxTE8xNXFiZjR4X01pLS1kSGtXOURmOXdUNWxJZVRZMS1SQ0RFVTBzRWdPLUVpNDVyZnhzaWY5NFZKRVJJcEFNUVRVMXNpWjJQQkpLX25NTFI3em9lUU52SGYyaFlqX2s0NTNoTURvd3BtYkxPbm05R3dJbXRqOXhUNlVkQUxDZVVYcDVFTWRfSFhwSmdYOGxxNl83dU0wZ0JUNlZPTWh2MDNHXzlQVVQxRGdxbWVCbGtRV3hYdnczb3E0LV9VYnBETDRmLXdlSXFQSU1wYmZoeTcw?oc=5",
@@ -1092,7 +1134,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx085",
+    "id": "122",
     "title": "Bengaluru: JCB mows down biker near NICE Road",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNRUZBNkQxWUlFUmpYYWdWTmtxRC1UVlhMdm45aFI5elZITnc0Z0htTFVDZkhmRGYyTTlscXBONUJrb0lrWTNKbHlpWXZBdW1nc2VNYlpVV3NMc1NKdGktLXdPV1pUSEZaZkFqOEMzYmF5WVp3am5sRUF4bmM4NFVGNmJuRGVtV3NtblNTdEM2YmdoZFFhRmpPeF81UDYyZVNqeUFkQV9SSU1aMC0wSmlfX01aLUw4d3U2Q0I00gHIAUFVX3lxTE1yZHN5N09wT2tKcFZjUFVJTndXaWdPeWpGZ2hiTlYwa0RXZmE4d0RDNkgyVnBPdVpkZmN1RmtDMFR5ZWhENW0tLTF5aWxBZl9YMzBEVmhtNlNkR3d3bTZwQ3Utb3B3REJ6VjZLT3JoaHRUYkJ3bHl3ZnhMbmNod3VWVUVva3N3TGo5OEZFNHM3MnRqdm9jc3UzWlQ1ZF9qbXNBZllfQjhHVlR6WTdqWHBjTlhXYkJMY3dyUkxZNTYyVkwxU3RJMU9h?oc=5",
@@ -1106,7 +1148,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx086",
+    "id": "124",
     "title": "45 & counting: Crashes mark Bengaluru E-city flyover",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQdXRkX0FCVHNGUU9XR3BpcVlJYlpBaGdzQldsM3d3dGJ0XzJVdEtRdDIxYnNCZUZ2MkNQdHRiTVh1TEZ5d3kxYTRkS3JCR1RLbklZY21NSlhma0pJUHl0eXZ6WjdSNy1saWI1a3g5c19VSENEYjJFX3hYMmpmbzRTWTMxR3JJVXFWYW9HeHpkS0NaVFVQOUNCWEVOZ3NFZlEtR3BFWjFfdlZSNl8weXdsa2FCRU5Sd0lacnfSAccBQVVfeXFMTmduZ2FvdGlIUndHQVpnTFpYVThhYVRUWDJuZGFWTl9RMzc4NTljOEIteDVJNGtROTJWR3UxS2d1Zy01VWp0c0xqanVlUndBbDQ1U29PZmZrT1RnYllEY0dVcGlGQkpYSTdtSURTYXVqNGgzY25Ld2tZbVlORG53ZUx2Y2VfbVlrMVJtYTFhNkhmSTlNM3Y4d0F0Z0RKeDhHWTlPaU9EVnI0NGR4MklqbUgxRnZpNlpVRDV3VnNCRnNzaUlCN05fZw?oc=5",
@@ -1120,7 +1162,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx087",
+    "id": "142",
     "title": "Alert driver avoids mishap after Bangalore-Chennai bus catches fire",
     "source": "The Indian Express",
     "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPNjlNN01VQjI5NHltRGlXZkN2TmZ6aVFmdjNGc3BKOW9LUEJxRl9Famh2bDY5bjlxMXN1Y1ZyeWIzUTI3R1YyazBXbkZET0Z6MWZnemV4OHJIVU1rOHZfX0ZvbEhuSENWbXhlWUl0bUdGd0xhY2oxa2N4MFNpYVF4QldZZjFtajhTU3hsNnBpYjJjd3FSTkQ3dUFaUkd5NEIzS1RwUExGYWh1WkZOMWxoTDNwREtwc3NKdVE3LXpWTXY3UU9ndHfSAcwBQVVfeXFMTmNqREdabl8wYTVyRXRxOHZBcUlDa282cXQyYjcyV2xuZWRXWkxISE16T0F0TGNnVDUzUmJBak04Ym1yeENPNmRnSGZXUUppUlN1Y3Y4UzNjNnZWVmNzNzdmcklMd0gwVDFhUkhxVkVydXFyM2c2MWozdlBZOTRZd2NPLXdhUENZLUhEdmZKOW8tN0I5T1lNbmd1S19uN2h0R0pNRF9GNVFkcHBqeFoxazcwQ2JfQjJOU1ljMlNRRlYyQm9PWG9oOElmdlBY?oc=5",
@@ -1134,7 +1176,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx089",
+    "id": "130",
     "title": "5 of family killed in accident in Bengaluru",
     "source": "Deccan Herald",
     "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQUzNSeDBfWTVwTTl2QldQOHAxU19vZmNXSi1lX3h0WWRJQlJNbkJYZkhqYkdJWV9RZ3hCNTN5SzJ6QVdDQlFET005cEJTLVR0RE1vRGw4M2dra2dFLTBvaGQxMXIxNERkOHRHaGo1a04weTNfenRxdEQ1aU1oV2NtQ1U3RWdicEltcG5KajFaLTFNb1pNS2loVXJJQS1XSlN6OHVjUC1mQUlpOW5SUDk0?oc=5",
@@ -1148,7 +1190,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx090",
+    "id": "128",
     "title": "Five of a family killed as ambulance collides with their car in Bengaluru",
     "source": "The News Minute",
     "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPcnI4R2RRb21qbjMwTzFtaDZIOWpZU3NQUU9BcWl0U1BkcDFmRUlXLVJYX1hTMG1UZk5Vb3ZuSDU0a2YwVm10WEtyX28tN1NlZUYxRzI1V3d1MmxFRWJSWTFjWDMyUDVnZXZuWHpEUHJSa0l2SXVEOGJDeXY1aTRWcTVsNXRVSUdqZS1PYUoybzNMNmN0LVBVTjhFcVZKWHh1YTVObkFiTdIBtAFBVV95cUxOTHY3S1YxOTh1aV92ZHI0dFBvdUFja2drUVluOXJOR0NhNmpzSWdWQ1E5c1FKazlJZDIyRzdacXpvNkU1d3JSRHBIQy14NUJLLTN5THVQT3VYTS1PcmJibnhsMEk5bndDdElDaDU3dXVRWF9iOGNtQTBtRTVIblFUSUxhVjVwU0ZJTnc3Mi14ekY4VVFmVnVjZVJ6UlBZcUhGZnhXc0I1RUFNSTRxTG5kLTlZQWo?oc=5",
@@ -1162,7 +1204,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx091",
+    "id": "146",
     "title": "Two killed as trio on bike collides with numberless tractor in Bengaluru",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxNS3FZWlp6WGUwZjhKVEpZYnJiQ3N5TTZGbDVpMjVOOWgzdXlRX0xRYWtpclEyME1oUFFBTkJzMjg1b1d0UlVFb1FJRTNFTzZjaXJXS2gtMXEyd0VEUFJQSUFnWUw3ZThwWTkyWnVNRk9Sc0hSeG1QSjFsLUw4OTA1amdSUGhKS0p2VXNrcGNsUGs1aUtnU0NlYmRDdHhyMFdFZTVScEdOUFNSWFlOMVVnZkZxWktiZFBFcFkyUjJieHVKcEpPOE9TT2lvZFlhUGQ5QUU4YkVkU1hHaS02OG0xSHlB0gHnAUFVX3lxTE9HS01JbVVPR2t5SUg4QXU4N2hMRjJUb2wteUYyYjZReGVYQk9CVFZBOGRQYzVZcXkzYUQ0OFUxOHRQOUpuNWxtMlNtVkRhRV93dmFNdzB6SEk4SVhuUERMZ0lpUmtpMC1FUnp2OU4wWTdteC1YTVVFMGN2VEtBRkluSktQbFJuY01UTHB3UGRxbjFBNVRQc05UY3BTRkgxaDZ4NlNtcWctS0E4VkZOWFFsMmdodXZjNFBRc2tkcHdYMDZYVFpLWDE3ZGtMbUxxMW91ZkRSRnotWWt3SFNRSmhDNjdrWHdiZw?oc=5",
@@ -1176,7 +1218,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx094",
+    "id": "134",
     "title": "Three-year-old girl run over by school bus in Bengaluru",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPeW1xZGlrMzdnNlNfbUtsSHdkS29yN1ZpOGpEZldOSmdKQUpxVXpLcFVtODlpOHh2dEJWN3BvSlgxbmgzZEphZ1FFc0RtTFlmNDZaUTZ0RkFuTFk4VkdVanZza1NZQWtod3JOWlBQV1E4YkhtaC1uTUFxMm5keC1Ua1VLeGlha3dVZGNhUmE5OWdIR0N3aHM3cmUyMEEwYy1TQ0s0RHFvMUJ3WE9rNjVUakZ5SFRoV0w3R1HSAb8BQVVfeXFMTWdvUWdoYzBndTZCbWNNQ0R0UDJMeG9ocFVMdWpUTWhBb0l4bU9sMTNLMUw4Qzdud2swUE9teFZmNmVnS3BDWjhEeGJKejF5MHBId1dmWmRqZzhTTHB3Z2FaTkR6ZkJpYTdiYXlDaDV1aFM3Znh3aWJoalZZbk1ZTFRJelg2VUVLUDJwWDZ1SFBCenBzNGFCWkhJc0NzNVhXb19YMW1FbkNZV1J4dnp6LTdETURzcS1yVDVaVjZOZDA?oc=5",
@@ -1190,7 +1232,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx095",
+    "id": "136",
     "title": "Bengaluru: Movie distributor dies as sports bike hits wall",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxOOXIxTm45Yk1xcnYxa3dnRm1WMDlzeHNZMHhHbDhyZVdIYjI4YllEa1BJVS1lUnVPcHBsSGtiME5aQWtFdXdmN08yLTcxUTBLX25MVEpVeTR4SC1RUkFwbm5tY3NLb3YzVDdaUDUzaFR0VDBueUF2bFFBZUxxYXk3U0xxc1VGVms1TDNQS2V4QTdDRXdGdXJhbjNuYTFtb1BLY0tUQVJxM1duNXlYOGlfZWpGZUVHQVZKNzIxVlNucHVxbWVWUHFyLUQ4MDFmdw?oc=5",
@@ -1204,7 +1246,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx096",
+    "id": "138",
     "title": "Five Bengaluru residents killed, three injured in accident",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNcTFVeWZpcHNRQTRQZmpuM1RHZ3RfRTJEWkNObTI0bnZiNlBUaVJJSDNyekhYTVBZZVZyS2dZdC16RU5HcGdwNnc3Y2cybmgzcjI2UV82SkVPV2NORjRDZC1qQkIzWEpveVFJekc5QjNjX0NwOUlLaGhoTHRfU003MzFFdmNtX3FLRzZUSGNWNXBjd25aSWUwR2F0cVQ1V2N4ZmJvdGVwT2oyM3ZzWWZseDVma3dtSlNNeWFYX3hNekZINkNndjd4R1JQMznSAdIBQVVfeXFMTWJyejM2U2lFa3ViVTkwcDlzbUZyR3VkQVN3T3FzWU5CeFJUcEdPTjJ6T2NCbFBWeEhZT3gwN2ZMNUhZM3JVTWt4Q2tQVU92cEZnTGN1b3VReEpkMEp2aUlRQkdSZ2U3VnRpRVFaUXBNc3llNUlLNjFGTUpEQ0pVdFV4bnZOTVBfSjhmX1J6ckxyaUJxMzg3ejcwcndVeUQzQmhfM2hWYUJSWGNFbXVfb3hwSkdnMlB3SjFFZFVYcDRLc2V1ZUxVRktKUnRvc25mNFlR?oc=5",
@@ -1218,7 +1260,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx097",
+    "id": "140",
     "title": "Bengaluru couple, two kids killed as car crashes into KSRTC bus",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQNDdWZnNKejVnMFhHeXJTLXF0dS1yN0d3WmtGRWtIaTFJckZySmhXajRPV3pWS3EyVkZ4QVBjNnpGNEtxT3F2WGdob3FPRS1abVJjVVBjVjVtV2RiNDVlMjRDTURMVHEtZnlIQWhyYWl3MVpiRkNwYWZlR0ZCMWt0MExKd3J3TnBrQ1VYN2xyZFZ1Qjh6N3F1bTducHhHNkYweXM0Ync4cEd3NEVieXMzcS1reEZUc3lsSjBscjA5VnphYnU2ZW90ZHA2SHRvWUtu0gHWAUFVX3lxTE5QeGpfaENydnBWVnlRalEzaWQyRkZ3Q3I5Z3Z3S3hhbkgzSmUzTjlxN3dtTmcydjRHWEpkdFBYYUJwamNsTVVVR2N0RkNUOFBTMnNLeDBxMWRQSDVYUmF3eXdqd2VobUlXaGpJb2xRbzRTcmhxVURtSXM1M3JBWEROSk9mX2dUR0hIUFVTVHNlNXBGbG81cUt2Uk9EYjVwbzB5cFEycE1fLThhMjhYU094MDZ2ajdjQ09pamFDQURXWkozYXQtc1hEWHpfTDVqUmZTdUxnT2c?oc=5",
@@ -1232,7 +1274,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx098",
+    "id": "144",
     "title": "Bengaluru’s Sarjapur residents fear Chennai‑like banner accident",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQTnBPeTVVWFppeExfM21ENW9wbG5xZXBKdTBnbUpBQkVtV0w5QWhVZ01jVHpMTHp4anRveFVnLUhQb1Q0b0JuNGhiWmE4ZEhjY0lORl9lVEpmMkRBbHprbGxOODZWUnJCdElCdGlHQ1Z3NWh5Z1d4MmEwenhoSW1KTTBtbll5R1VLaFNwYkhqOVV2TEdWZDNQSkd1aERSM1owaENYY2dUUHRUcXdFVzJnNGhuWlJjMzJJV3RVWWNvVzh1UDFGUGdRNkVHNkpWR1FFSDdYYtIB4gFBVV95cUxQQmN1Q05YVGpKa1h1LXhZWE5tOHFnTUVlRWljVl9qWE81ejJPTzRpbk96TERfZXBjbmhGQlM5MmRhXzlJeWZmcWdjSGEyYUE0OWhPcVBfcFJYR3AwQnhDSGZjMUI3U09aVVdmU0V1QmdMakRmWkZydmNOdVlWbVpPclU3R2JoZVVRUzdaUVJOX2l3NlprbWhLTklabVc2dTlVamhCeUNhazVJRm40VWdJTmpnbVpsQ2gtaU9wNUt1WXpWNkI1Ym8wWVZQWHQ0TUVzWEd1WkZjX2xtVVZhWE43NFVR?oc=5",
@@ -1246,7 +1288,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx099",
+    "id": "116",
     "title": "Three dead, 13 injured as private bus rams into truck on Bengaluru-Pune highway",
     "source": "The New Indian Express",
     "link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxOQjJUUjNZOW94MG4yeklUWnQ3OTY0NENwaGs1WGs5Y3RfM2t1d19lbWUzZGg4NjU4OW5rLWt5UHdPOGJaZ2lTa0JyX0dGQ1RRdTlacm8zMkdGenBHLTF5elE5VklobzUwN01Qb3RGTFNlcXpHVVVJNkJyOHZISkVmcnVfUGJLamlHY3ozVHpNcmpDdWpycE5TaFhiM0NHamxHNUphdXAya1RoOHNxcnRGYTVmVGJhdERwUEZ1bWFtYlJ0RFBnVVdQQUFadXZqOTR3d2FLSkE5WVczbWFOempUaXpfN2JLWUZq0gH2AUFVX3lxTE5halhiTWFBbUxGSFVkdnk4eXhSR1RHUWVQWXdnQ2VMaEQ4Qmk1SjlrNjlaYUoyRnZ5bXFuNzFnVnRWaDdCUE9Ya2dwVXphNFZxRG5MczNWcEJQMTJFTEE4OFBORWEtRzJONDhYdDBmQzc4bXVtdmQ2WnZTRExkb2JrdzRHb25kazJlSklsaHF5elFMcFFrYmZFYW01Uk1MdGxhZlhQQ25DZ05Ydy1KVW1kNW1PUTFEMkFSUi1ETGJfU3Q0VENUQUNyOWJPQld0cER0QlVmRjY0NHB4MVJHa1ZyU1BGb0lDWF95bUdaQVY4YWxTWlBMQQ?oc=5",
@@ -1260,7 +1302,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx101",
+    "id": "152",
     "title": "Speeding car kills cop checking rash driving in Bengaluru",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNRlBXREdBNVNaWTctUGluZ2ZQUEpGeUUtdlhpTDEzWnJabklPU0JiTWpRVkJKbmtILVgwMFYyX05ULVlPS0JzRkVhUjY4Z1dsRkRxbkdrdEZvVjlGT3BJUzhTLXVYanNPOFZUNzEtV0o4akJtbzNGNlBrQTI3RVRzYURCRExXOF9CT29NdDFvbnVLZnNnZjVPLTJhQ3BjOHlMMm14WktYUnRSSklzUXJCc0JXOHRUclo5T1hYQTR0dE1rTkJsaExUWWRVNmVFQdIB0wFBVV95cUxPcC13bl9fLUxOalZKNzZLS0c1T1VIMklIS1loRHo1bi15R053aFI2ZjVFY3Jnay1IZExteE51Sy1kQzBhUkFpQmNOTlVKMXZIdFUteWs4ZElLcUw0bjlzVFd6MlQ0aVBiSG9jZUYxdndlRzA2dTBmY09mbjhGUDVyQktjdkVSWTlNMC1fTDV3VzUwRllFOXFXYklVQVF6VXdQWF9sWmoxS3dsV0VJTkI2YXV2Yks4ZU1WZGkyTmI3UU1qbHNaeG9tVkpZb2tiaXl5R3dn?oc=5",
@@ -1274,7 +1316,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx102",
+    "id": "150",
     "title": "Bangalore Bike Accident: Three Men Die In Jakkur While Trying To Perform Stunts On Their Motorcycles",
     "source": "drivespark.com",
     "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQWUlUU05PUGx6cnY1WUdFVm01cU1zczZuQW5TUlJvTUJwUkpabHVTY19TSTdXckJpSzFpZVREY1F5VlFvaHdkTkRVUDBwV0ZVNFN5VE9QWGM1dDlOOFZMNjhyanJfbjFCMWREZTA5aWtjLWZGYWFoM1lUeTRRQTAxR3BIWlg3VXc2UE9GVnFoSDNkUWhuMDltUC1WRmdGMi1DYm1WamxHS0g2WHRLdWhFekNJMjJkZldGNUhxV295VkJpRlpsczM4WF82LXRkSVhnRGticA?oc=5",
@@ -1288,7 +1330,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx103",
+    "id": "162",
     "title": "Bengaluru techie, family members among five killed in road accidents near Tirupur",
     "source": "The Times of India",
     "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxOYVVTUjBzZWhJMUdDZkVQLTF5aWp2cnhlNXNSX2NTN3V2a3V2Z3F4X01GX2t6OXBPcXdqYXN1OEVtcko4UmRUWnBOMzBTcjM5LUtKT3FYZ0VtUUk2N3NNZzczczVQZmp0cm9ZazFUaWlnZ3JOc2hoTzVZUGNDSUxEMzdPc2d3TDctMDRLR0I5S0xJcHpaMHlIM1BoSjNzbHhydlR6aVBIM0kzeUxGb3lrcXhRMm9rRk1seTRUSDVWbFRxY0k5eWo0NmRDWUlTcHRqVUk3U2tTNmZOMUt0WHRtX3p1dFdQaE5ndWZHWVNR0gHzAUFVX3lxTE1QaEVUX1JSSWcwei1EN3d6UlFkZHJ5THFBd3Q2Ym83Y0diMmpRMDRMRlphb3E4QkNzeHRpamNtTmpkWHdVUEc1cGFiQW9HTUhoTzlWZEpPWVlSYzVzT2wtQ2RMUERWaHlsOWdWb3J6NG1Gd1pjOHVhNmN2OENTOFB6dVlqMXpLMnJUTTRnX1dvTm1nQ3l4T24zQWtON05UMi1hVkxhanFIeFMtZ182SW4xUk05aUxGQ3EtUHprMVJJbzNtUDRpclhjN2ZsZ1FaUFV3dXdkMnZfWHNxZUV5bEVDX0RwSzJYVVh5WUJERnlxVGp4dw?oc=5",
@@ -1302,7 +1344,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx104",
+    "id": "154",
     "title": "58-year-old farmer dead after car of Karnataka Dy CM’s son hits two-wheeler",
     "source": "The Indian Express",
     "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxObEVlUDBxYUtRb3BERmMwS193MFBRSGdVcVhKa29tR2twejBGdkZpYTlfTGNhQmVLRUJRRzVWck5IZVpSRmZiakhxVngyV1ZTUjFJT05CalY0S09EaXdOWnRkRUUtS2tQRm5nLWprWFY4TDNIelJFd3ZxbzFYZVN2Z1FJU2FiYnRfODV2d0FzTzZzN0k2aUhXQnRVRVcydENaaWoxTWMwbFZVRi10b2VXZ3hKSHdkdFdCWENoMdIBwwFBVV95cUxQVU1IZWpCd1pxcEZKSkhVYTBJVzJwQzlkUVFIaDBmNUlpd2JjM1BkZE9UeURuckJDd044Q1dQbFN3V0VKOVlwdzZHWmVydnJaV0p4UmNrdHZqR3k3czRVRVhhMlVqbjJBdXBIQjd6RWNNRjg4TzBxWUs0aG56VHVpRkhuWlpLRkpLY1R6NTVUaEIwTDkwWlBDSjZ1WDVlaTF2YWVVbXVuY0FSdmo3TlE1Y0Z5Yk1TVUQ5VWcxQmdJOUNnRlk?oc=5",
@@ -1316,7 +1358,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx105",
+    "id": "156",
     "title": "Karnataka: 8 dead in jeep-truck collision; jeep driver arrested",
     "source": "The Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOcjg0eGt6NE90Vm1mTkwyM3Fib1d5U011aGtDd1pTZGhWZER4ZUdGc2V0Z0dFMkQ5VVRWdU1XYXQ4Z3NGcF9IUVhoZFBhOUxxZ0VlUGlhN2RqSWE4clljYkltTVlBUXhKeVEwRmkwMjFCaTE3akt3RGRia1hhZzA2Y1RKRjUyREJfeG9QUDN0VEQ0UGZlTF9Bc3F6WG9seUdjcTdoMWRNYnliNmpWRUQ5VEJCVWhHU3hTMUHSAcABQVVfeXFMTUhwV0xra3F2YVpvWncybWhYc25rcXdWSHJpemFONUJVVF95Tm16eDhBQVFiOG5jbWI0OTB3bk1pNjVIa29yaGNvcFVXSnZ0dk9ZQ2h4Q24wUzVUNzc5VW1nTXhOY0JIRTVtdzVDRV9Cd1pwS2NSZXNXc0kxdzZkUTR3QkxTSWZYaTM1SzdYZDJGaHhCRk8taDBqQk5pWTdSQ05Pem56WUJ5Ylp4ZnBnTHZodGNMQ2plMC1ldXdBYldh?oc=5",
@@ -1330,7 +1372,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx106",
+    "id": "158",
     "title": "Two On Bike Fall To Death From Flyover After Car Crash In Bengaluru",
     "source": "NDTV",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPdk5IT0dkR1liemFMd0xNUTMzRmJqWFpYelRNR3BkNzBsU0Q2a0UtWW9aTWQxVVFoblctUE95b3BQclhBRmlEOWpXakY0cDNlVjN2eTJiSDA3X05ZVGZoWDh6VDNjNzlUNWEtc21xM0RNZ1pnd01LWVB5QnlveC0tM29UWDktLWVodGpQQi1VbGQwd1NoT3Vlc3NRcU5waFJoaE4wSjFXc0NJZUZ3?oc=5",
@@ -1344,7 +1386,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx107",
+    "id": "160",
     "title": "Bengaluru: Two die after BMTC bus rams bike on Electronic City flyover",
     "source": "The Indian Express",
     "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPZk5QejVIT096WlRrRngyRkJVTE5EbGtVbFhWQzB0UHJZMklNSTNJcnVESk1Qb3oyWjhuOGlPaXh0OU01dkJIRzFuQm14Um5hY2lUNmw2YTg5c1BWSWlqZDJOeU5nZXV2TV9hbWlLVGo4Z0cxcXh5M0lJVmxHeVFUQi0zSmtTcG54dzRuWDNkcEdteUhqY3dMTnFNcHhRNktzZkRkaWRoRE5BcW1Tb0l4eTlmU3NmTmRScU5JcVNUeERxSGZVekVlag?oc=5",
@@ -1358,7 +1400,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx108",
+    "id": "166",
     "title": "Karnataka: 12 hurt, 8 vehicles damaged in toll booth accident",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMi0AFBVV95cUxPUWFTVC1LMmFuTWlGNW5rTHdKMmdXT1JVRWROYnRKTGFsczNfTURKd0tidWlVdXVPVXVQTS1KWDVRZTMwcWJ1VTRUWEN1V2FDWlJlaGNBOFFLRVJ1R1NTaFQ1dTVrZkZTc1VaLUZEblRFRTJYMms5clVhYkhobXpwb3BGSVF5eGRjQkEwaUl3Mm9Oajk1NDUzZy1fekc4WWdrNlBUNjhqVml4YmdmNU5yOWpfXzdLOXhiVGVrZEVpSnUzRkluQVdXT0tJR2VnNHJo0gHWAUFVX3lxTFBiN190VnRYWDlGWGl1ZUNPaFJZdFZ3N3hsTlN0dGhKRDVkeTRlRDY4VHllOE5EUzJ3WVkzQWdSaEc4YzF0V2tha0FOc1F4ZU9YVGxsTUJ4c2daWEhPUnlsTlhZNGpTXzBrcWNwVl96V2tlV0JiNmxCamZjSVBMNm5lOW9aVXJQaEQ3ZnBGdUJFQVRFWGllbGxrTmVNeEN5V19HTnlxNTRtcFFZTkRUbkh2aXZQcUxOMUxlRUtHUHR0T19ycDZxd0llRU5sZERHM2d2WjhyM3c?oc=5",
@@ -1372,7 +1414,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx109",
+    "id": "168",
     "title": "At least 10 injured as Bengaluru-bound SWIFT bus overturns | Accident | Kerala News",
     "source": "Onmanorama",
     "link": "https://news.google.com/articles/CBMimAFBVV95cUxPdjZOdlRpSHQyTVZhc29SZ2NSaWt0ZnJJb1FBTzIzMFY2Q0lHemlJSXgweHQtQUZJZzR6Ym1xd0o0bFdVQTZOTkVoWE1jXzNrQ3U5MEJ6WjBXTnRxcUhFZS1hQkhnYTdqWUF4WnpNbkpIYW82UlBNUUx2eklvdmthcHF2am9ScmFNNzNPZ2VjNEpsdl9tVXlfSg?oc=5",
@@ -1386,7 +1428,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx110",
+    "id": "206",
     "title": "Bengaluru: Student driving Audi rams 3 vehicles, injures 4 people",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMiyAFBVV95cUxOZnlwTHo1MUZXc1FYdWQxeVhWcGVsdVlsVnBXR25IV216bG1acXYyMVZmZllLRlVjcnZ0bGlfdWZGeUhzeEdjMlF3dDhzNktMdTBxVDVoX0wzVjNWRlN3V19xNGNNRm9DQ2tzTkNIb2dCTXZtMFlBQkVOMUtJQ1BjcmtzT042SjBtdVU1QUdOOHg4cjZsdUdqTjhlOE43dDJURm9BV0dfVnItMGFrOXVfMDdtcTNCUXpUaWRseGQydVRPOUcyM28yWdIBzgFBVV95cUxOY2dsdXBGSl9yLUZfc21IZU00djVkbU9Qd2pONzd6bndiVzA4d19Mc3lJT000ZTkzc056MFVTNE5ZOU0wYU9NNnZMU0VkUVZlVThqU3R0Vk5FemVWclBCc1BmZzhQVjlUZi1sWlRjVUkwc19rS01yMk9NM3NMR3RxZ25aR1A5TEVmYmpWUjZsMm53d0pWajhXQ3A5cDlMYXN1Q2JnWU5JdUVBUlhGeDVXa3N1N0pnTXkzSERqSjNuQ21feDBzelRMb0RIYkZXdw?oc=5",
@@ -1400,7 +1442,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx111",
+    "id": "170",
     "title": "Patient among 4 dead as ambulance crashes into toll plaza. Clip captures horror | Bengaluru",
     "source": "Hindustan Times",
     "link": "https://news.google.com/articles/CBMi3AFBVV95cUxNSEtiS0VHODc0ZUEzZUpDSnVIazhJY3MyVU5wSnQ3UUFTNXVvbTBKQm1ZRWVnaUJSUHN5Yk9rYkVvckRKZFZMakxwT0luLTBxcnFDTXlOTFNHcjhBMGlHNVlZampsUFJqZ042MW9leVhqOUxnTjN2aFVHcTBVdWZLamFKR2NBdFZmMDktRGhQeTVNMGE4N19KRkcweDEtZWhNMTdYa1FnU09zeXllMVRnYW5LZERhSnlJaHdzdGY2Uk14WkFBaVhBZ1hhdENmTWYzU0pzZF9rQjZoZHVE0gHiAUFVX3lxTE9oUXNtLXJIUGgyNU1VejVaYV9XSVFEMWlSWUJhTmZsWWJrYTZRTDJQUlpOQ1oyZGxRWjlBaVJVb3k2MU5DbUEtTFJncTFPUmx0R2N6b0dGSmpjZjdHcE42akZqTXV6cE9pZ2lvZFBtYnlBSXhkSC1ENzBtbXotRV83UTlRejlsYlk1SEpQRWpRenZMWl82T055cU82cTlkR3kyVmd1ajh3ZW13Rlk0ZEdLeTA3YXIxNWtvMEp6UFRrUjVPYnBMd0NzZ1ZDMERKbmJJT3Jkc3VyYmRsdzdNRmhZTmc?oc=5",
@@ -1414,7 +1456,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx112",
+    "id": "174",
     "title": "9 killed, 13 injured in crash involving truck and tempo traveller in Karnataka's Tumakuru",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMi3gFBVV95cUxORHFIYi1UV09zaWE2dXQwWlBSVzdEQlNKVHYyYVpWcGo3U1MwNjFJZUpYc2RDWkVXb1pUbkdGY2FsSmxHdEZvbWl0QnJUdkh6cGU1bUlVUUpaMGhIWWZWLWlUNTh0T3MzREJjY2d4SFd6RTBoVEJ6OFVsd0N4c29CR1NMT05TRXJHV25IOXZQazRMTzh5OTRVUVBIa0lHQ1dhVWtlS3FILVBtZHlQLXFfYWIxRndUYTMzdVRCdTVmUnJWT1Zlcm9RM1VKMWJLdjAwV0d5QnJxUzNwck5QY2c?oc=5",
@@ -1428,7 +1470,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx113",
+    "id": "172",
     "title": "Bengaluru: IndiGo staffer dies in hit-and-run accident on Muthyalamma flyover",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMi3AFBVV95cUxOR3BiNUt5dXlIbW1LTmxfaGh6R3FmNnZUNjI5cVB5YjZTMFhPRzBpT3NBU0lZZUhZVmZlaEI3UnV5N1hEZzdKLVRYTWZ3Y3Y0ejJndUV5bEk0UnZFSVp3NUVWRk9ZTTdEUXFwdVhMc0ZTUmFFUF9wUEpNLW9RRzV6elVZUWtnVkpPQlFvXzFFQXUzeUtrTjFLVENhZGllOHB6UlJJQXV1ZWJ4RE1NTWZDVk1lbXFfTWZ3Y3lHTnJOd3B5WjNSczFYZU5WblViZHVNUWFjOGl1b1l5NUVw?oc=5",
@@ -1442,7 +1484,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx115",
+    "id": "176",
     "title": "Bengaluru: Rushed to hospital in golden hour, man gets severed leg back after accident",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMi8gFBVV95cUxNS0xRVEZGY1dYeXAxRjdxTnhLbXFxUmNxeXlydUlBWmZEMjNVSkEySE84Y040OU9BMjBIdGZzTG9adl90NkJuTEU0c3ppYTlFcWFQX09DNjBMdnZhQjVPaUp1ZDA5ZkwxZzdscFFCOTl4VGt4Ri1KaXdCUnBBUG96eWNmUFhveTI4bXlCYl80dnFIWUxlR1g0cUtMYlY3SjZ2RFc5Ykl6UHUwOE9Bd3pxa2xWRm5PMUJnc1NmaW5DSTNUMGJCYXJ6djI1ckw0OFczbUJkTUJscS15MnlTajByVy0zVlF0NGRWRFQ4M1NpRm5rUdIB9wFBVV95cUxOdFhoXzFVUmxQU0pEbThvWlJvRktVUGhZeko2Q2s5RERGTXQxY1JMay1wTXZRN2ZkRGhadUdFOGNyOTk3ek9VaFdXY3lTZXQzUW04ZVN1TWZTZGlSM0VxOG4tYjJOUi1aMVFDT0Y2VV9BM0hHUUNscDJQWjBIQThRWDFNVmdQa2hWRVZON1VHYVZnUlZWNkdoZ3VmNTVTb09lVHdUQXUyRUZPTjNBTWxGTDE3X1ZYUDdzbTFMZWlLemdURTBLd3BtSUd4NnBhR1gza1ROMEttcVpNSnpiaHZIUGFfbWdjMW9OZ042MUpLRWdWd1J4WU9n?oc=5",
@@ -1456,7 +1498,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx116",
+    "id": "178",
     "title": "Student killed, two injured in road accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMiwAFBVV95cUxQTm9iTlc2aHBxcFcxeFFjUlBKNHRxeV9ROUxUdkJxRWE2aGxnSFhqUE9QZnA1TTZfT3I0LUJ4cmJ5MlQybFFFZVZpSmZkbmlYeENJLW9RbTVvSWo3bzd6d29oOW9xR3Y0Nm03djNQZmRKc3BPdFV4eUotdVVJYjNWRnJwX1JDMTFVQXFvUWI0eGw4UzlmWk9LeFBzUWR6V21KYV9KTWd5YUoxQnhyNEpJenBDdzdXNTEwVXl1RFBwWXbSAccBQVVfeXFMTXc3NThJLWhZNmhBNmo0dVV4R3BIZDFwWUN5U2c4ZURRaW5YeTZJX1F6U2ExQzRyZlBBWmJvN25rWXVSV0U2LU0yVFlfN3BPQzJibVFvbGVHYm5CSnZVdUtLRHlnOHltZUVoaUNXUGRRQnl3LW5JR2V3YzNtWTNsbGpJRGktckZBZ1BPZkJNYUNkS3FlYWxsZ3VremhiMjJIOUlXeWVrTTA3WUN5Y1pJOU1WT0RqN0h3aDVoLTNFQlliYm41VVhjWQ?oc=5",
@@ -1470,7 +1512,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx117",
+    "id": "180",
     "title": "Heavy damage on Kanakapura Road",
     "source": "Bangalore Mirror",
     "link": "https://news.google.com/articles/CBMisAFBVV95cUxPRE9NSU5GOEJxQkt5WENvUFBjZzRPS3oyVlhxMlA0NU9LZUpmLWtkc2FQUlZxUVpzalZURF85b3dHY2JxWWdqN3lOSmpxY1BxaDdOWjJ4MUFpbjd4X1BIUjllY0NvMS10amlRMDVFQ21rRTUzZENEaUVzMmhVQjRPYzdsX2dwM2RzYVJUSnBzb3lZaTYzU0w3enByRXFrMjF1ZkZqSmE1YkNRYlR1UktyYtIBtgFBVV95cUxPbHpnWkRHbnpXTzNueXlXc2ZzSm41MHdocUdEbl92UGt5MDc3V0x6U1ZLcGZnd3dqY2hCeE44dkNmUFZjQUpub2k5RThDSG1hOVJMNGtwRGNBU1d6SXNIT0N6M3E3MXQzOFlmN0FSSUl5Q3BpaE16Q1JWb0JZOVN1eFJKZ3FoTzA2a2dpTWpkaTYzaVpyNTlXTkptdXFDR0V4NExTY3hlaWVoNGNBVmxMaFBHT3J3dw?oc=5",
@@ -1484,7 +1526,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx118",
+    "id": "184",
     "title": "Horrific road accident in Bangalore Bescom employee crushed to death by speeding Canter",
     "source": "Country and Politics",
     "link": "https://news.google.com/articles/CBMizgFBVV95cUxQYXNsTmRXa3dMYlJfRk1KdDhZT2Z5T184Vk9Id2lURThTNTZKRzJYU2FSRjZTMjBKaUYxVWVkTXRZTUYyVHRzUktkc3NSRWhnbk1HRDVOR0NPb0ZhX2tMYzZFS3RNaHh2OWVtREc3TG9wenhaci0yWG1yYzVSV2wwZEVTS3N5eGJSUG9OQ0pURmw3bWNmYURuREJqYS04S0JFQ25GMlAtZ3J3WWE0Ml9RemlzZW9tU1lhcTZPUER1ZHk1cHpoTGQybVAyOUhNUQ?oc=5",
@@ -1498,7 +1540,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx119",
+    "id": "182",
     "title": "Protest by Bangalore University students after girl injured in accident on campus",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMi5gFBVV95cUxNQTJmQXk0a3RpZmlyalRJdG1GOFpROUpxMHc1VjdCS3JHSFBON3pUVXpzaHhEdjNzekRQdnY0bk0wdUpoTm5MZHEtVTRtZXpBdF9vUFRyYW9zbEp5aHVRV1hCdkMwblFiVmhESzlSeGU4LXVKZXB6VGNXR1NfVml5N1o3eWxoU0JieUlmQ2ZDSHpIN2YxdUxmUFc1dDVRRHZyOUJmQVFub3ZkLW1tUEFpM0ZTS2hMbUJTSlZpOFF6SjBhU3ljc09LUDZPcjB1RTgwcWtJWEVYY1oyMXk5bGt5YWtieWRHUdIB7AFBVV95cUxPaUcyMHBwTmlUZ2NNN2IwV0tQX3FLamNyZHpMeWhQUmZFNVRXZnVhZ241R2dEMXFBVEhxV2pnbXEzLVZWQ3E5bGREOThXWEx6Znc0X3BFQVBuaEtkeVRQaUpEYm5Gb3AwMkZsMFpWTjl6RHVMSmg0SV8tY21MNHUxOV9aMVBHZjFfeHlJSGpLRHhLbU9mQ2xXeUNiQ0RTb0pGTUZqSXQ5YmhFR2NvUG9WZkZvSUEtTUVaelA1NTlZQkRublpRQ1ZZLVFTNmc5c3Vwa1NIRVlqelBNXy04Vzd5OXpwUEJaRlJFZ1IxMw?oc=5",
@@ -1512,7 +1554,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx120",
+    "id": "200",
     "title": "Bengaluru biker crashes into open car door, gets run over by another vehicle",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMitAFBVV95cUxNQlVRZ3d6NVdMMm4wN3ZPQmdwQjF4NV9JM3hKcTJaTnhpSjJULWlURy0tSC1EVGhmWFRhMDRxa2xmWVEyQkxuOTRnYUJXOGVtNkt2bk96S0tkcTkxZGNDMUdUQ2JJMGNVV3dyaWExNmgtMTRMUTZoaE42bmRDNUs1SDlqUGpiN2tnZ1VlcGJhck5QSXFoNkFVSDhkTnAxYVQ3WjhxSEU0V3Nsb3FXbERxa3k5eWTSAcIBQVVfeXFMUHhCVTEzTGhlTGNFa1BNWi1INDAtdW5KSDBCdTdxMXhNQ25uM2tibEZJMl9uUHRmWXJnS1VoOHBYVXdxU0NyemJtY3ZBUFBVNVBQazdzQWVxMXFZT2xRU0lXWldjZ044djU0aDNDcEVVVjVEc1B2bGtqdDliS216UWlFbnQ3S1VoSFFwXzB5UWg4V3ZmcC1RRDhSekItbV9kZk5wb2lRVHFpeHpXd3JmRXRqanlVMUNIb2RHNDBZZUotVFE?oc=5",
@@ -1526,7 +1568,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx121",
+    "id": "208",
     "title": "1 killed, 4 hurt as speeding car rams into pedestrians in Bengaluru's Kodigehalli",
     "source": "India Today",
     "link": "https://news.google.com/articles/CBMixgFBVV95cUxPMmphemxJYTBadVJaWmg2WFRFVFpJX2JzaWJPSTFyOUc3MEdTc1VFNGxwbWw1VHNpUURlYUljY1FULUxEeENUc3htSXBVLV9PM2tnNk9GRWZUeVNBNWkyXzNHaE5OMWF1S2F1bTIxZjlVdU1OTDZLMXkxNWwzNmxxY0piUVd4TDFJejZ0RWlUakRLYUNzUl9SZE5pbFJtZk9CZXhFWVpfYkpfWDRGRnFNQ2tCMXpmWG9xSGpndy03NHhGSWlMeFHSAcsBQVVfeXFMTkhMZmtpcFVRdGp6ellDR3hJZGdQYjY0SWp3SjhWYV95bkFOQ3JvckFPT2tQYktRQ21kb3FDLUtpRzY2dHpRcmlfRHhTSFRzcm9UVERaanFZMEV6ek9tNThrMXFYTEZpclN0VmpkaGhvXzVxN1pRSDRNOXotT1g0VE9aMFhramRaWjRfT0NiWGNhZTlaWHp3RlN6SDFqNEI1Qlg2MmRrN0FReDZPVjlJb1VhSkhCaG4zc2F2MjZXR0lQMl9KM05taXgyUnc?oc=5",
@@ -1540,7 +1582,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx123",
+    "id": "186",
     "title": "Woman mowed down by bus after falling from vehicle due to suspected pothole in Bengaluru",
     "source": "India Today",
     "link": "https://news.google.com/articles/CBMi0wFBVV95cUxPSWplaVhYX1EtMVhBWmNMQzZmQjA3aEpWVVMzYlVzY2NDV29DZGZIdzQ1TkVrQXI4YkJGT2djQVpIelJ3Qm9ra0tsLWxPYjN4a21aTTVoZ05udjhMaEdYWmVrQ2FjUldaU012em5rNWJDd0UzRWhGMUx5UEhBcnU1aVIwUW02eHFCQlAzY3RvWVBPcUlkS3hTX08xU2JDWGFuMFdVdFFSQjFxbmxzcFlvdHB2ck0yNWJmMHpNN2hQOUVzc0RITTBOa0ZKNjVVU1ZqQWpB0gHYAUFVX3lxTE54T2ZaaDN3OGNzcXlmWFRZaTZfdmx2cjNsX0ZpYUtlY3VnbGdOVVoxUlBFZDdZUV92SXhVZXJQRzByclRXWVVfeGdzM29RWG1ndzkxeXhJNHNIOHgyaUpUMjVWemRwVEJlZGV3MTlmSEpfVWx5Vzc2Y1VXR2hOUzZ6dV8yNE1VZWpudThXNmRoMjZod3o0bGw3ZG9yMkVBYVdTM29JWlZVeTZyeHdFVENhZFY2cWl5VXZQSFd1eWxPa3NjLU9GWEMtcUFnSUNhVDhpTHVXaWZ4Qg?oc=5",
@@ -1554,7 +1596,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx124",
+    "id": "190",
     "title": "Girl killed, boy’s hand severed in accident on Bengaluru airport road",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMiwgFBVV95cUxObmJDOXExSjJ2Z2RDVnFQWkpiZmxaU2d6RmVFOHBRSGt4amppamRvWjFaV3cxZlRuUHJlYm5WLV9RYW00N0VKaHd3RFlxZ0RxbWpxZVluQzhYMDhYd3YwMmh1X25CcjVXZWpTSmNiWUJfTHdNcFpuOTBjSGktRnU5Qm9lUGY0cFlyQ3lwenAwc19OOVBkOTExVDFLejZHMFJLTG1yNlBpTVNnQUtoSDJmSGExWVMzbXFYSDV0NkxlN2dIUdIByAFBVV95cUxNTUIwYkN6S2hwUFNWeE10SV9sV1FObVZwekRuYTU4MzRnMEx6bmc1Tl9OQmkyVFV6d0ZGNlRyVXlIVzRrczNiY3hEZ1ZoanVYMElzN0ZlZmt2ZU93bURRYmp5TnlMRU9ESmQyMDV0Umg3cnVldXY0RmlabTlkN081dFh6aFBCQ2dSelBHVE9ZamN5T1lXQzFyTjA5Mi1CczVZc1NzbDZUd3Vxck1aWnVQT21BeE4zSHU4Y0tIWFNKVmVnLUNYb0lWYQ?oc=5",
@@ -1568,7 +1610,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx125",
+    "id": "188",
     "title": "BBMP in denial over death of Bengaluru woman who skidded on pothole, wants proof",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMiuAFBVV95cUxNRzRzbTdjOWt3RElnVUxDamlmNTQwQ1o1SWNXSHhVMzJEZGN6ZTRDMnFDNlQxLXRoTFkzUkM4aTlybXNrYkl6amV2bXlHMkF6VGJWRDVtR3ZUV3dRcTU3c1FvVmtsd21Jb2s4bzV6T2c0RVdSTHVQSFpfZkdOd0NkVVhvUXlOSFpWR2NiSC1PYlZxRHJrTEpielBzTHVCVUpJY3pGUWkyXzRDeDF3Mk9Zd2IySm9uMm9B0gHGAUFVX3lxTE9zMV96RG9NdlB5NEt0bTBkTGZNamdzY2MzYnh6eTBJLVZoZzlLMjZ5bGZiUTMtenV1QllBaFN1Y2FIdmxEeGppV0ZTM0o0NEVXYm1sTzU0aUpob1c2LUFzMWZNLThRTUxJSkx2REFFUDZZZmtiMkFmVkpIOE1MNG5YLWg5ZUh6MjZjcE16UGE2WFJSbWhIQzRfRW5qUXVaZTlkLW1IdW12YnVIT2prTWpfUFplaEgzbFlBVjE0bC1SZV9Mcm1kUQ?oc=5",
@@ -1582,7 +1624,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx126",
+    "id": "192",
     "title": "After battling for life for 13 days, Bangalore University accident victim succumbs",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMi5AFBVV95cUxNay14bGRRQ3dHc0UtaWVHaHFudDNDczkwSWNEeEFwOElVT1VRWEdwbVVUalJzWE1XOU1GMk9BWUlkM0hrQ2QzN3FRZ1ZMR21qaXVvdDJyVU5TZFhwRGFmdmc2VTQya3dUb2VxY1c0YUdEY3UxczM4MjhQQ01YZ0Z5bFNjU203SmUtbnkzNS1KR2ZsWGc0X0JQZGd4YXJfQjQ4Wm1xRFRFc0M1UlhjUElYbWFybU84eWpjT2NWVC1acXplVTJVQlIxcUhmMldoaGJ2MHU5b3FlN252VThEc045MnVpNljSAesBQVVfeXFMUEFGVW1XN05reEMyZkJsTVJEanJSMU9iVWRMLUZzMGtqeXJHb0NMYURCa1pCOVVJblRPbmpURVhnYXVrNWx6VmNzYUhDNXAwcTlrZXpvWTg2UlJQUE9WVDBWYV9CbGFsWVFvQ3Y1YkQ3NHo1NUdFUDRNMkJ3LTVBcnRTaUdPRXFEV3RqQ3RORHpuWnF4Wld2SFU1SzZnZGg0b2FRWmUxUWstcjJOQ3hhQ0w0bnZoNnAxVVhneFR4RTdGYThNMDF4NHhvRFVOQ0Ntc0ZWYXJPUUtWakJqNU40YjdDY280MlllSW1RYw?oc=5",
@@ -1596,7 +1638,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx127",
+    "id": "194",
     "title": "Bengaluru: Biker dies after falling off E-City flyover",
     "source": "The New Indian Express",
     "link": "https://news.google.com/articles/CBMixwFBVV95cUxQRDJoWUdTc1duSDJKZEVrRFhEUWtDV1VvWmplUUlxeTExQzhES0JYdG9ONGFIcEt2bXBjeXJmSEplTmoxbjd4MWw3ODN5R3o2Nm1KTzJFMlV4SUFJOUUtdmlPdjdNMmF5OHBRUXV4cHJfcllrb2dBT0ExLUc2NGs3Y253ODhycC12MldSb201dGtjc29DNUt5TkNGSG1sZjNKVGFUMkVOZ1R6aDFIaXJTWDQ0Wm5kMnZ1Ymg0QUp0UF9MMDB0N1VB0gHUAUFVX3lxTE9NYXl3b1ZYbXhMU1JxNGdqU1YwN2JwOXFMSXBmekFqMTUzNS05NkpNZ3hmaFFTVFJPMVZyd01yZmZpQk50MGlPeXZVUVVpSDNicDNmcUcxbjB2NUVXVWNCaXRNb2hqc2cxTE10UE84a1dOQWNwZ0lVb2l2WW1Md0NkOVozUFMxZGYwVmdobldmSFkteTluYnZiMEwydk9oaEFFcTZkNDIzNlpDYkxoZEQxaGMxZWhpeEtCQ2pmc09fTkFmWWJLTVpNWjNZZW44QVc2U3F5?oc=5",
@@ -1610,7 +1652,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx129",
+    "id": "196",
     "title": "Bengaluru student dies after car-bike collision involving pothole",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMizgFBVV95cUxOZTJYazBUQ2FLVmN5LXNFczBkNlUzR3RqSW02MGY4X3hCUThUMkJ0NmJmWGtjZ211blYzUDF6X3Y4YjEwUWR4d01EN3BxeWtBM1JrNGVYNWRuOXppcW00d3VscFd6S1RmN3M2NUVMcEJJdFFwTENyNEJzbFU3eEJjWkFkUHVzRDhRNFBVM01zeTR1OGt2TmNkb2E2SE1JeVdTLVJZMTh3dk1DRXVoZk1pbVdnVVlpZmprNmZMU1A1OXlTdEJiSEZucE5GaExFdw?oc=5",
@@ -1624,7 +1666,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx130",
+    "id": "198",
     "title": "Bengaluru: Two pillion riders fall to death from KIA expressway",
     "source": "The Indian Express",
     "link": "https://news.google.com/articles/CBMinwFBVV95cUxPOWc4QXlheE5telFBMDV4SGMtWXpDcGdZQzlYeVZzVkFlcEVWbC16aERsWGJBQlA0bmdiRndrQjVwVWRSSmtWSVZKcHhDTnAxOFdtNE1CYnRsZF84Yk9IaFFUUlpMNnROY3IxNFB1Z1ZKaDRZcG9IVmFiSG1HS0lDeTE4TDY0OHh3UnUyTTQwUGlhcmJZWjVwaGotNGcwdkHSAaYBQVVfeXFMT1BKQXJCQzFzdTBfSUVjbUV3NnF6T1FXOC04N1gycW9aeFNJRnZVejJveU85c25FZUw2M0dCOURnenZYY3N0RHhXUlRFRjZzQW9pWU9TVko4UXRkR29qR2YzUkY1TjhtTlU5dHk4QTZtV3VCNFlwZFRpZnJWalBiSTU0Sk5PRXVIZkxyTE1PUlBMNzdRdGVCdENaRHd0WVBRUFdUX1lDUQ?oc=5",
@@ -1638,7 +1680,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx131",
+    "id": "164",
     "title": "Another pothole-related accident in Bengaluru, man in coma: Report | Bengaluru",
     "source": "Hindustan Times",
     "link": "https://news.google.com/articles/CBMi1AFBVV95cUxQdUpVTktkb0x4dnVpc2xPVnpNWDhiM2J4ODBmOGJoZmR6N2dSS3M2UkplTF9HZDk2MDVhS09XamdfenFFZzNoR0pscGlwU09fN0pxbl80dS1rWnk1VG9XSWZuSEhySnByZGFnX3d1MDZtc2gzVk43TGJXRDhvVjdqSjZ1UVpVdVR6ZVl3ME1GOXYyaGwxdkVNdS1LY2k0MUNoODFSQmN1WHd6X2c1M0tNRW1VWU9KVXFaTVBRcTcxTkItQ25tNUlTb285OFBSNmxzNGdZONIB2gFBVV95cUxNeDBCOGw2YWFBXzVuRlZqM3hqdERMazhwMElXUFpVZnl1T0NVbFZFay1TSkVJaU12dWs2b0tneHlNXzlhb0lleXkydGhZTmc0ZlFRZDdpM2szVHhwZEUwQ2puSU5tVllCekhIczFJRDlUX3hhN21RWkdWTmFVd1poMjc2YkRxTU85UTJaUnF0RmIwdWpfa2hJS2dic3BIMmNOeUNUOENETU9GckU4SW5BemVoUDJsZktOU1hXb3Q2MDdPbzM1YTVuaExsdEVGbWZBQ0xGSGo3dlVnUQ?oc=5",
@@ -1652,7 +1694,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx133",
+    "id": "202",
     "title": "Soldier succumbs to injuries sustained in Bengaluru road accident",
     "source": "IBTimes India",
     "link": "https://news.google.com/articles/CBMilwFBVV95cUxPVW15QW5VODJWUW5hcW14ZllZS0VyVnpNaVJYWTBSV05XcDNPZGpZOUV3TndXWHRRSk04WFZFUUd2RXAyYU9YZUFCRnctX3JhMWMyWTdBTDJoQ3lOVkpfdmVOY1czV19kbmY4QkYzc3ZuMlBBZ3I4dEtrWE81QW1ITGV5NUE0V29lUWt5WFZGRXV5blE1YmRn?oc=5",
@@ -1666,7 +1708,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx134",
+    "id": "204",
     "title": "16-year-old girl dies in accident, while mother and younger brother sustain injuries in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMi9gFBVV95cUxPTlRlaUdXZkcwakR4RFJiZmt0N0FCZXl4eXp4cUtrWkh4U3ZvQjFQelBJeXcxR2o5QWE1VWdtNGZKZ2loRlIzU21DcEcyRnVVU21PbmNJcjNDZmZwaGQzV3IwTjVvWXQ3N1dFbGoyMzhBR1Q0R1pXQ2NDY3cycFMwNUNHbTRMZVRPQm12Snl6RHYxU2h3X3RBNmJFdGZWNlpvemZnT2Q3THdIYTB2a2d3d3FQNGZNbHlFSk9hNmNwN2Y3b1FNcHhfVFg1OWg5T293SzcyY3FzZGNPa082UC1JRkNraW1fdW1SeGFnY3JoQzY3NXRoenfSAfwBQVVfeXFMTlJRNXd3NTZRdDNXbUNBRTAtWUtqUndtYl9QOVIwUU53NFA5QVUxYWdHRDRDSlVJcjJETWtIOUNWOElCMm0zTnF2emhxdGQtVU5kN18zUmJhSElpMXBpNV9KNFdEcU1RWnhnVW5JdDQ0RzE3OTMwRzF0QkxHLXBJd1FMOTNHWmZsQ2kzbkFHam41VEktT2ZLblhsYkk2VU1RUnFJYUJLZ2xJZlEyY2pCdjljZFM0QWJRaVlXVUQ1dDkxQlZLcFpMZG04OUk4Q05jLW05X1N6eTV3UkdrQmJxTG91aDhwQmVqaEhiUUhQbDlhc1J6TUdfcHdsbk1k?oc=5",
@@ -1680,7 +1722,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx135",
+    "id": "282",
     "title": "3 hurt as speeding truck loses control, rams into vehicles on Bengaluru airport road | Video",
     "source": "India Today",
     "link": "https://news.google.com/articles/CBMi6gFBVV95cUxPUmRLdDJRdElIeGJPcFo3OU1tcGdNWmNGczM5RnQyVmNMUElTLW95OWZuclEyNk0yejh1U19senJhY3pvLWI4ZnhzWFJTQ0Y2enpvSlBXaExNVEVaV3pkTHNyMTI4TmpucXAtMEppUmMxWTBnb214WTV5VkZuVG53M2g1OFNkMXFaR1hkMDVQOXItcHFSMVl1TFA1YXhlb2I1RkpYX1ZiTEJXQUlqdzJ1RXBVR2stdWFzVmUyNkliME40alZaUThqdzA1VkhvVDN3UzQzSE03eXpWNEluT0ExenNQcjQtZV9IblHSAe8BQVVfeXFMTmNEYkk2el9pQnU0YW92aU9fa2cxTFlGOWwzRHVSNzdHN2ZjSDJEMlhDS3o5WVRYZjJEeVAtY0htdzRfVkJsRUdrajZqd0tkVjZzUThyZExDX25qLVhXakFDVFp0a0FsdzdiMmNNd3NBYXR5Ui01SWRsV3pnWHpNWndNR2RlaEtRT3h3YzhhcFdfeVJKRFlsbWZ2QlUyZDlDdTdHUnBEZnVrd0FuVkdIcDRQVkhZYTZoLXViQnlBZy1xWllFLTdyNUdPUWtFSXlPTGhtQTB5VzhON0RpX2F1VFRscG1IaTJnOE9GWk9yd3M?oc=5",
@@ -1694,7 +1736,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx137",
+    "id": "314",
     "title": "Bengaluru metro beam collapses on ORR, kills woman and two-year-old son",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMirwFBVV95cUxQRjZHM21IUTN3TjNYR1RMczFzS0RRcWZ3T1QwemY4TEtJdzR4NzNTZzhOeklkQk9TeVhYOHktaGcyUk05enpGSjUwbUtfSWVERzBtLWdSR2UtQmJhVXYzNWgyb1lsek1KbTZxOUtWTUtsNXl2Z2paakcyVjQ4ZWE1cXdMX2x6eElRdHFBajk1OE4wUzdiUWhMWDRrZjh3bnJ4dHlzdnEzenBGNllWQ3BF0gG8AUFVX3lxTE1GTWhkMURpcGNBdVp5SlhycURHUVhwNUs2eFpuNkItMVRMWGVOd2NJMVFOWGdnMERwSHMzSklIZUpRb0d1WTJKSkxpQmV3TXRqcC11YW0zRlJDYVRRMTJjVDJhOEZUZHNxc1hyNlpJU19NMU9jX2ZPSE53b3RNb2xsdFdfamRBWWRWOFhoLUZITXhZRlZtUUFEVnRoYjczcTljdGMwLUNBd0lfYnVjYmxTempYeldsbXVLcElz?oc=5",
@@ -1708,7 +1750,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx138",
+    "id": "210",
     "title": "On Camera, 71-Year-Old Dragged By Scooter On Bengaluru Road After Accident",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMiswFBVV95cUxPX25oTzF1d1FwYjQtVVoyMWRpWUJGSnptZE9xLWVWVHF3NWVLMU5Ra216VFNkU2h4UWwxSk1GOF9Oam94Wm5oeDlaWHZ6TmJTb2VIRmwyVkg1MThRNHhBU0o0OXpUYmY2TUZpMHg0b1B0bjhEZXdPRjJfcFI3OTBjR2Y2R0o3TWlhU2Y3bHNDaXU3R1NGU1B5RzZyMTRqclAtT2s2NEZaVTZxYV9DTkNhVEZGUdIBuwFBVV95cUxOTEFtMDhmLURzZWhkaGkxSmNfWXZJY0pQM2tFYlVIcnRsd3FpTm1DZHFIRGZwNjVHYXpMTm9XWE1HeXpya0ZuYVN5ZWFjcWc0YUpYSjVaNGkxalNkWVEwYlgwWnplOHE2dVU2NTFtZ3l3cDZSSzRQQXBHbEViRHVydlcyZVNMb1ozOXMwMjhRekRPNWx6V2d2ajZkX0xaVEV6cFVrS3BNLTZ0V0trdVV6cnJqdU9sT2hPaUdj?oc=5",
@@ -1722,7 +1764,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx139",
+    "id": "214",
     "title": "Woman drives a km with man clinging to bonnet of car after accident in Bengaluru - Watch video",
     "source": "Mint",
     "link": "https://news.google.com/articles/CBMi4gFBVV95cUxQSDJGMk1SOFNnODdvWF9ZT21rUmFnMFpvTUVMcF9VX2hTNU1oSHNlRHktQXpIWE1oUHd6YzlHbngyV2wzU01raXVfNHd0VjNMdEkxdEVjbVZsem1aYURPOVE1WkQzYmxzYjU2dldKbWxkczJFQkcxalZkZExGVUFmOE1IcHhpcVg4b0dHTmV2UWZraHV5eGlNNkJjbW5iTjlkT2NtbFFDY014ZE5wWmxGX2lVZlpLTmZwcnZZeDZGQ21GczhZaERIVGhKRGhqRHk2NXB3LUFmNENkOWViTkRhWEhR0gHnAUFVX3lxTE9wRzhwWFBGR2RRN1c3VThzbDZ2Q1ltX3d6bjZLTGlXelYzX2lMcjg4Qk4tQmhVbGJ4OHdZb3R0SUVqNGZRLVRjOTEyRkdObjZyWl9tVk5DZmZXMlAtbFhFUVBvUjBNLVB2dDJQTnp1T19NU1c1Rm9iUHJkMDJNNVRINEFxUWp3Q3lCeFBGY2c0Y19KbTRnd3F5X0VWcjZnc1lIVlo0RWVwOEdfczRWMVBITkRGUW9QTUJKWVpzX0cyNVYtWm9lMENwMldzZndsdktuN2l4MHZ1YjZLb3F1WHB4aHRZcU5RZw?oc=5",
@@ -1736,7 +1778,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx140",
+    "id": "216",
     "title": "Wall painter killed in road accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMitwFBVV95cUxPUkVha1QxT25wVVhweEh0OTkxbGJRRlhwejRjT0M2RVJubTZGNDV0XzVtSjdyWjRlU05URXNLS09sRk9xQkhfMDdVaERnQVhhRzNuOTk3OWVqbXE4U0dpYnYyc3hqcjcxQmZtaHl1TWRSNzhJSXZWeFE0VmF5MWV1RkpJeVVqV0p5SWFoVlNJSEVVZU8wcTZONlhGRnJnQ3dVT0lLLUFwQ3hSaTRKZUtSZlBjUk9FYkHSAb4BQVVfeXFMTW9wUnFLa0JjRjdaelRNZzlKcjBoMGxQX3dtYldkNWVJRVlSTy1KT1dVd19DSkhXQWVTbG02NnZTY2trUjRMRnVJN0xtdVlyTkZ5Zi1iTm4tX3Zkd0l6LUY1NldIZXNaTzZLX2dSN0VBa29tbVFsYjhSUk44SDRJSlBOZDlQb1pIMnFyQWJ4a0V4X2I4WDVCbEtjWmZrbVJRdWV3Zml6bmlCTjBLX2hDdzJIcEs0SGVQbkM3ZXoydw?oc=5",
@@ -1750,7 +1792,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx141",
+    "id": "224",
     "title": "Post fatal accident, Bengaluru Metro's Hebbal-KR Puram work halts | Bengaluru News",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMi1gFBVV95cUxQSmxBQjg1MzE1ZldzMnR3Wm5xZ1lkdVNPRHc4RnZlTVEtbWJKVVA2Smw0bW56QXFtQmFUTkhUTGxmV3o3bzRCSVFZMGFEaGQ0WVFpbC0xZVZ4RmtsV3FpU0RFWmM5VFBUcHh4NHNQZU5ZMlVhWGozRGRhdnhLR0k0b3FhZklod2UydXdCN2xGcUFDMkhRS0RMVURGYWtRNmRSeWNyUmdUVkJBc0tKQ1d3Y1VIcU0zOEhUNFRYWnlISUFXbVlOam9uUm1NYy1zT1BjMHFwR29n?oc=5",
@@ -1764,7 +1806,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx142",
+    "id": "230",
     "title": "Two People On A Bike Fake An Accident To Scam An IT Couple In Bengaluru; Watch Video",
     "source": "ZigWheels.com",
     "link": "https://news.google.com/articles/CBMiwgFBVV95cUxQd1lTNnRPblh2VmFHamZqSnFjU0NRM3BPUmNrYTBpY281NnRNa0F6RlMxY2FzM0t6bW9hTDZyWjhMU3dLNXdocHVwcC01N0FoUFlQWkZhc2Y2UXJzWjdxSmdTVFV1NWxqenJmeGNmb1gxZkZhWDFGbjRpMjIzeHJtZVlManczVGhzOFhWWmVLdTdHczRfc0hhM1BFS3BqS2NsNkRLM2lxOEVhdDVBcW90Z3VEYnFBTVV6NTQwWWo0WTVjdw?oc=5",
@@ -1778,7 +1820,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx143",
+    "id": "234",
     "title": "Speeding Truck Overturns, Crushes Car In Bengaluru; 2 Killed",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMipAFBVV95cUxQYVV1eDhiTlJ0eEhFbEVhdHNrenpzQnhOajZDb2RKc3NsNUY0ZGROd3VuQ2lpRjlUZ2ZYZERXblRBaVJIb1V6LWc3X3ducGwteXZXOFZRT2w1ZzVxM2VPdFRpNWNUa2xMazFoMXVnTEVCTHVxM1c2cDBEcTRPTzIxSW9zeDY5Q1dycHBRN21pQTAyYmNZYmM3dm9kWTBpUmxoRGFHNtIBrAFBVV95cUxNYlY5am1jNERjNzBXeG5VbEw3LU1iUmE3YTMyaWZ3WWUyQ2c5TnotMnNDci1SRC04YVRldEJvY2hrVUtRcldxNnZ0R3o5TmEwNlFNWFRCMzdIUThWQ25BZW41MlFEcUY2ZjlYMnhCV1hmcUtDZ2ROLWNleENRWHN0eWVvWXphX25fcTBCQzBRNlBnNjZpeWQzZ3lqa2tnZmU2b3Bzc014cl9qN0t0?oc=5",
@@ -1792,7 +1834,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx144",
+    "id": "270",
     "title": "MBA student critically wounded in accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMivwFBVV95cUxQNE85MlFYUE13dmpHNktqR1I4MEJDbWxmLW9tTGtwUmFuUmtKMXI5am9BLTdRUnRNaVdUQmUwbVN0Z25EY0h1N1lzVWRaRDc5b1k0RlE5U2tCU2N1Nmp5cnRkYWdwMWNFcWRrWUtaaG1yLVdkVFZsYlp5V1lZNXZwM2kxS0RLbXM1cFdydTAwZHBsUTlFM1R3M2wxQnBIcVo1UVpsNnlSY1JXX0JNNGlnZ2VyUEhtNzV3NEtCdlRqc9IBxgFBVV95cUxPR0dqSTRTcUkzdGV1THgyWC1WQkdodnY0S1hzMHVCRURJQmhDOHpnQkxpOG9uSFY5LUplU2NfckpSUjhYbDRRaThRdlVMek43cUhuOEk0NmN2UlZGNjJ6aWVINlNKVnRBVmM0V20xNkVTMnlweHZPdWp4eWhfcDJOVDJFZXZ0b3c1WUhiX1RkTVVYYlgtODFiOTM2YmVDWF9QazhWY0F0TzRyeXU2NEdUVFAxTXBFODIwQWxmYllZNmlXNTlEWEE?oc=5",
@@ -1806,7 +1848,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx145",
+    "id": "302",
     "title": "Car runs over 2 in Bengaluru: No action against MLA who let family misuse pass",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMivgFBVV95cUxQSTNSTXMzdWxNTHRnSXJzb0E5dklCbzlNeC05cUZqMWdUa0hITTktZERkdGg4R0c3dE56TGt1TlpQYXF6Qlcza0x1V2IzVzNkQU82cGpDQXFpOEwwZEg0TTFzYlByckU5Vkg3M1E1aDVOUUM0bW9DdTE1a1MtdHNQZHR4aGRLdWQxdTl5cE5EeVZFSFlXdk9XRGJ5TmJMU0RMUExzSXd1TEkwbEtjQ2RXNTJlR1VoWF9RRFg0RHVB0gHLAUFVX3lxTE9mMTIyTDQ4TldtMnNaV1Fab0hIQThqNjJ0NmdycDRXTXRWY29EZXFMQkpsMmJZcE8wX1Zic1Jvb0lfSVd4QXdrQUNDQk5ESE12M3V2WFJIeXNUeWZrOE5ENm1venV3Y1g1SU5aRHBTU3dGTUQwV0djODVNV0hpU3NRaC10NElYdVFUZ0I0TUZKWGw3QTlISnQtYzdJSGtrV0NJTzFjZktIVm0zdWU5MzdjU1ZPdk01aG4yd3VkTVAtZEdaVmstbGNJLUc0?oc=5",
@@ -1820,7 +1862,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx146",
+    "id": "258",
     "title": "Bengaluru: 20-year-old food delivery boy dies in hit-and-run by BMTC bus",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMi1gFBVV95cUxPQk5Fb0g0bHlFWS1wWkl4bUlWZ2p3aGJ0bWlaOUd2QnRTaml6Z1c1Rk1tY21FNzdQRU9LbmowQjYySndlM1ZURThvODFFNVdjZUZ1WUNSQmRHQ1BYbjE2OGlrcUVYeXBfVFZwdlNTU2JNZWxDeTRKN2Jqc3BzWkozVU1aMmp3c3F6UjVDSzRWeGd5T1B2a2tEZ05iQ1BfMUpjcXFJM2JOMUJUQVlvV29NcVllY2E5Yy0xOWJMWm1DcjdaYm9mdGduemw2YmZGUFlBM0VkX19n?oc=5",
@@ -1834,7 +1876,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx147",
+    "id": "262",
     "title": "Family of five killed in road accident on Bengaluru-Mysuru Expressway",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMi0gFBVV95cUxORWxxYVp5Tlc0NjJVRlFreXRXbWZVRUlyUXVOVFhULXYwVTgwU2Fvd3NQR1VjU2lPc0htSnc1Vkpwb0ZPWDdMQ1F0a2RYcWJpRlFFME1kOWxPSnl5OE0xSl80bnlkdnpLQUlBMXlmZDdXdUJKOEdWeEJRVEQxQ29Gek5ISEVNYVBVQkVlZmU3eGZ4dHk1cUZTZFQ0TGpJU1pBYmNVOU1SbkNmcjNWNlpKcHhvX3pBdmFHRUVaTFU0Y2V6blFtOWZMNnExSGRqenJfV2fSAdgBQVVfeXFMT3ZMRzd3TmpldjBOTG1JNFlZWkcwR2lVbEdDSnhsNFZtOTcxYnZHbVlzZEZ2LXZjNUdrMzRQUEltWVh0bVdnek9sQjVRSGl0VWZDX3ZvaC1PQzhkUVZ6ckpTWmEyZHF4UUp3RmwtaFg0bE96Zy1hWFVjRTJtNmJ0bEhSek1vWmNadEVkdzl0YVp1SmEzS2phMWhKV09qZk9oeEVOc216RU5zcXAyLXJscUpuSmEzaFJ0aXhlSFdKVVNpc0hPcEI0eGJPQ1NDQkpDMnZzaGRtbS1O?oc=5",
@@ -1848,7 +1890,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx148",
+    "id": "266",
     "title": "CISF Jawan meets with road accident in Bengaluru, dies",
     "source": "Mathrubhumi English",
     "link": "https://news.google.com/articles/CBMipAFBVV95cUxQc29VRHVmaDhsNGNqLUFRNUZiZ3hYQW9LdkprZnllNnJma2NkNWI5LWVJdFRNR0ExcUxfV2pFMlVzVzJxNzk5Umg4SW11QWQ0ZDdzd2JaNThOdDFkdUw0VmpGdmxjbUhfXzlIS0g3WUU3M2lKSVJ3VE1ueDNTaHdOaTR2MUtBMDBQUG5FeG1KVzJGeFExOGxIU3NoWXlEdnpjeFRwa9IBqgFBVV95cUxQaHVzSFNud3JYVF9pMl9oM0xiNktNaW4yVVpid3BnLU5mRFZWNjFwWGFKakdEcnBjaUZENUo0V3d3cEFmNW1kcWs2ZkZSMVlUbDN5X0Q5ZXZmSHFXSGxvMTE3czR6czJ4WTVOVG0zaWhLSk5Wa0pSYXNKLWlnV2s4M1dxemdGNzU1Q3puT3ZsbHE3dlZSVVNYbnpqUnludFBvYXk2blJGMWg3Zw?oc=5",
@@ -1862,7 +1904,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx150",
+    "id": "276",
     "title": "Family of five killed in car crash on Bengaluru-Mysuru Expressway",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMipgFBVV95cUxPR2xTOVFPczlpaXhSRWtRUEJqRDVXaGpWYnN6X0JxdjQ5dHBaVkw2bm1mLWRWZkhDNE8zSW5BQXRLemFYS3dFMkt2enNPOXNQdnFnVkVtUGNHNXQ4MENjcERrVXMtUU94VkRQVjVwakRuMGxPcDNYVDZTWFRMOGZ2OER0cDE1ejhDVlMtckZGRW1KdGVJN2NWVWZmcWIxLTJMVGc4N3B30gGzAUFVX3lxTE5WdXlaTDZmNHFFOGhQQ2NJc3R3R2c3WGp3aS1sdzJSTFhYbXFxTmplWmtNSzlvaGR0dzJ4d3plbnNXSk55bzJmdFJLeXRrSEljSlQtVXl3cVBReERLaWF5RzZDZ1hIcnpqOFc4dFYzQjJVZmZtV3F3NzhqV0FHdkJtQUV5Tm8zcWp2TTRselJJQmpHUkJpVm9yY1ltTWxjbEs5QWRFcV9na3N1djRMNmgyQW1J?oc=5",
@@ -1876,7 +1918,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx151",
+    "id": "278",
     "title": "Cyclist dies after being hit by SUV on KIA road in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMiygFBVV95cUxQckxRMVQ1T1c1NXFvSnBvd3BLbnRTblFLNkFqWktma2pHSFBfZFRWT25RTkZlVHVRbWY3aENDR0xIVGQ3SDRYNEpObDlwU185NmpGaV83WWJaa3BLb3RCTlp4VjNqZXVsaHBWZVFJcjkxYW9QaW9mVVlOZlo0bXN0YlVEUUtwY3V5VW1odVhHekd5OUtrSHBObXhra2gyQ0ZfdzEwX2pSVzFaRjBmNktYaE9yRWxqZFNYa0Q3eFpJZEpOQ0FYV1VwYTJB0gHQAUFVX3lxTE5BQTVTa2JMMVJTZXFUS05mWjFvbnluZllYWkRwdmpTY19ndjNOMWtsbG12dVNIVkkxYXZQdXE4U1lCVThlMDRONlEwYTVjQUc1WG5ucTRVR0RVampEM3Rfd0dKSGQ2d1pVOFR5OHI1enVsM0tTSkpPb0wzWXRrelB4SW9tX2pqLTVLVTBwZ2U0T1pOYUlrbkxwZmlMczdQSTZodVRSSXBJUTRlMndNQUlRbGZ6RkFBSHNFSXdfcmR0WjkxMEhuLWNMY3JzTUNFM0s?oc=5",
@@ -1890,7 +1932,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx152",
+    "id": "294",
     "title": "Bus Crashes Into Pillar At Bengaluru Airport. Driver May Have Dozed Off",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMiywFBVV95cUxNZkI0bXQ5U01PVWV5aTNGZGxra2pNTjRycEpHbm9wRkZ0UHpQUzFrRlZVR1dUbVk4Yi1UaDA1Q285UlpuMk1GS19wRklOeGxYbURoNmpoWFZTU3ZLZ05ocnp4d05XZmZJM1JNcTJLT2sta3E2WW9BYU1PaFduSjV1NlZSZHh4ZU9UMEtVcXY1U3owTHNuSzMtOVhmb09iVFZCMU1OSmktdHg4elN2UTBPQXJtVWJ5amRlUWRZQ0VJd1RESDItckxMQlk1NNIB0wFBVV95cUxNOHRVZmN5V3dKak9wTUJSZ1hRcVFBM1hNWU9SdFJLNUVldTNXWjgyQ3RJbDdyY1NmN21VSWtKcEdYOUdHT2dIOVpWSmxZR3BBQ3JmUkRtZHFtNFpnZmZXUlQ1UHR6YndYay1YM2Z2NFpjRm5QRlQwVW1qcFg4dTRJMUNTVXFBak5sY0xETmlqYTR5RjRBZEc0WEJwTW5aa1Z5dmhKMEpnb0hjMXhzaU41UzRGTDhYN2ZQOXRiWkxVSzZvZmZaaW0wYU45dS1XMWpZRG8w?oc=5",
@@ -1904,7 +1946,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx153",
+    "id": "300",
     "title": "KSRTC e-bus driver killed, 25 passengers injured in accident on Bengaluru Mysuru Expressway",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMi7gFBVV95cUxPR1VaTWRJVUZCMjVGOTZaM1I1OE9kYmRWTWNQWThxY3Bmdm9VYnRuMEpvU2dzSHpHWXQ0VmJTM0lvczJMTmtFSEhvakpibmRqdHNQNzdoOXRqV3dzOTJWdFJEaUM1S0dMS1RlUlNIZFdCcDJyZFJKeklyb2QtR05oaHd4UTZzSXNibEZNWnpDaWxkUGtDMmlybHp2YzZOeVNEVDhxcUZqcFNVdmhWdGV3elEzRFZPMG1aR1AybWlnT1lFeWJTZWw5d19VNXBmRnIzZDdLWVVRODVtWjVWZ09VTW4xM2pvbllNeXU5Q2t30gH0AUFVX3lxTE9ocWxaUTFxTTQ3RUJVSUdzTHZ2bGpOOUdveVRjeXpQTlNWR1pOSUM0S2MtYW9FOEJTMmhGbzBCWl90ejNKZ240TWllNGc1MXpCTUstX01XczYxZklWUjBqYUdScHBaNWVmWmhSSEk4T2o5dmFyTy12UFU4dkNnY3J4MEVzVE9zSUh6TVZjV3pwdnI2SE0tcF9aU0hvU1l0VmxqT2dCLTNUWnE3djlPWVNLNW1FUWpGVDR0a2pZUXQ1STRfQm84c0VQSmM1UWRtX0o5bFNFVzdlci1hbU5TQmF2SWctemM5WThodUxvUm93WGlxV2s?oc=5",
@@ -1918,7 +1960,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx158",
+    "id": "308",
     "title": "28-year-old killed in crash on airport road in Bengaluru",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMiuwFBVV95cUxNVmYxN0poOTlhcDRyUkVPYnVNSHl2dzMzQU1HS05PaHdOaWVrOXltNkZNTDBTU1JkVlU5XzBiYjhTYmZLbzBnYXJkeDhkSERvWk1FakVOb094NWRxcXU3WDVhYjBJbFdFcVh2SHk2OHY4NjM4UmRIaXg5dXpxSWZPU1NkTll0Q2tYTWlIY2xfbDNMQVY2REhhX0FycEZ0Z3g0Q1BscTFsWUNhSEdwM052ZWRScHpRMk9ra2lV?oc=5",
@@ -1932,7 +1974,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx159",
+    "id": "310",
     "title": "Electric bus from Chennai to Bengaluru catches fire after collision",
     "source": "India Today",
     "link": "https://news.google.com/articles/CBMiwgFBVV95cUxNT01XXzlILVFqYnhqZXFTVVVhYTZ6c3pCbmtQeEhCVlRPY3NMYUV1bTBIX00yU3d5U09mVnZkZFlCb19aMm9lX1JWM25xc2V0NTZlY0syWm54QWtpU2paa210RFZBWU5vdV9kUnJqZTJ5aTRtZTY1VE5kcnRuRlFNbzBoRmlMeENYV1UtVF9BR1EwaEU5UjdxNTJaRF9uYm1Da3dGM0s3bTlUR3ctOWtJb29BWW1DNFpfdy0wYXlWVmZMUdIBxwFBVV95cUxPNkdsZm0xbFRHdmxiU2daRWZRWFoyUWJ3cDRtZkxWRVVwLUtsMmVQbklQRXhxU2p3RGdieUVXV1VSOG1IcGNjZ05MS1k3ODVnekhMbzF3UjRscTRaU3hidDlHRFNtYXN3c1Z1NmktVGNQajZFSmtIMkl3Y0dVeG1DZTFqV3E0WWl0TFlWWEZieGcwTnNtSnRNU2x2NTY1OXVydEZRcTlPeGlVbDc5aTdDQ2huczhwakxKR2hsc180bjdyWnZWYTZR?oc=5",
@@ -1946,7 +1988,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx160",
+    "id": "312",
     "title": "4 IT professionals die in road accident in Karnataka, probe underway",
     "source": "The Indian Express",
     "link": "https://news.google.com/articles/CBMixgFBVV95cUxQZ2VUWGZjVWVvU2dPODFGVGpIbi1uQXNsZkRyQW5JNUxndWY5WFJxMXBheFByb1h0TUtNa19tV1ZvX0xtb1htYWRkQlptblBRSW1oazhpZGtNMkR2WGEtQ0VPQ2FYNkxncVV2eWMyQW1VS2M3LThCZU5PY25yOUxFMTZzdUFHZXM5SktOVGdxc3FKaUdHbG9TLTM4SS1JZ1ZxQ1dJZjdDZlJMel9xUkFIUWhqcHJXbFJNTUhHSS16R2ktMzlCWHfSAcwBQVVfeXFMU21rU09IaGpvSUttRFJINGtTeWhiaXNCcm9waEJlRTl2alg2eEtZNHUtSUthQ25kd3ZocF9nR3lOcVEwbk40bzNRalpWZ0pPMDZXZGF2RmxQR1pkRUhWa0kwWUs0cVhITS1EaGFlQjBlVVlZM0xZMEFac19IcWJTWmJPeE1oVHFuRGlMLU82Z1pUXzZubUl2RjlOclVYQ2dWejc4bEtxZVR0dlRYUHpQUS0taVlRa2xwQ1ZKNUFZajBuWTAtbUtvSEtMS2px?oc=5",
@@ -1960,7 +2002,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx161",
+    "id": "268",
     "title": "Mother, two children killed in accident on NICE Road in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMizAFBVV95cUxQNVUtQmtURkprX3BwVmtCdmNWUmwwblRZUW82NE80bllSVVZGWklRM1MzRGhhb2NNZ1VDMVQxMURGY2VhSUx2cHpaNzI0NWNueFFHZzgxb2tyTmVMelpnb09jSXByeGtXckhiTk0zWURSeGpHVzNVV3I5YThQQUl1Z3ZXeFJ4enU4WlpTSWtlMUlyLUhzYy1SYWJqWTNMeHl1LU9QLVNRaEl6LUVjTy1fY0tHN19VMVhvYm8xQmNRR1FnNjYxbENrY0d1U2zSAdMBQVVfeXFMTWF6VXkwcnJEZGg1SktvSTdQcFB4b2JPa1hkYl9hcjk1cmFaajhpZWxod3JHLVFVSGp3RE9jUDRfM1NzMGlmd1Fibm5mZFAxYjhuY1JfbVZnOEtjQnQ0UzNqbGg5cUY4dk9ibnhQWDdIZzVmMkJWQVg4czFINUtGUzlOdnFKZG9aWmw0YjFJbHF3MUF1TzVFbXhDTGZ4MHd2R3lBZkVnQUltbkFEYzI2WUJfTkVJSUczd0lWcjRtRF9YSXE1bEVQVF8tbk14N1BPR29kWQ?oc=5",
@@ -1974,7 +2016,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx162",
+    "id": "304",
     "title": "Accident at firecracker godown near Bengaluru leaves 10 dead",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMiogFBVV95cUxNN0xvQ1puOHQ2b3dQNXNqamVzS0N0UldGSW9SWEdHVUtpNEFuUGNkWFFJUXp1V3dwcEJhRklacG1XTmg0aDJkOVFFSzN5MUhRWnNIV1B4Z1ZzNEtBZl9xQlpiMzlSQmN4UVZGZEU5WTJUNXdxeDE3ZmM2b2VDdEdINWliMTVZX2ZwTGVIM1N6S2lMMk9HSklkM0lULWVVbkhUeHfSAa8BQVVfeXFMT0t6dWZsX3RWdTdUTXV4SWd6dUhnRXB2M1R0UEo1RnFLR3pTbVlqeW10XzUxLTNROWQyRFFOUk9IRElSdTdudDdjc09KZzFOcWtFUTBpbzVEdDVlY2I3Z0l5Sk81eXRUUE9RczRtSEthRWpCZHFiYzA3dXE2TkZpSEtfMzJ4NTFZdjl2aFZINWF5cnEwV2F5eVd4OVFsSTJvUzZsTmstSG9qX3JvRU9GQQ?oc=5",
@@ -1988,7 +2030,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx163",
+    "id": "316",
     "title": "Engineering student killed in accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMiugFBVV95cUxObUJwVnhOZVdKRGZtcVdBRXZMcFF1MU9HR28xRXJXUExGSk1EaU1vX21BWkhuMGFWVWxIRnBjVldTVjdfWUJPOVdWOTVqM2VFSzhKTHR4cGJ0Tjlkb0U3Ui1lcWVLb3FsMmNraGZKZVVqbkxfdlNySXlqY0pKRmZmSmppaWUyaHdJd2FoZFhwMWtXdzNLQUhWdDJjYzQwU2FJVGVJZDdVeU5fT0tURFhiMzcweHVTRkt1bWfSAcABQVVfeXFMUEZOQUZXZE9KdGtsejZOZThXRGRzdk03ZzNMcU42dkRnSWljT09GWXJsbnpyc09FYlMzT0xXcUdGZk1SZnJNLVJNNUoxWDdReG82NFZlMmFnbi1paU1xNmdPUTBDb1I4bVMwbVlYUEtVTGI3NVNSeDdkWGJUaHI4QW1vOWR6V3ZDOHhvTloyX2xqMHhPZnRWYWtReDcxNUQzTFYwaUtBYUp4OEpYSmY1Yml2eF9waHRZeVZVWHBhNjBM?oc=5",
@@ -2002,7 +2044,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx166",
+    "id": "318",
     "title": "Video: Multiple Cars Collision On Busy Bengaluru Road",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMinAFBVV95cUxQd3FibkplNGEydmV3bTNiV3dDV3BGMHAyMkptRmRGclFXUUlGeU9wUU1WNjBCanNweTB5NTNyN0I1VEMyYXI1eTlrbXZQYVpyZ0E1dmdNLUZGSlBmVmFCQmRXRkNvUzc4X0llOUkwVVhhTi1pTjl3N3VJMnR2NS01bHBIWkhSZUFrNXZxemp5cHlhVHpBbmVRRVJNNmXSAaQBQVVfeXFMT1F0M05mNUlUTXlUZEFNWXFtSTN3cmNhV2ZkTWFEMm9TMzRIM1cwVW5TRC1BSGltQ0E3VUtRdFI4QXA0M2Q0ck1PNnh4aDdnMEVtZXdJdDdvdXhlZ0NrUnpWYjFnSHVpb1FhZTV4TlZxM3NWTTZKR3NTR3lZc2FDcndCOE1yQ2xtWU1XVHdtNkxZb2RBRTUzNThvWlFpc3huRTRWd0Y?oc=5",
@@ -2016,7 +2058,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx167",
+    "id": "322",
     "title": "Bengaluru traffic police to do drug tests for drivers involved in accidents, drag races",
     "source": "The New Indian Express",
     "link": "https://news.google.com/articles/CBMi8gFBVV95cUxOLVQzVlFTU1hFY0g4S0FvcGRKTlFIMUlTajBSaXE4LWZYb2tPS1hpczEwOVAwOXR4RVJtZ0hnSnJwSFlYWTE5NGFnWDVWVk1NLTlqWHhFSThENzFTS2lXUXo4N3NhY05kdVBBT21aOXZPcmFHbnN0NGUzM3lXUmdWVGYxMjFJVUVIZ2JhYkFRYmtwWTllemdWWUFZdDllV3k0TjNuRWotMWhVb2dUYVBhUm9ncnBCQlpmWTRrSVV4b1hVWG52a0dqTkdZemlaekFUTkhUZXdzazJvZlJZaDQ5ZjZXTThXSExxM2Z3Vm10MG5iQdIB_wFBVV95cUxNTHdCMXVNZzdLbWN0RDV6M1pnblk4c3NHT0tfbWZLTmwwZHNMTjRzcDYzbW5FRXZRb1IxWDM5eE53YkpUSHJjTmt3NWNPRzdlcHBOSVc4WnJwa1pHSFpZcW82Q3c3UVRwVmRDQ1J0aThwSkw5TGkzc2VmVENHdTNUMndWcjd1LTdxb1hQS1hfbWh6M2pUS3A4c1hFWWM4NEwwdHFoc1F6bGZPUTB1MXplbHRpNFo3ZkdkYnlvV09HNEZWSG54MEhzZ1gwcll2bVpvaEY0Tm9QSmdCYXhYd3pVSXd6elRyWDdTNDZxTzg2X2lJWkc1ZlJORmhuZFUzcTQ?oc=5",
@@ -2030,7 +2072,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx168",
+    "id": "326",
     "title": "Three die in fatal accidents post New Year's fete in Bengaluru",
     "source": "The New Indian Express",
     "link": "https://news.google.com/articles/CBMi0gFBVV95cUxQV0tROGdPeWg5VkF1VWNsdGFiLWhXR1RnWVJMa19iLUdEMWg2d0YyZnM4VkFCcUM0TlMxQjdXampKYW43a0JlemtMcG9FdUpRSXdSVl9naXBzdEpSQmpqYW5LbnhDbnF2OWJBQTJFc01acHprbGtnSEF5NVdKSFcxd2lOXzc1OGw0VFJELTBrbTZIUHFMdlJEOGtCMkdfOTFWd3Naa1hyZEJKdVVKc0RJdm81b3R2blpWZkc0VlZQejhHMVZnVGlaclZNb1BSSkFLaHfSAd8BQVVfeXFMTk5felVzSGFTbXQ3R0F3X2xkWHZkZlE3UXVjeDUzb3gxWWZxWkhFTGZQb0x3WlhrVW10eVNpOXBPWUJrODZnY2ZLa3cyUEpzR21WV2xmaXVpYUNzM3ZBYjFaZ2FMOE9xTVd3R3BGWGlkeHNXZmhMajU2azRQNjdEaVlqajRyNDRrTnJQY2gwSWl3Mk5zWGJ2dzJsWnp3dDJQMFJRYUx3eUFGTy1FbUp3UzBteXB4SnhFSldVYWtLUzRyREdLWFExalBMT3dIYmFSOWhTaHZzaS03R3hDeXMyNA?oc=5",
@@ -2044,7 +2086,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx170",
+    "id": "324",
     "title": "27-year-old football player killed in road accident in Bengaluru",
     "source": "The Indian Express",
     "link": "https://news.google.com/articles/CBMiugFBVV95cUxQZkE1SlludVo1NkdncjBqVVQ0Z1ZRSlFTX0V4T3RzU1drWklGZl9Wck5jcVk3V1lZRllQNHFqelpMREJ2dEtRYWdZYzFWWUs2cElGY3dweE9IMXQtbzBfbkM2bHdpZ0FtNmpoNDNRMTlscXl2c2toaWQyZE0wQjRWTzJySWozdkd6S1d1UTZuSzRCYl9wTWt3UE55VjdXNFI5NmV2QVdPenNGOFgwZklCWjdzWWVMM3pEU1HSAcABQVVfeXFMUEZOQUZXZE9KdGtsejZOZThXRGRzdk03ZzNMcU42dkRnSWljT09GWXJsbnpyc09FYlMzT0xXcUdGZk1SZnJNLVJNNUoxWDdReG82NFZlMmFnbi1paU1xNmdPUTBDb1I4bVMwbVlYUEtVTGI3NVNSeDdkWGJUaHI4QW1vOWR6V3ZDOHhvTloyX2xqMHhPZnRWYWtReDcxNUQzTFYwaUtBYUp4OEpYSmY1Yml2eF9waHRZeVZVWHBhNjBM?oc=5",
@@ -2072,7 +2114,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx173",
+    "id": "328",
     "title": "Wall painter killed in road accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMitwFBVV95cUxPUkVha1QxT25wVVhweEh0OTkxbGJRRlhwejRjT0M2RVJubTZGNDV0XzVtSjdyWjRlU05URXNLS09sRk9xQkhfMDdVaERnQVhhRzNuOTk3OWVqbXE4U0dpYnYyc3hqcjcxQmZtaHl1TWRSNzhJSXZWeFE0VmF5MWV1RkpJeVVqV0p5SWFoVlNJSEVVZU8wcTZONlhGRnJnQ3dVT0lLLUFwQ3hSaTRKZUtSZlBjUk9FYkHSAb4BQVVfeXFMTW9wUnFLa0JjRjdaelRNZzlKcjBoMGxQX3dtYldkNWVJRVlSTy1KT1dVd19DSkhXQWVTbG02NnZTY2trUjRMRnVJN0xtdVlyTkZ5Zi1iTm4tX3Zkd0l6LUY1NldIZXNaTzZLX2dSN0VBa29tbVFsYjhSUk44SDRJSlBOZDlQb1pIMnFyQWJ4a0V4X2I4WDVCbEtjWmZrbVJRdWV3Zml6bmlCTjBLX2hDdzJIcEs0SGVQbkM3ZXoydw?oc=5",
@@ -2086,7 +2128,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx174",
+    "id": "220",
     "title": "Post fatal accident, Bengaluru Metro's Hebbal-KR Puram work halts | Bengaluru News",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMi1gFBVV95cUxQSmxBQjg1MzE1ZldzMnR3Wm5xZ1lkdVNPRHc4RnZlTVEtbWJKVVA2Smw0bW56QXFtQmFUTkhUTGxmV3o3bzRCSVFZMGFEaGQ0WVFpbC0xZVZ4RmtsV3FpU0RFWmM5VFBUcHh4NHNQZU5ZMlVhWGozRGRhdnhLR0k0b3FhZklod2UydXdCN2xGcUFDMkhRS0RMVURGYWtRNmRSeWNyUmdUVkJBc0tKQ1d3Y1VIcU0zOEhUNFRYWnlISUFXbVlOam9uUm1NYy1zT1BjMHFwR29n?oc=5",
@@ -2100,7 +2142,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx175",
+    "id": "228",
     "title": "Woman, daughter killed in freak accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://www.thehindu.com/news/cities/bangalore/woman-daughter-killed-in-freak-accident-in-bengaluru/article66459567.ece",
@@ -2114,7 +2156,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx176",
+    "id": "240",
     "title": "Techie-mom, daughter crushed to death after truck falls on car in Bengaluru",
     "source": "Times of India",
     "link": "https://timesofindia.indiatimes.com/city/bengaluru/techie-mom-daughter-crushed-to-death-after-truck-falls-on-car-in-bengaluru/articleshow/97537403.cms",
@@ -2128,7 +2170,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx177",
+    "id": "232",
     "title": "Bengaluru: Enroute School, Mom & Daughter Crushed to Death by Truck; Husband Got SOS from Car",
     "source": "News18",
     "link": "https://www.news18.com/news/india/bengaluru-mother-daughter-crushed-en-route-school-after-cement-mixer-topples-on-car-flattens-it-6975799.html",
@@ -2142,7 +2184,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx178",
+    "id": "246",
     "title": "MBA student critically wounded in accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMivwFBVV95cUxQNE85MlFYUE13dmpHNktqR1I4MEJDbWxmLW9tTGtwUmFuUmtKMXI5am9BLTdRUnRNaVdUQmUwbVN0Z25EY0h1N1lzVWRaRDc5b1k0RlE5U2tCU2N1Nmp5cnRkYWdwMWNFcWRrWUtaaG1yLVdkVFZsYlp5V1lZNXZwM2kxS0RLbXM1cFdydTAwZHBsUTlFM1R3M2wxQnBIcVo1UVpsNnlSY1JXX0JNNGlnZ2VyUEhtNzV3NEtCdlRqc9IBxgFBVV95cUxPR0dqSTRTcUkzdGV1THgyWC1WQkdodnY0S1hzMHVCRURJQmhDOHpnQkxpOG9uSFY5LUplU2NfckpSUjhYbDRRaThRdlVMek43cUhuOEk0NmN2UlZGNjJ6aWVINlNKVnRBVmM0V20xNkVTMnlweHZPdWp4eWhfcDJOVDJFZXZ0b3c1WUhiX1RkTVVYYlgtODFiOTM2YmVDWF9QazhWY0F0TzRyeXU2NEdUVFAxTXBFODIwQWxmYllZNmlXNTlEWEE?oc=5",
@@ -2156,7 +2198,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx179",
+    "id": "252",
     "title": "Two killed and four others injured as SUV runs over them in freak accident on Nrupatunga Road in Bengaluru",
     "source": "The Hindu",
     "link": "https://www.thehindu.com/news/cities/bangalore/two-killed-and-four-others-injured-as-suv-runs-over-them-in-freak-accident-on-nrupatunga-road-in-bengaluru/article66478543.ece",
@@ -2170,7 +2212,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx180",
+    "id": "250",
     "title": "Car with BJP MLA's sticker kills two men, injures four in Bengaluru",
     "source": "Deccan Herald",
     "link": "https://www.deccanherald.com/india/karnataka/bengaluru/car-with-bjp-mla-s-sticker-kills-two-men-injures-four-in-bengaluru-1188633.html",
@@ -2184,7 +2226,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx181",
+    "id": "256",
     "title": "Video | Car With BJP MLA Sticker Rams Vehicles In Bengaluru, 2 Killed",
     "source": "NDTV",
     "link": "https://www.ndtv.com/video/news/news/car-with-bjp-mla-sticker-rams-vehicles-in-bengaluru-2-killed-680994",
@@ -2198,7 +2240,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx182",
+    "id": "248",
     "title": "Car runs over 2 in Bengaluru: No action against MLA who let family misuse pass",
     "source": "The News Minute",
     "link": "https://news.google.com/articles/CBMivgFBVV95cUxQSTNSTXMzdWxNTHRnSXJzb0E5dklCbzlNeC05cUZqMWdUa0hITTktZERkdGg4R0c3dE56TGt1TlpQYXF6Qlcza0x1V2IzVzNkQU82cGpDQXFpOEwwZEg0TTFzYlByckU5Vkg3M1E1aDVOUUM0bW9DdTE1a1MtdHNQZHR4aGRLdWQxdTl5cE5EeVZFSFlXdk9XRGJ5TmJMU0RMUExzSXd1TEkwbEtjQ2RXNTJlR1VoWF9RRFg0RHVB0gHLAUFVX3lxTE9mMTIyTDQ4TldtMnNaV1Fab0hIQThqNjJ0NmdycDRXTXRWY29EZXFMQkpsMmJZcE8wX1Zic1Jvb0lfSVd4QXdrQUNDQk5ESE12M3V2WFJIeXNUeWZrOE5ENm1venV3Y1g1SU5aRHBTU3dGTUQwV0djODVNV0hpU3NRaC10NElYdVFUZ0I0TUZKWGw3QTlISnQtYzdJSGtrV0NJTzFjZktIVm0zdWU5MzdjU1ZPdk01aG4yd3VkTVAtZEdaVmstbGNJLUc0?oc=5",
@@ -2212,7 +2254,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx183",
+    "id": "226",
     "title": "Caught on camera: Car rams into scooty on busy Bengaluru road, one dead",
     "source": "India Today",
     "link": "https://www.indiatoday.in/cities/bengaluru/story/caught-on-camera-car-rams-into-bike-on-busy-bengaluru-road-one-dead-2331694-2023-02-07",
@@ -2226,7 +2268,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx184",
+    "id": "254",
     "title": "Bengaluru accident: Two killed, four injured after SUV with BJP MLA sticker rams into multiple vehicles [VIDEO]",
     "source": "Timesnownews",
     "link": "https://www.timesnownews.com/crime/bengaluru-two-killed-four-injured-after-suv-with-bjp-mla-sticker-rams-into-multiple-vehicles-video-article-97692688",
@@ -2240,7 +2282,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx185",
+    "id": "260",
     "title": "Bengaluru: 20-year-old food delivery boy dies in hit-and-run by BMTC bus",
     "source": "Deccan Herald",
     "link": "https://news.google.com/articles/CBMi1gFBVV95cUxPQk5Fb0g0bHlFWS1wWkl4bUlWZ2p3aGJ0bWlaOUd2QnRTaml6Z1c1Rk1tY21FNzdQRU9LbmowQjYySndlM1ZURThvODFFNVdjZUZ1WUNSQmRHQ1BYbjE2OGlrcUVYeXBfVFZwdlNTU2JNZWxDeTRKN2Jqc3BzWkozVU1aMmp3c3F6UjVDSzRWeGd5T1B2a2tEZ05iQ1BfMUpjcXFJM2JOMUJUQVlvV29NcVllY2E5Yy0xOWJMWm1DcjdaYm9mdGduemw2YmZGUFlBM0VkX19n?oc=5",
@@ -2254,7 +2296,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx186",
+    "id": "264",
     "title": "CISF Jawan meets with road accident in Bengaluru, dies",
     "source": "Mathrubhumi English",
     "link": "https://news.google.com/articles/CBMipAFBVV95cUxQc29VRHVmaDhsNGNqLUFRNUZiZ3hYQW9LdkprZnllNnJma2NkNWI5LWVJdFRNR0ExcUxfV2pFMlVzVzJxNzk5Umg4SW11QWQ0ZDdzd2JaNThOdDFkdUw0VmpGdmxjbUhfXzlIS0g3WUU3M2lKSVJ3VE1ueDNTaHdOaTR2MUtBMDBQUG5FeG1KVzJGeFExOGxIU3NoWXlEdnpjeFRwa9IBqgFBVV95cUxQaHVzSFNud3JYVF9pMl9oM0xiNktNaW4yVVpid3BnLU5mRFZWNjFwWGFKakdEcnBjaUZENUo0V3d3cEFmNW1kcWs2ZkZSMVlUbDN5X0Q5ZXZmSHFXSGxvMTE3czR6czJ4WTVOVG0zaWhLSk5Wa0pSYXNKLWlnV2s4M1dxemdGNzU1Q3puT3ZsbHE3dlZSVVNYbnpqUnludFBvYXk2blJGMWg3Zw?oc=5",
@@ -2268,7 +2310,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx187",
+    "id": "332",
     "title": "mysore road bangalore accident yesterday",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMiigFBVV95cUxObTR3YVMyYTBLbW1xYVI5RDNkZ2VDenQxeXE4YjVSRlNBS3JJZW9oVzJ5UHJneExHSURtMElUV1dzSUpvQ0RlTXBxZmF1ZU93YnFMWHk2NEFkR0Qxd2JLbkRGQXZkc1ZQa0VCTzJwMHg2T3VaVEhIejZiTHV0V0xxV1dhUFVQTUlTdUE?oc=5",
@@ -2282,7 +2324,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx188",
+    "id": "274",
     "title": "Cyclist dies after being hit by SUV on KIA road in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMiygFBVV95cUxQckxRMVQ1T1c1NXFvSnBvd3BLbnRTblFLNkFqWktma2pHSFBfZFRWT25RTkZlVHVRbWY3aENDR0xIVGQ3SDRYNEpObDlwU185NmpGaV83WWJaa3BLb3RCTlp4VjNqZXVsaHBWZVFJcjkxYW9QaW9mVVlOZlo0bXN0YlVEUUtwY3V5VW1odVhHekd5OUtrSHBObXhra2gyQ0ZfdzEwX2pSVzFaRjBmNktYaE9yRWxqZFNYa0Q3eFpJZEpOQ0FYV1VwYTJB0gHQAUFVX3lxTE5BQTVTa2JMMVJTZXFUS05mWjFvbnluZllYWkRwdmpTY19ndjNOMWtsbG12dVNIVkkxYXZQdXE4U1lCVThlMDRONlEwYTVjQUc1WG5ucTRVR0RVampEM3Rfd0dKSGQ2d1pVOFR5OHI1enVsM0tTSkpPb0wzWXRrelB4SW9tX2pqLTVLVTBwZ2U0T1pOYUlrbkxwZmlMczdQSTZodVRSSXBJUTRlMndNQUlRbGZ6RkFBSHNFSXdfcmR0WjkxMEhuLWNMY3JzTUNFM0s?oc=5",
@@ -2296,7 +2338,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx189",
+    "id": "280",
     "title": "Woman dies after car gets submerged in flooded underpass in Bengaluru's K.R. Circle",
     "source": "The Hindu",
     "link": "https://www.thehindu.com/news/cities/bangalore/woman-dies-after-car-gets-submerged-in-flooded-underpass-in-bengalurus-kr-circle/article66878432.ece",
@@ -2310,7 +2352,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx190",
+    "id": "284",
     "title": "Woman dies as KSRTC bus runs her over in Bengaluru",
     "source": "The News Minute",
     "link": "https://www.thenewsminute.com/karnataka/woman-dies-ksrtc-bus-runs-her-over-bengaluru-178114",
@@ -2324,7 +2366,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx191",
+    "id": "290",
     "title": "Bus Crashes Into Pillar At Bengaluru Airport. Driver May Have Dozed Off",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMiywFBVV95cUxNZkI0bXQ5U01PVWV5aTNGZGxra2pNTjRycEpHbm9wRkZ0UHpQUzFrRlZVR1dUbVk4Yi1UaDA1Q285UlpuMk1GS19wRklOeGxYbURoNmpoWFZTU3ZLZ05ocnp4d05XZmZJM1JNcTJLT2sta3E2WW9BYU1PaFduSjV1NlZSZHh4ZU9UMEtVcXY1U3owTHNuSzMtOVhmb09iVFZCMU1OSmktdHg4elN2UTBPQXJtVWJ5amRlUWRZQ0VJd1RESDItckxMQlk1NNIB0wFBVV95cUxNOHRVZmN5V3dKak9wTUJSZ1hRcVFBM1hNWU9SdFJLNUVldTNXWjgyQ3RJbDdyY1NmN21VSWtKcEdYOUdHT2dIOVpWSmxZR3BBQ3JmUkRtZHFtNFpnZmZXUlQ1UHR6YndYay1YM2Z2NFpjRm5QRlQwVW1qcFg4dTRJMUNTVXFBak5sY0xETmlqYTR5RjRBZEc0WEJwTW5aa1Z5dmhKMEpnb0hjMXhzaU41UzRGTDhYN2ZQOXRiWkxVSzZvZmZaaW0wYU45dS1XMWpZRG8w?oc=5",
@@ -2338,7 +2380,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx192",
+    "id": "288",
     "title": "Bengaluru Airport shuttle bus crashes into pole, 10 passengers injured",
     "source": "Times of India",
     "link": "https://timesofindia.indiatimes.com/city/bengaluru/bengaluru-airport-shuttle-bus-crashes-into-pole-10-passengers-injured/articleshow/101068736.cms",
@@ -2352,7 +2394,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx193",
+    "id": "292",
     "title": "Bengaluru airport accident: 10 injured as shuttle bus crashes into pole",
     "source": "News9live",
     "link": "https://www.news9live.com/karnataka/bengaluru-airport-accident-10-injured-as-shuttle-bus-crashes-into-pole-2177722",
@@ -2366,7 +2408,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx194",
+    "id": "296",
     "title": "Cinematographer Navroze Contractor killed in bike accident in Bengaluru",
     "source": "Indianexpress",
     "link": "https://indianexpress.com/article/cities/bangalore/cinematographer-navroze-contractor-killed-in-bike-accident-in-bengaluru-8674807/",
@@ -2380,7 +2422,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx195",
+    "id": "298",
     "title": "Another accident in Bengaluru-Mysuru highway: KSRTC bus driver dies, 25 injured",
     "source": "The News Minute",
     "link": "https://www.thenewsminute.com/karnataka/another-accident-bengaluru-mysuru-highway-ksrtc-bus-driver-dies-25-injured-178504",
@@ -2394,7 +2436,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx196",
+    "id": "286",
     "title": "Scooterist killed in road accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://www.thehindu.com/news/cities/bangalore/scooterist-killed-on-magadi-road/article66966357.ece",
@@ -2408,7 +2450,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx197",
+    "id": "212",
     "title": "Woman drives a km with man clinging to bonnet of car after accident in Bengaluru - Watch video",
     "source": "Mint",
     "link": "https://news.google.com/articles/CBMi4gFBVV95cUxQSDJGMk1SOFNnODdvWF9ZT21rUmFnMFpvTUVMcF9VX2hTNU1oSHNlRHktQXpIWE1oUHd6YzlHbngyV2wzU01raXVfNHd0VjNMdEkxdEVjbVZsem1aYURPOVE1WkQzYmxzYjU2dldKbWxkczJFQkcxalZkZExGVUFmOE1IcHhpcVg4b0dHTmV2UWZraHV5eGlNNkJjbW5iTjlkT2NtbFFDY014ZE5wWmxGX2lVZlpLTmZwcnZZeDZGQ21GczhZaERIVGhKRGhqRHk2NXB3LUFmNENkOWViTkRhWEhR0gHnAUFVX3lxTE9wRzhwWFBGR2RRN1c3VThzbDZ2Q1ltX3d6bjZLTGlXelYzX2lMcjg4Qk4tQmhVbGJ4OHdZb3R0SUVqNGZRLVRjOTEyRkdObjZyWl9tVk5DZmZXMlAtbFhFUVBvUjBNLVB2dDJQTnp1T19NU1c1Rm9iUHJkMDJNNVRINEFxUWp3Q3lCeFBGY2c0Y19KbTRnd3F5X0VWcjZnc1lIVlo0RWVwOEdfczRWMVBITkRGUW9QTUJKWVpzX0cyNVYtWm9lMENwMldzZndsdktuN2l4MHZ1YjZLb3F1WHB4aHRZcU5RZw?oc=5",
@@ -2422,7 +2464,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx198",
+    "id": "218",
     "title": "Wall painter killed in road accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://news.google.com/articles/CBMitwFBVV95cUxPUkVha1QxT25wVVhweEh0OTkxbGJRRlhwejRjT0M2RVJubTZGNDV0XzVtSjdyWjRlU05URXNLS09sRk9xQkhfMDdVaERnQVhhRzNuOTk3OWVqbXE4U0dpYnYyc3hqcjcxQmZtaHl1TWRSNzhJSXZWeFE0VmF5MWV1RkpJeVVqV0p5SWFoVlNJSEVVZU8wcTZONlhGRnJnQ3dVT0lLLUFwQ3hSaTRKZUtSZlBjUk9FYkHSAb4BQVVfeXFMTW9wUnFLa0JjRjdaelRNZzlKcjBoMGxQX3dtYldkNWVJRVlSTy1KT1dVd19DSkhXQWVTbG02NnZTY2trUjRMRnVJN0xtdVlyTkZ5Zi1iTm4tX3Zkd0l6LUY1NldIZXNaTzZLX2dSN0VBa29tbVFsYjhSUk44SDRJSlBOZDlQb1pIMnFyQWJ4a0V4X2I4WDVCbEtjWmZrbVJRdWV3Zml6bmlCTjBLX2hDdzJIcEs0SGVQbkM3ZXoydw?oc=5",
@@ -2436,7 +2478,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx199",
+    "id": "222",
     "title": "Post fatal accident, Bengaluru Metro's Hebbal-KR Puram work halts | Bengaluru News",
     "source": "The Times of India",
     "link": "https://news.google.com/articles/CBMi1gFBVV95cUxQSmxBQjg1MzE1ZldzMnR3Wm5xZ1lkdVNPRHc4RnZlTVEtbWJKVVA2Smw0bW56QXFtQmFUTkhUTGxmV3o3bzRCSVFZMGFEaGQ0WVFpbC0xZVZ4RmtsV3FpU0RFWmM5VFBUcHh4NHNQZU5ZMlVhWGozRGRhdnhLR0k0b3FhZklod2UydXdCN2xGcUFDMkhRS0RMVURGYWtRNmRSeWNyUmdUVkJBc0tKQ1d3Y1VIcU0zOEhUNFRYWnlISUFXbVlOam9uUm1NYy1zT1BjMHFwR29n?oc=5",
@@ -2450,7 +2492,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx200",
+    "id": "244",
     "title": "Woman, daughter killed in freak accident in Bengaluru",
     "source": "The Hindu",
     "link": "https://www.thehindu.com/news/cities/bangalore/woman-daughter-killed-in-freak-accident-in-bengaluru/article66459567.ece",
@@ -2464,7 +2506,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx201",
+    "id": "242",
     "title": "Techie-mom, daughter crushed to death after truck falls on car in Bengaluru",
     "source": "Times of India",
     "link": "https://timesofindia.indiatimes.com/city/bengaluru/techie-mom-daughter-crushed-to-death-after-truck-falls-on-car-in-bengaluru/articleshow/97537403.cms",
@@ -2478,7 +2520,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx202",
+    "id": "236",
     "title": "Speeding Truck Overturns, Crushes Car In Bengaluru; 2 Killed",
     "source": "NDTV",
     "link": "https://news.google.com/articles/CBMipAFBVV95cUxQYVV1eDhiTlJ0eEhFbEVhdHNrenpzQnhOajZDb2RKc3NsNUY0ZGROd3VuQ2lpRjlUZ2ZYZERXblRBaVJIb1V6LWc3X3ducGwteXZXOFZRT2w1ZzVxM2VPdFRpNWNUa2xMazFoMXVnTEVCTHVxM1c2cDBEcTRPTzIxSW9zeDY5Q1dycHBRN21pQTAyYmNZYmM3dm9kWTBpUmxoRGFHNtIBrAFBVV95cUxNYlY5am1jNERjNzBXeG5VbEw3LU1iUmE3YTMyaWZ3WWUyQ2c5TnotMnNDci1SRC04YVRldEJvY2hrVUtRcldxNnZ0R3o5TmEwNlFNWFRCMzdIUThWQ25BZW41MlFEcUY2ZjlYMnhCV1hmcUtDZ2ROLWNleENRWHN0eWVvWXphX25fcTBCQzBRNlBnNjZpeWQzZ3lqa2tnZmU2b3Bzc014cl9qN0t0?oc=5",
@@ -2492,7 +2534,7 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx203",
+    "id": "238",
     "title": "Bengaluru: Enroute School, Mom & Daughter Crushed to Death by Truck; Husband Got SOS from Car",
     "source": "News18",
     "link": "https://www.news18.com/news/india/bengaluru-mother-daughter-crushed-en-route-school-after-cement-mixer-topples-on-car-flattens-it-6975799.html",
