@@ -94,6 +94,7 @@
         <option value="minor">Minor</option>
       </select>
       <button class="btn-apply" id="apply-btn">Apply</button>
+      <button class="btn-apply" id="upload-btn" style="background: var(--color-minor); margin-left: 8px;">+ Add Article</button>
     </div>
     <div class="toolbar-right">
       <span class="record-count" id="record-count"></span>
@@ -137,6 +138,12 @@
     <div class="modal-body">
       <div class="modal-info" id="modal-info"></div>
 
+      <div class="modal-section-label">Search Place on Map</div>
+      <div class="modal-link-row">
+        <input type="text" id="modal-search-place" class="field-input" placeholder="Enter landmark or street name (e.g. Hebbal, MG Road)...">
+        <button id="modal-search-btn" type="button" class="btn-open-link" style="cursor: pointer; border: none; font-family: inherit;">Search</button>
+      </div>
+
       <div class="modal-section-label"> Coordinates — click on map to set location</div>
       <div id="edit-map" class="edit-map"></div>
 
@@ -162,6 +169,49 @@
     <div class="modal-footer">
       <button class="btn-cancel" id="modal-cancel">Cancel</button>
       <button class="btn-save" id="modal-save">Save Coordinates</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Add Article Modal ──────────────────────────────────────────────────── -->
+<div id="add-modal" class="modal-backdrop" hidden>
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Upload & Verify Accident Article</span>
+      <button class="modal-close" id="add-modal-close"></button>
+    </div>
+    <div class="modal-body">
+      <div id="add-modal-error" class="modal-error" hidden></div>
+      
+      <div class="modal-info">
+        Paste a news article link below to automatically fetch, scrape, and extract accident details using AI. Alternatively, you can fill out the title, source, and text content manually.
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Article Link</label>
+        <input type="url" id="add-link" class="field-input" placeholder="e.g. https://www.thehindu.com/news/cities/bangalore/...">
+      </div>
+
+      <div class="modal-section-label">Or Fill Manually</div>
+
+      <div class="field-group">
+        <label class="field-label">Article Title</label>
+        <input type="text" id="add-title" class="field-input" placeholder="e.g. Drunk driver knocks down pedestrian">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Source Publication</label>
+        <input type="text" id="add-source" class="field-input" placeholder="e.g. Times of India, Deccan Herald">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Article Content (for LLM verification)</label>
+        <textarea id="add-content" class="field-input" rows="5" placeholder="Paste full article text, description, or news report content here..." style="resize: vertical; font-family: inherit;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="add-modal-cancel">Cancel</button>
+      <button class="btn-save" id="add-modal-save" style="background: var(--color-minor); border: none;">Verify & Upload</button>
     </div>
   </div>
 </div>

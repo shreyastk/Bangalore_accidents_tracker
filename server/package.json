@@ -8,6 +8,7 @@
     "import:xlsx": "node import-from-xlsx.mjs"
   },
   "dependencies": {
+    "@openrouter/sdk": "^0.12.35",
     "@supabase/supabase-js": "^2.105.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

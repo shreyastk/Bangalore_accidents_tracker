@@ -12,6 +12,7 @@
   let editMarker = null;
   let editingId  = null;
   let deleteId   = null;
+  let mapboxToken = '';
 
   // ── Auth helpers ──────────────────────────────────────────────────────────
 
@@ -38,6 +39,18 @@
     document.getElementById('admin-app').hidden = true;
   }
 
+  async function loadConfig() {
+    try {
+      const r = await fetch(`${API}/api/admin/config`, { headers: authHeaders() });
+      if (r.ok) {
+        const data = await r.json();
+        mapboxToken = data.mapboxToken;
+      }
+    } catch (e) {
+      console.warn('Failed to load mapbox token from API:', e);
+    }
+  }
+
   // ── Login ──────────────────────────────────────────────────────────────
 
   document.getElementById('login-form').addEventListener('submit', async e => {
@@ -60,6 +73,7 @@
       token = data.token;
       localStorage.setItem(TOKEN_KEY, token);
       showApp(data.user);
+      await loadConfig();
       loadData();
     } catch (err) {
       errEl.textContent = err.message;
@@ -217,6 +231,7 @@
   function openEdit(row) {
     editingId = row.id;
     const modal = document.getElementById('edit-modal');
+    document.getElementById('modal-search-place').value = '';
 
     document.getElementById('modal-info').innerHTML =
       `<strong>${esc(row.title)}</strong><br>
@@ -287,6 +302,87 @@
     editingId = null;
   }
 
+  async function searchPlaceOnMap() {
+    const searchVal = document.getElementById('modal-search-place').value.trim();
+    const errEl = document.getElementById('modal-error');
+    const searchBtn = document.getElementById('modal-search-btn');
+    errEl.hidden = true;
+
+    if (!searchVal) return;
+
+    searchBtn.disabled = true;
+    searchBtn.textContent = 'Searching…';
+
+    try {
+      let lat = null, lng = null, displayName = '';
+
+      if (mapboxToken) {
+        // Mapbox Places API — bbox limits results to Bangalore metropolitan area
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchVal)}.json?access_token=${mapboxToken}&bbox=77.35,12.7,77.85,13.25&limit=1`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Mapbox HTTP ${res.status}`);
+        const data = await res.json();
+        if (data && data.features && data.features.length > 0) {
+          const feat = data.features[0];
+          lng = feat.center[0];
+          lat = feat.center[1];
+          displayName = feat.place_name;
+        }
+      } else {
+        // Nominatim (OSM) fallback query
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchVal + ', Bengaluru, Karnataka, India')}&format=json&limit=1`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Nominatim HTTP ${res.status}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+          displayName = data[0].display_name;
+        } else {
+          // Nominatim fallback with Karnataka
+          const fallbackUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchVal + ', Karnataka, India')}&format=json&limit=1`;
+          const resFallback = await fetch(fallbackUrl);
+          if (!resFallback.ok) throw new Error(`Nominatim Fallback HTTP ${resFallback.status}`);
+          const dataFallback = await resFallback.json();
+          if (dataFallback && dataFallback.length > 0) {
+            lat = parseFloat(dataFallback[0].lat);
+            lng = parseFloat(dataFallback[0].lon);
+            displayName = dataFallback[0].display_name;
+          }
+        }
+      }
+
+      if (lat !== null && lng !== null) {
+        document.getElementById('edit-lat').value = lat.toFixed(6);
+        document.getElementById('edit-lng').value = lng.toFixed(6);
+
+        if (editMap) {
+          if (editMarker) editMap.removeLayer(editMarker);
+          editMarker = L.circleMarker([lat, lng], { radius: 8, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(editMap);
+          editMap.setView([lat, lng], 14);
+        }
+        console.log(`Geocoded "${searchVal}" to: (${lat}, ${lng}) - ${displayName}`);
+      } else {
+        errEl.textContent = 'Location not found. Please try a different name or set coordinates manually.';
+        errEl.hidden = false;
+      }
+    } catch (e) {
+      errEl.textContent = 'Search failed: ' + e.message;
+      errEl.hidden = false;
+    } finally {
+      searchBtn.disabled = false;
+      searchBtn.textContent = 'Search';
+    }
+  }
+
+  document.getElementById('modal-search-btn').addEventListener('click', searchPlaceOnMap);
+  document.getElementById('modal-search-place').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      searchPlaceOnMap();
+    }
+  });
+
   document.getElementById('modal-close').addEventListener('click', closeEdit);
   document.getElementById('modal-cancel').addEventListener('click', closeEdit);
 
@@ -356,6 +452,71 @@
   document.getElementById('edit-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEdit(); });
   document.getElementById('confirm-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirmDelete(); });
 
+  // ── Add Article modal ────────────────────────────────────────────────────
+  const addModal = document.getElementById('add-modal');
+  const uploadBtn = document.getElementById('upload-btn');
+
+  uploadBtn.addEventListener('click', () => {
+    document.getElementById('add-title').value = '';
+    document.getElementById('add-source').value = '';
+    document.getElementById('add-link').value = '';
+    document.getElementById('add-content').value = '';
+    document.getElementById('add-modal-error').hidden = true;
+    addModal.hidden = false;
+  });
+
+  function closeAddModal() {
+    addModal.hidden = true;
+  }
+
+  document.getElementById('add-modal-close').addEventListener('click', closeAddModal);
+  document.getElementById('add-modal-cancel').addEventListener('click', closeAddModal);
+
+  document.getElementById('add-modal-save').addEventListener('click', async () => {
+    const title = document.getElementById('add-title').value.trim();
+    const source = document.getElementById('add-source').value.trim();
+    const link = document.getElementById('add-link').value.trim();
+    const content = document.getElementById('add-content').value.trim();
+    const errEl = document.getElementById('add-modal-error');
+    const saveBtn = document.getElementById('add-modal-save');
+    errEl.hidden = true;
+
+    if (!link && (!title || !content)) {
+      errEl.textContent = 'Please provide either an Article Link, or Title and Content manually.';
+      errEl.hidden = false;
+      return;
+    }
+
+    if (link && !/^https?:\/\/\S+/i.test(link)) {
+      errEl.textContent = 'Please enter a valid URL starting with http:// or https://';
+      errEl.hidden = false;
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = link ? 'Scraping & Verifying…' : 'Verifying with DeepSeek…';
+
+    try {
+      const r = await fetch(`${API}/api/admin/accidents`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ title, source, link, content }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Verification failed');
+      closeAddModal();
+      loadData(1);
+    } catch (e) {
+      errEl.textContent = 'Upload failed: ' + e.message;
+      errEl.hidden = false;
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Verify & Upload';
+    }
+  });
+
+  document.getElementById('add-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAddModal(); });
+
   // ── Filters ───────────────────────────────────────────────────────────────
 
   document.getElementById('apply-btn').addEventListener('click', () => loadData(1));
@@ -366,6 +527,7 @@
   async function boot() {
     if (token && await checkAuth()) {
       showApp(ADMIN_USER || 'admin');
+      await loadConfig();
       loadData();
     } else {
       token = '';
