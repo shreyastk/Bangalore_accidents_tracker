@@ -429,7 +429,10 @@ app.post('/api/admin/accidents', adminAuth, async (req, res) => {
     
     // 1. LLM Verification & Extraction
     const extracted = await verifyAndExtractArticle(title, link, content);
-    console.log('LLM Extracted:', extracted);
+    if (!extracted.is_in_bangalore) {
+  return res.status(400).json({ error: 'Accident not in Bangalore' });
+}
+console.log('LLM Extracted:', extracted);
 
     const finalTitle = title || extracted.title || 'Untitled Accident';
     const finalSource = source || extracted.source || 'News Article';

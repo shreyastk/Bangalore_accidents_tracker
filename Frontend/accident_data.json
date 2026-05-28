@@ -126,20 +126,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx009",
-    "title": "Five die as bus overturns near Bangalore",
-    "source": "Deccan Herald",
-    "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPV3VtWHpRMHpNOV9BYVZVYnFnT0J4aHBIcFNBNF9HSDZ2aFdwSm1FV3paQmdYN2hBQWxLM3BfMno3M2ZJcGFzc1p3TkNNOTFnR0MteGtsU1RoZndWZmFXaFd1N2RTZm5BSHF3WWFrSWNOdEZTWkdBRE5EVThCTFNuM3ZB?oc=5",
-    "location": "NH-4 near Hoskote in Bangalore Rural district.",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2014-01-05",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx010",
     "title": "Bangalore: Nine-year-old girl run over by BMTC bus",
     "source": "Oneindia",
@@ -166,20 +152,6 @@
     "severity": "fatal",
     "date": "Unknown",
     "hasCoords": true
-  },
-  {
-    "id": "xlsx012",
-    "title": "Seven Killed in Accident on Bangalore Highway",
-    "source": "The New Indian Express",
-    "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQX21Lcll3QlVGUk1BQXVfRWFrY1NQOG5DRzAzZW5HTGhhSzFhY2tudjktOC1jQWtwOGVxbDI5b1JPU19lSVR4ZFczNjJ4TThRQkhNS2szdFNsS1pwRE5Md3NFQjNUSnBrR096WWI4NlhVbFRSWWJlMmFKX052dmJVdmhzOWc0dEhWZ0xIdzUzM3BrRWVIRi1FUS1uZTRfMzJTUHl1a1hEaFlxZkZCYVMwdXVSLWpFV2ZYamNN0gHIAUFVX3lxTE5aY2h3M0o2ek81SXRmRVhNZ1pJV1hQQ0wtM0NmUmdZZm9keVdsaWJBcFFRODZtRWNKeWpvQnNXRllVVHdqYl92X3BlYlRWNkIzdlFBMVZGZkJwN0tUTFhvVTJWdzNIVVFwcGVxd3I4WHV1QUtjaEtSNFM1WFYyWE84aUM0cVltaEthWjdIUDFIU1ZjenVRWmdONzdlaDFoM042SVNZRkd6d2ZJRjJxeWJDZ1U4MzZNUlQtRGY5ZEY1SXRHQnc1NE1P?oc=5",
-    "location": "Bangalore-Hyderabad highway",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "Unknown",
-    "hasCoords": false
   },
   {
     "id": "xlsx013",
@@ -448,48 +420,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx032",
-    "title": "Tanzanian girl assaulted, stripped by mob after Bengaluru woman dies in accident",
-    "source": "The News Minute",
-    "link": "https://www.thenewsminute.com/karnataka/tanzanian-girl-assaulted-stripped-mob-after-bengaluru-woman-dies-accident-38472",
-    "location": "Hesaraghatta main road / Ganapathinagar, north Bengaluru",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2016-01-31",
-    "hasCoords": false
-  },
-  {
-    "id": "xlsx033",
-    "title": "Youth survives 20 minutes after lorry splits body in half, donates his eyes",
-    "source": "Bangalore Mirror",
-    "link": "https://bangaloremirror.indiatimes.com/bangalore/others/youth-survives-20-minutes-after-lorry-splits-body-in-half-donates-his-eyes/articleshow/51017593.cms",
-    "location": "near Tippagondanahalli",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 1,
-    "severity": "minor",
-    "date": "2016-02-17",
-    "hasCoords": false
-  },
-  {
-    "id": "xlsx034",
-    "title": "Bengaluru road accident: Have our sensibilities been crushed, too!",
-    "source": "Deccan Chronicle",
-    "link": "https://www.deccanchronicle.com/nation/current-affairs/180216/bengaluru-road-accident-have-our-sensibilities-been-crushed-too.html",
-    "location": "NH4 at T Begur near Thippagondanahalli (Bengaluru-Tumakuru highway)",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2016-02-18",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx035",
     "title": "Split in half after road mishap, Bengaluru youth pleads for his organs to be donated",
     "source": "India Today",
@@ -642,20 +572,6 @@
     "severity": "fatal",
     "date": "2016-11-23",
     "hasCoords": true
-  },
-  {
-    "id": "xlsx046",
-    "title": "Bengaluru: 61-year-old advocate dies in road accident",
-    "source": "Deccan Chronicle",
-    "link": "https://www.deccanchronicle.com/nation/current-affairs/261216/bengaluru-61-year-old-advocate-dies-in-road-accident.html",
-    "location": "Cubbon Park road after crossing the Siddalingaiah Circle, near UB City",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2016-12-26",
-    "hasCoords": false
   },
   {
     "id": "xlsx047",
@@ -1008,20 +924,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx072",
-    "title": "Bengaluru: 3 die as car crashes into stationary truck",
-    "source": "Deccan Chronicle",
-    "link": "#",
-    "location": "Nelamangala highway by-pass near Amanikere",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2018-06-08",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx073",
     "title": "3 medicos die in car crash",
     "source": "Bangalore Mirror",
@@ -1232,20 +1134,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx088",
-    "title": "Student in Mercedes car runs over man, angry mob targets Bangalore Alliance University campus",
-    "source": "The Indian Express",
-    "link": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxPVktOX0ZpTk0yYUlWUl9OeTRReThXSWE1NENocWpoX2drc21QbE1PaGc2LV9aV09LVF9aVW50UktIaE9LMHF2MndsVk1YZXVSU1hGVDlRdEEyTjY5WWtXVWY5VFdDSFg1ZzFuOEJ1TF9GdnlxZjJPYTdKeTNEWHZFeVd3eG1XWHBvM2xuX3ZJaG1MWXJGa3d2MWI4aE9ERzZTb1lhYTFxblp6dXhsT19mdmloNFF3eC1DektqR0xhYUZXbTFUVDFYU0lCNmdpTlAyNF81VzFOWdIB3gFBVV95cUxOQVdBaElJU1hERFAzeVZHT2xmTGc4ZjRSRVNBS19ObndXdklXYnVBakMwazY5SjlUenhZY1YyRXJOajJGS0ZCMGxDWWsxNVFXdjVFLUwwR19IWnlZbVNzWGhIdW84d2J0U3dWYU04UEdJUGNfUGUxaFYzNW5DbXA1Y0NRRnNqVTVhdTlXOFNiUXdRN2R6T3RBZHdYR3ljb2YzM3lMVFR3aEdhUy1NSFI0ODRseUplaDFPZ2k0cmw2Z0JOdXVMOUd5N29aM0Rld1RtWS14THhQcUs5cUtycVE?oc=5",
-    "location": "Hoskote-Bagalur Road near Kannur, Bengaluru outskirts",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 9,
-    "severity": "fatal",
-    "date": "2019-05-26",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx089",
     "title": "5 of family killed in accident in Bengaluru",
     "source": "Deccan Herald",
@@ -1286,20 +1174,6 @@
     "severity": "fatal",
     "date": "2019-10-05",
     "hasCoords": true
-  },
-  {
-    "id": "xlsx092",
-    "title": "Slow vehicles banned on Bengaluru airport road flyover in trial run",
-    "source": "The News Minute",
-    "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPMmEyUkRCYW1XVzRFallJa2YzUDhyYmUyNzFZTGRXNUtiQTN4cEphSDc1alVFNnZ2cEZybHNnMl91aUN0U3dwTVZMNTd2WGUyMnFUTDJnSHRiQ0paN3NtUXRmdHZmN3BmMk5ZTzIwRXVfSTZHQVFkdUxxRXZxZW53QXo5aVhiZjB0YkUtaW96SHVBS1Zpd2R1ZmE1LU5mOXJfNVpMZnRaeFliU1ZP0gG6AUFVX3lxTE9yMU5PNmpScG5sVmd2cTl4cUlZak9MWjROdTFSeDRVLTRyQ0hqeEZFY00wRG95VkVvLVBJdEVrakJaNXBPVWxRaVFPNnU0dHNidmgyMklPU0NsZWIxVkVHZEVYYVpCczFTM1NHOWVSdE50VV81U29XUmhoUkFKVzA3Y21LWDVMczI2V1h2N3hDX0JSZkxvZDl1VjJTcTZyaDlBRFhKaEF1TWNxQ2xtcHFHanZwbUZtLTBVUQ?oc=5",
-    "location": "Edehalli village, Tumakuru Road",
-    "area": "Tumakuru",
-    "lat": null,
-    "lng": null,
-    "score": 1,
-    "severity": "minor",
-    "date": "2019-11-05",
-    "hasCoords": false
   },
   {
     "id": "xlsx094",
@@ -1384,20 +1258,6 @@
     "severity": "fatal",
     "date": "2019-03-10",
     "hasCoords": true
-  },
-  {
-    "id": "xlsx100",
-    "title": "Bengaluru man critical after fixture from Koramangala flyover falls on head",
-    "source": "The News Minute",
-    "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQRHJtMXpxYlZxWFM3TU5abGVIZzJUa3AwTHBIdXJRZk5zT3V5eUVxQ2ZsSTBZMlJ2VkMyNEhUN0R4alNDQUFnY05meEpKRHZGamVnQlVqeTBrSEhpRk5RQ0xiTzR5Qk1VeHMzQk83TVZJM3VCajZQUVhIb3JCTjJWYi15M0hUMVczdHZ2YU96Y05VRWRLSUFtN2R4b0N5YjFXdTlIVG0xMEs4M25UY2RtUWlHQXnSAcIBQVVfeXFMT1lVc2xQeFVHdllaeEVuLUpZNENVNXAySnM0YnJ2azVfME5MWUNXdlQwNFFxZUhiOXVrOUJFcG9iOVpxRDF0c2puMzZhQTk2elZBTG1qZkFmXzByRGpra1VLSjZJVzJQSDlCT0tEQnZ4VUtFMk5SVlIzZnRDRDVVeGlyM2YxblZGOVZTaWwwYmthc0xjYkFHdDFIVjE5VWlqbjdUa1VyUk5NQ085cExiRlZHaWpaaVF5UDlqOURDZGY0RUE?oc=5",
-    "location": "Koramangala flyover, Bengaluru",
-    "area": "Bengaluru",
-    "lat": null,
-    "lng": null,
-    "score": 5,
-    "severity": "serious",
-    "date": "2019-07-11",
-    "hasCoords": false
   },
   {
     "id": "xlsx101",
@@ -1582,20 +1442,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx114",
-    "title": "Bengaluru: Farmer killed after car rams 2 scooters",
-    "source": "The Times of India",
-    "link": "https://news.google.com/articles/CBMiwwFBVV95cUxOdnVuWUt1MTVOVjVlVFRlMVFISml5ckdQdE5kdVlaWWhCdVhvclJtVVFPNGJ0OXQ4LUwzWXc5RURZcVRCX3Rob2ZvYk91c3VvbTZSd3hzd25nRDJvaGM2YWlPcXZ0Wm5WY0E3aFFxUFVzdE54aE1aYnRrMzRNbm5NZS1WM3haLXB2VTVUWnU5MmR1eU9sczFXS0FYRnpOcXdQOExuMUpvQmdZd0FKcGo2ajRTUnc4VWhocUZVRnR0OWJfM1XSAcgBQVVfeXFMUGUzXzEtZkF5SExnX19HSndwWG5yUjQ4aUFKSF83bnR5ZUlydkpHcEh0RV8zVHlXaVNXZFd0VVE3b2RUYlllb1FEN3lRV0dGV3JrZ21yRUxFZl9TUGNSb3lkVk1qVEU2QWNrUUh2akpvMXlwdHBCR00tTG1nV3FGS0w3WXpQOGlWZko2V0xPWGRBZ0xlWF9wQXh2emN5TGtnU1BtTWVhbWdPS0dYOHZZa1VBRk1mNlcyU0Z1YXFrZl8ybXljcGFPaHQ?oc=5",
-    "location": "K Gollahalli near Kumbalgodu (off Mysuru Road), Bengaluru",
-    "area": "Bangalore",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2022-10-08",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx115",
     "title": "Bengaluru: Rushed to hospital in golden hour, man gets severed leg back after accident",
     "source": "The Times of India",
@@ -1764,20 +1610,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx128",
-    "title": "Karnataka: 3 dead, 2 injured after car rams into road divider | Bengaluru",
-    "source": "Hindustan Times",
-    "link": "#",
-    "location": "Chitradurga (NH-48 / Pune-Bengaluru highway stretch)",
-    "area": "Chitradurga",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2022-10-25",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx129",
     "title": "Bengaluru student dies after car-bike collision involving pothole",
     "source": "Deccan Herald",
@@ -1818,20 +1650,6 @@
     "severity": "serious",
     "date": "2022-06-10",
     "hasCoords": true
-  },
-  {
-    "id": "xlsx132",
-    "title": "Ex-serviceman run over by truck while trying to avoid pothole in Karnataka’s Mandya",
-    "source": "The Indian Express",
-    "link": "https://news.google.com/articles/CBMiswFBVV95cUxPdlJJSnlXeEVYcG80T3JVV1NiR3RObzBoRk5PdHpUeGxKV2ZyckNCRVlKbnRPQWIzV1N5c0hxX21GZnF5ZHJaTVF5dUd2MUdoQXJWRDZWRWdzaU5yYlE0NjM2clROZjRQMjRLbTlMSG5IZDg1Q2xaa04zZGIxU2VUamZvWnp0Z0pQeUNhMm91RjZnS3RqcU5LbXJaQzhHTExUVHJGOHhIUTRSMUtIR2dncFV4UdIBugFBVV95cUxQbUNkNVBFYUQ1NHFMZ3FCUVRrUG5NcDB4YzFERWh2TmFFNVFkd3ZsdFdwSWJ3aWNHZGJ6bFRDR3ZLVXg5UGQtRFZrTF9JbVdXX3RlVkZ3aFR3U2h0RWk0ZnUyVnd3RE9ObHR1eU5QQ3E0WGlSMTBQWi03QmZMMEVGRV9sTzU1a3FpYVZpWlN3elRQZW9RU1VES1RwcmM4LW5oTExqbm5ONTNOMy05VHBjTE9tUVYwNkZiWXc?oc=5",
-    "location": "Kaaremane Gate, Sathanur near Mandya",
-    "area": "Mandya",
-    "lat": null,
-    "lng": null,
-    "score": 5,
-    "severity": "serious",
-    "date": "2022-11-14",
-    "hasCoords": false
   },
   {
     "id": "xlsx133",
@@ -2044,20 +1862,6 @@
     "hasCoords": true
   },
   {
-    "id": "xlsx149",
-    "title": "Karnataka: 4 dead in SUV, private bus collision in Tumkur",
-    "source": "The Times of India",
-    "link": "https://news.google.com/articles/CBMi0gFBVV95cUxOWWNGNmdrWHRIUGlBSWhYOTRNMkFNSHFJR05QSWp3YndmbllpUTJIZzhaSHF3Z2ZDaG5QZ1hWWThRS1NWREFqSV9ya2x1eVVzQ2ZoTE9ONFJ5OUFiSnVmVzYybE16TnpXbks2Zkx2Qm5OdnlTLTJWeHc5VnNHVnZJcVJUcTFRNVZzb0JkWjZ6TUJwWkNTd3lHZUlmMUdJWVpQREdLRmRNZDllTUp0ZEF2YzU2bmVzTmhhbndPaEx2ZHpST2hfVnMxSk9EeHA1NURyTGfSAdcBQVVfeXFMUC10bVFCRWNRb3VHQVJhOVptM2xzZThHdmxiSVM5TExtTlFUVnpxSllBUlQ3YU54aGRFSnhzRk5rcktfRGFkTTdreU1sY0F6VllHam5haTRhQW5EMUVhQXN0V25CTWFPYzF2OTh6bWU3ZXNrS2xMNU9HdVZ6NVJwd2kwUndMQldRWExIa000aEpQaHU1Y0t6Si14SmtSU0p3X1VpSUFQNnUxZ0FDblByTkxxbUVTZlZsWi1CbWVZRlI4UUNfZE5BdnM0QjN6TlpYMTBOcnllOW8?oc=5",
-    "location": "National Highway 48 near Hirehalli village of Tumkur",
-    "area": "Tumkur",
-    "lat": null,
-    "lng": null,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2023-04-15",
-    "hasCoords": false
-  },
-  {
     "id": "xlsx150",
     "title": "Family of five killed in car crash on Bengaluru-Mysuru Expressway",
     "source": "The News Minute",
@@ -2120,8 +1924,8 @@
     "link": "https://news.google.com/articles/CBMiuwFBVV95cUxNVmYxN0poOTlhcDRyUkVPYnVNSHl2dzMzQU1HS05PaHdOaWVrOXltNkZNTDBTU1JkVlU5XzBiYjhTYmZLbzBnYXJkeDhkSERvWk1FakVOb094NWRxcXU3WDVhYjBJbFdFcVh2SHk2OHY4NjM4UmRIaXg5dXpxSWZPU1NkTll0Q2tYTWlIY2xfbDNMQVY2REhhX0FycEZ0Z3g0Q1BscTFsWUNhSEdwM052ZWRScHpRMk9ra2lV?oc=5",
     "location": "Karnataka (bus-truck collision, specific stretch not detailed)",
     "area": "Bangalore",
-    "lat": 13.0222347,
-    "lng": 77.5671832,
+    "lat": 13.079441,
+    "lng": 77.607669,
     "score": 10,
     "severity": "fatal",
     "date": "2023-09-14",
@@ -2195,34 +1999,6 @@
     "score": 10,
     "severity": "fatal",
     "date": "2023-10-14",
-    "hasCoords": true
-  },
-  {
-    "id": "xlsx164",
-    "title": "5 killed, 60 injured as two buses collide on NH-44 near Chikkaballapur, Karnataka",
-    "source": "India Today",
-    "link": "https://news.google.com/articles/CBMi3AFBVV95cUxNLUhnS21VUVA4WnFHU3N5dDZnU1NsMmZJT0tjSGstcnJvc2pacWpDZkptU0NBU1lYbkREVkhDeUFSTFNvWTZqcUx4SExnRXc3ODN3SUdjVlVDNG9PLXdScjNjWExxT0E1bDh2RzNsRzVMWDhBZU5RNGtQLUs2NlZISmxEeHVXaEhKVDVITWg0OEduVWNhWkJ5QlNrOEc3UHhyRER3R0d6d052ZmRHR0N6bTg3bE12WWd5NXhkei1aRC1ZS2hxS2pKVjlCZUc1bVJsNDJBM25KUkx6a2tj0gHiAUFVX3lxTE5GOV81TmJHLUt0SkFfREs4U2E2cks4YkswcTVGS2pOZ3F6bDlSRE9lNFJiR2lJMjdiWndEa3FvVHpaYzdhSS1xR2NTSGszclBITmZWTldJV0RFdHFwSGxja2EydXhVMDlqLUo1cnZScVMwUkZKVjc0MGpSLUU0N1MwWEpPa2VlWGpRbDEtV3U0YnBudWRUQTBiRFgyVmNLblp0WEd2QU9aZEZtOXZFNFluNUhGRE1XU0stXzJqMTVwU2xLYk9xLTZsMXZqVXNrc0xfVXVIa3JRQWFSakVYdE5Cb2c?oc=5",
-    "location": "Bengaluru‑Hyderabad Highway (NH-44), Chikkaballapur, Karnataka",
-    "area": "Chikkaballapur",
-    "lat": 13.0428866,
-    "lng": 77.5911192,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2023-11-10",
-    "hasCoords": true
-  },
-  {
-    "id": "xlsx165",
-    "title": "Two Mangalureans returning from Bengaluru Kambala killed in tragic road accident",
-    "source": "PulauJudi",
-    "link": "https://news.google.com/articles/CBMivgFBVV95cUxQQzUwX3dvNTlyNXNialdJS2Zxa2JvSW1Kc0ZVOTdxc0tmTnBIUFFnaVY4WWxZN1pFQ0F4S3lxTjZyUkw0eTVwTnBxdWtkd1N6Tk1JUENHMHBKSkxHVVF2RlZVbmhlQWpqbEcyMnc2UWQzZTltUzlWM2t2VU44Z2NwVnIzRU1YdGo0cy05UGlaWHk3YkJESzFIQ0twRGJWdmhpemVMTV9MV3ZBSTVFZjhGMjk2LVl3XzBZSlNOZW5B?oc=5",
-    "location": "Chennai-Bengaluru highway in Tamil Nadu",
-    "area": "Tamil Nadu",
-    "lat": 13.0222347,
-    "lng": 77.5671832,
-    "score": 10,
-    "severity": "fatal",
-    "date": "2023-11-26",
     "hasCoords": true
   },
   {
