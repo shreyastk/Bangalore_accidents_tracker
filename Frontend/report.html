@@ -6,9 +6,9 @@
   <title>Report Accident — Bangalore Accidents Tracker</title>
   <meta name="description" content="Submit a geotagged accident report for Bangalore. Upload proof and help improve road safety data.">
   <link rel="stylesheet" href="css/main.css">
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- MapLibre GL JS -->
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
   <style>
     .report-page {
       padding: calc(65px + var(--space-xl)) var(--space-xl) var(--space-xl);
@@ -346,8 +346,12 @@
           </form>
         </div>
 
-        <!-- Map Panel -->
+        <!-- Map Panel with Search -->
         <div class="report-map-panel">
+          <div style="margin-bottom:var(--space-md);display:flex;gap:var(--space-sm);">
+            <input type="text" id="map-search-input" class="form-control" placeholder="Search location to zoom map (e.g. Hebbal, MG Road)..." style="flex:1;">
+            <button id="map-search-btn" type="button" class="btn btn-outline" style="cursor:pointer;white-space:nowrap;padding:8px 16px;">Search</button>
+          </div>
           <div class="report-map-wrap">
             <div id="report-map"></div>
             <div class="map-pick-hint">
@@ -372,48 +376,121 @@
       document.getElementById('desc-count').textContent = this.value.length;
     });
 
-    // ── Map ──
-    const reportMap = L.map('report-map', { center: [12.9716, 77.5946], zoom: 12 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd', maxZoom: 19
-    }).addTo(reportMap);
+    // ── MapLibre GL JS Map ──
+    const reportMap = new maplibregl.Map({
+      container: 'report-map',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      center: [77.5946, 12.9716],
+      zoom: 12
+    });
+
+    reportMap.addControl(new maplibregl.NavigationControl(), 'top-right');
 
     // Fix map loading issue in grid layout
     setTimeout(() => {
-      reportMap.invalidateSize();
+      reportMap.resize();
     }, 100);
 
     let pinMarker = null;
     let selectedLat = null, selectedLng = null;
 
-    const pinIcon = L.divIcon({
-      className: '',
-      html: `<div style="
-        font-size:28px;
-        filter: drop-shadow(0 0 8px rgba(239,68,68,0.8));
-        transform: translateX(-50%) translateY(-90%);
-        cursor:pointer;
-      "></div>`,
-      iconSize: [0, 0], iconAnchor: [0, 0]
-    });
-
     reportMap.on('click', function(e) {
-      selectedLat = e.latlng.lat.toFixed(6);
-      selectedLng = e.latlng.lng.toFixed(6);
+      selectedLat = e.lngLat.lat.toFixed(6);
+      selectedLng = e.lngLat.lng.toFixed(6);
       document.getElementById('field-lat').value = selectedLat;
       document.getElementById('field-lng').value = selectedLng;
       document.getElementById('selected-coords').style.display = 'block';
       document.getElementById('selected-coords').textContent = ` Pinned: ${selectedLat}, ${selectedLng}`;
       document.getElementById('pin-warning').style.display = 'none';
-      if (pinMarker) reportMap.removeLayer(pinMarker);
-      pinMarker = L.marker([selectedLat, selectedLng], { icon: pinIcon }).addTo(reportMap);
+      
+      if (pinMarker) {
+        pinMarker.setLngLat([selectedLng, selectedLat]);
+      } else {
+        pinMarker = new maplibregl.Marker({ color: '#ef4444' })
+          .setLngLat([selectedLng, selectedLat])
+          .addTo(reportMap);
+      }
+      
       enableSubmitIfReady();
       // Update steps
       document.getElementById('step2').classList.remove('active');
       document.getElementById('step2').classList.add('done');
       document.getElementById('step2').querySelector('.step-circle').textContent = '';
       document.getElementById('step3').classList.add('active');
+    });
+
+    // ── Geocoding Search ──
+    async function searchLocation() {
+      const searchVal = document.getElementById('map-search-input').value.trim();
+      if (!searchVal) return;
+      const searchBtn = document.getElementById('map-search-btn');
+      searchBtn.disabled = true;
+      searchBtn.textContent = 'Searching…';
+
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchVal + ', Bengaluru, Karnataka, India')}&format=json&limit=1`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        let lat = null, lng = null;
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+        } else {
+          // fallback query
+          const fallbackUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchVal + ', Karnataka, India')}&format=json&limit=1`;
+          const resFallback = await fetch(fallbackUrl);
+          const dataFallback = await resFallback.json();
+          if (dataFallback && dataFallback.length > 0) {
+            lat = parseFloat(dataFallback[0].lat);
+            lng = parseFloat(dataFallback[0].lon);
+          }
+        }
+
+        if (lat !== null && lng !== null) {
+          reportMap.setCenter([lng, lat]);
+          reportMap.setZoom(14);
+
+          selectedLat = lat.toFixed(6);
+          selectedLng = lng.toFixed(6);
+          document.getElementById('field-lat').value = selectedLat;
+          document.getElementById('field-lng').value = selectedLng;
+          document.getElementById('selected-coords').style.display = 'block';
+          document.getElementById('selected-coords').textContent = ` Pinned: ${selectedLat}, ${selectedLng}`;
+          document.getElementById('pin-warning').style.display = 'none';
+
+          if (pinMarker) {
+            pinMarker.setLngLat([lng, lat]);
+          } else {
+            pinMarker = new maplibregl.Marker({ color: '#ef4444' })
+              .setLngLat([lng, lat])
+              .addTo(reportMap);
+          }
+
+          enableSubmitIfReady();
+
+          // Update steps
+          document.getElementById('step2').classList.remove('active');
+          document.getElementById('step2').classList.add('done');
+          document.getElementById('step2').querySelector('.step-circle').textContent = '';
+          document.getElementById('step3').classList.add('active');
+        } else {
+          alert('Location not found. Please try a different name or click directly on the map.');
+        }
+      } catch (err) {
+        alert('Search failed: ' + err.message);
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.textContent = 'Search';
+      }
+    }
+
+    document.getElementById('map-search-btn').addEventListener('click', searchLocation);
+    document.getElementById('map-search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchLocation();
+      }
     });
 
     // ── File Upload ──
