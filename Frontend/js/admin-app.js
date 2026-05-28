@@ -96,11 +96,30 @@
     const search   = document.getElementById('search-box').value.trim();
     const status   = document.getElementById('f-status').value;
     const severity = document.getElementById('f-severity').value;
+    const sortVal  = document.getElementById('f-sort').value;
 
-    const qs = new URLSearchParams({ page, limit: PAGE_SIZE });
+    let sortBy = 'accident_date';
+    let sortOrder = 'desc';
+    if (sortVal === 'date-asc') {
+      sortBy = 'accident_date';
+      sortOrder = 'asc';
+    } else if (sortVal === 'id-desc') {
+      sortBy = 'id';
+      sortOrder = 'desc';
+    } else if (sortVal === 'id-asc') {
+      sortBy = 'id';
+      sortOrder = 'asc';
+    }
+
+    const isIdSort = sortBy === 'id';
+    const limit = isIdSort ? 10000 : PAGE_SIZE;
+
+    const qs = new URLSearchParams({ page: isIdSort ? 1 : page, limit });
     if (search)            qs.set('search', search);
     if (status !== 'all')   qs.set('status', status);
     if (severity !== 'all') qs.set('severity', severity);
+    qs.set('sortBy', sortBy);
+    qs.set('sortOrder', sortOrder);
 
     const tbody = document.getElementById('table-body');
     tbody.innerHTML = '<tr><td colspan="9" class="t-loading">Loading…</td></tr>';
@@ -111,7 +130,7 @@
       const data = await r.json();
       curTotal = data.total;
       renderTable(data.rows);
-      renderPagination(data.total, page, PAGE_SIZE);
+      renderPagination(data.total, isIdSort ? 1 : page, limit);
       document.getElementById('record-count').textContent =
         `${data.total} record${data.total !== 1 ? 's' : ''}`;
       updateStats(data.rows);
@@ -128,6 +147,39 @@
     document.getElementById('s-fatal').textContent   = all.filter(r => r.severity === 'fatal').length;
     document.getElementById('s-serious').textContent = all.filter(r => r.severity === 'serious').length;
     document.getElementById('s-minor').textContent   = all.filter(r => r.severity === 'minor').length;
+  }
+
+  function updateRowInTable(id, lat, lng, location, area) {
+    const rowEl = document.querySelector(`tr[data-id="${id}"]`);
+    if (!rowEl) return;
+
+    const coordCell = rowEl.querySelector('.cell-coords');
+    if (coordCell) {
+      if (lat && lng) {
+        coordCell.innerHTML = `<span>${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}</span>`;
+      } else {
+        coordCell.innerHTML = `<span class="no-coords">No coords</span>`;
+      }
+    }
+
+    const locCell = rowEl.querySelector('.cell-loc');
+    if (locCell) {
+      locCell.textContent = location || area || '—';
+    }
+
+    const editBtn = rowEl.querySelector('[data-action="edit"]');
+    if (editBtn && editBtn.dataset.row) {
+      try {
+        const rowData = JSON.parse(editBtn.dataset.row);
+        rowData.lat = lat || '';
+        rowData.lng = lng || '';
+        rowData.location = location || '';
+        rowData.area = area || '';
+        editBtn.dataset.row = JSON.stringify(rowData);
+      } catch (e) {
+        console.error('Failed to update edit button row dataset', e);
+      }
+    }
   }
 
   // ── Render table ──────────────────────────────────────────────────────────
@@ -241,6 +293,8 @@
     const lngVal = parseFloat(row.lng) || 77.5946;
     document.getElementById('edit-lat').value = row.lat || '';
     document.getElementById('edit-lng').value = row.lng || '';
+    document.getElementById('edit-location').value = row.location || '';
+    document.getElementById('edit-area').value = row.area || '';
 
     const linkEl = document.getElementById('modal-link');
     const linkOpen = document.getElementById('modal-link-open');
@@ -261,26 +315,39 @@
     // Init or update map
     setTimeout(() => {
       if (!editMap) {
-        editMap = L.map('edit-map', { center: [latVal, lngVal], zoom: 13 });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          attribution: ' OSM  CARTO', subdomains: 'abcd', maxZoom: 19,
-        }).addTo(editMap);
+        editMap = new maplibregl.Map({
+          container: 'edit-map',
+          style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+          center: [lngVal, latVal],
+          zoom: 13,
+        });
+
+        editMap.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+        editMarker = new maplibregl.Marker({ color: '#dc2626', draggable: true })
+          .setLngLat([lngVal, latVal])
+          .addTo(editMap);
+
+        // Click map to reposition marker and update inputs
         editMap.on('click', e => {
-          const { lat, lng } = e.latlng;
+          const { lng, lat } = e.lngLat;
           document.getElementById('edit-lat').value = lat.toFixed(6);
           document.getElementById('edit-lng').value = lng.toFixed(6);
-          if (editMarker) editMap.removeLayer(editMarker);
-          editMarker = L.circleMarker([lat, lng], { radius: 8, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(editMap);
+          editMarker.setLngLat([lng, lat]);
+        });
+
+        // Drag marker to update inputs
+        editMarker.on('dragend', () => {
+          const { lng, lat } = editMarker.getLngLat();
+          document.getElementById('edit-lat').value = lat.toFixed(6);
+          document.getElementById('edit-lng').value = lng.toFixed(6);
         });
       } else {
-        editMap.setView([latVal, lngVal], 13);
+        editMap.setCenter([lngVal, latVal]);
+        editMarker.setLngLat([lngVal, latVal]);
       }
 
-      if (editMarker) editMap.removeLayer(editMarker);
-      if (row.lat && row.lng) {
-        editMarker = L.circleMarker([latVal, lngVal], { radius: 8, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(editMap);
-      }
-      editMap.invalidateSize();
+      setTimeout(() => editMap.resize(), 100);
     }, 100);
 
     // Sync inputs → marker
@@ -289,9 +356,8 @@
         const lat = parseFloat(document.getElementById('edit-lat').value);
         const lng = parseFloat(document.getElementById('edit-lng').value);
         if (!isNaN(lat) && !isNaN(lng)) {
-          if (editMarker) editMap.removeLayer(editMarker);
-          editMarker = L.circleMarker([lat, lng], { radius: 8, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(editMap);
-          editMap.setView([lat, lng]);
+          if (editMarker) editMarker.setLngLat([lng, lat]);
+          if (editMap) editMap.setCenter([lng, lat]);
         }
       };
     });
@@ -357,9 +423,9 @@
         document.getElementById('edit-lng').value = lng.toFixed(6);
 
         if (editMap) {
-          if (editMarker) editMap.removeLayer(editMarker);
-          editMarker = L.circleMarker([lat, lng], { radius: 8, fillColor: '#dc2626', color: '#fff', weight: 2, fillOpacity: 0.9 }).addTo(editMap);
-          editMap.setView([lat, lng], 14);
+          if (editMarker) editMarker.setLngLat([lng, lat]);
+          editMap.setCenter([lng, lat]);
+          editMap.setZoom(14);
         }
         console.log(`Geocoded "${searchVal}" to: (${lat}, ${lng}) - ${displayName}`);
       } else {
@@ -389,6 +455,8 @@
   document.getElementById('modal-save').addEventListener('click', async () => {
     const lat = parseFloat(document.getElementById('edit-lat').value);
     const lng = parseFloat(document.getElementById('edit-lng').value);
+    const location = document.getElementById('edit-location').value.trim();
+    const area = document.getElementById('edit-area').value.trim();
     const errEl = document.getElementById('modal-error');
     errEl.hidden = true;
 
@@ -406,11 +474,11 @@
       const r = await fetch(`${API}/api/admin/accidents/${encodeURIComponent(editingId)}`, {
         method: 'PATCH',
         headers: authHeaders(),
-        body: JSON.stringify({ lat, lng }),
+        body: JSON.stringify({ lat, lng, location, area }),
       });
       if (!r.ok) throw new Error((await r.json()).error);
       closeEdit();
-      loadData(curPage);
+      updateRowInTable(editingId, lat, lng, location, area);
     } catch (e) {
       errEl.textContent = 'Save failed: ' + e.message;
       errEl.hidden = false;
@@ -521,6 +589,7 @@
 
   document.getElementById('apply-btn').addEventListener('click', () => loadData(1));
   document.getElementById('search-box').addEventListener('keydown', e => { if (e.key === 'Enter') loadData(1); });
+  document.getElementById('f-sort').addEventListener('change', () => loadData(1));
 
   // ── Boot ──────────────────────────────────────────────────────────────────
 

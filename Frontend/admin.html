@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Bangalore Accidents Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- MapLibre GL JS -->
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
   <link rel="stylesheet" href="css/main.css?v=2">
   <link rel="stylesheet" href="css/admin.css?v=3">
 </head>
@@ -93,6 +94,12 @@
         <option value="serious">Serious</option>
         <option value="minor">Minor</option>
       </select>
+      <select class="t-input t-select" id="f-sort">
+        <option value="date-desc">Newest Date first</option>
+        <option value="date-asc">Oldest Date first</option>
+        <option value="id-desc">Highest ID first</option>
+        <option value="id-asc">Lowest ID first</option>
+      </select>
       <button class="btn-apply" id="apply-btn">Apply</button>
       <button class="btn-apply" id="upload-btn" style="background: var(--color-minor); margin-left: 8px;">+ Add Article</button>
     </div>
@@ -155,6 +162,18 @@
         <div class="field-group">
           <label class="field-label">Longitude</label>
           <input type="number" id="edit-lng" class="field-input" step="0.000001" placeholder="77.5946">
+        </div>
+      </div>
+
+      <div class="modal-section-label">Location Information</div>
+      <div class="coord-inputs">
+        <div class="field-group">
+          <label class="field-label">Specific Location (Landmark/Street)</label>
+          <input type="text" id="edit-location" class="field-input" placeholder="e.g. Richmond Road flyover">
+        </div>
+        <div class="field-group">
+          <label class="field-label">General Area (Neighborhood)</label>
+          <input type="text" id="edit-area" class="field-input" placeholder="e.g. HSR Layout, Hebbal">
         </div>
       </div>
 

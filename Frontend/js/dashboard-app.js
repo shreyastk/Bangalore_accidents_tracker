@@ -118,88 +118,178 @@
     return { fc, label };
   }
 
-  // ── Leaflet map ────────────────────────────────────────────────────────────
+  // ── MapLibre GL JS Map ──────────────────────────────────────────────────────
 
   let map          = null;
-  let markers      = null;   // L.LayerGroup
-  let heat         = null;   // L.heatLayer
+  let isMapLoaded  = false;
+  let pendingData  = null;
   let heatOn       = false;
 
   function initMap() {
     if (map) return;
 
-    map = L.map('accident-map', {
-      center: [12.9716, 77.5946],
-      zoom:   12,
-      zoomControl: true,
+    map = new maplibregl.Map({
+      container: 'accident-map',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      center: [77.5946, 12.9716],
+      zoom: 11.5,
+      pitch: 45, // tilt for 3D buildings view
     });
 
-    // Light road map (CARTO Positron — clean, no token needed)
-    L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19,
-      }
-    ).addTo(map);
+    // Add navigation controls (zoom, rotate)
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-    markers = L.layerGroup().addTo(map);
+    map.on('load', () => {
+      isMapLoaded = true;
+
+      // Add dynamic accidents GeoJSON source
+      map.addSource('accidents', {
+        type: 'geojson',
+        data: pendingData || emptyFC()
+      });
+
+      // Heatmap layer configuration (calculates on GPU)
+      map.addLayer({
+        id: 'accidents-heat',
+        type: 'heatmap',
+        source: 'accidents',
+        maxzoom: 15,
+        layout: {
+          visibility: heatOn ? 'visible' : 'none'
+        },
+        paint: {
+          'heatmap-weight': [
+            'interpolate',
+            ['linear'],
+            ['get', 'score'],
+            0, 0,
+            10, 1
+          ],
+          'heatmap-intensity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            0, 1,
+            15, 3
+          ],
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0, 'rgba(0,0,0,0)',
+            0.2, '#10b981',
+            0.5, '#f59e0b',
+            0.8, '#ef4444',
+            1.0, '#991b1b'
+          ],
+          'heatmap-radius': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            0, 5,
+            15, 25
+          ],
+          'heatmap-opacity': 0.85
+        }
+      });
+
+      // Point marker layer configuration
+      map.addLayer({
+        id: 'accidents-point',
+        type: 'circle',
+        source: 'accidents',
+        minzoom: 8,
+        layout: {
+          visibility: heatOn ? 'none' : 'visible'
+        },
+        paint: {
+          'circle-radius': [
+            'match',
+            ['get', 'severity'],
+            'fatal', 8,
+            'serious', 6,
+            'minor', 5,
+            5
+          ],
+          'circle-color': [
+            'match',
+            ['get', 'severity'],
+            'fatal', '#ef4444',
+            'serious', '#f59e0b',
+            'minor', '#3b82f6',
+            '#3b82f6'
+          ],
+          'circle-stroke-width': 1.5,
+          'circle-stroke-color': '#ffffff',
+          'circle-opacity': 0.9
+        }
+      });
+
+      // Handle interactive point clicks (Mapbox-style popups)
+      map.on('click', 'accidents-point', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const p = e.features[0].properties;
+
+        // Open details panel in sidebar
+        openDetail({
+          ...p,
+          date: p.date,
+          isUser: p.isUser === 'true' || p.isUser === true
+        });
+
+        // Show Leaflet-like styled popup on canvas
+        const sev = p.severity;
+        const hasLink = p.link && p.link !== '#' && /^https?:\/\//i.test(p.link);
+        const html = `
+          <div class="popup-inner">
+            <span class="popup-sev popup-sev--${sev}">${sevLabel(sev)}</span>
+            <div class="popup-title">${esc(p.title)}</div>
+            <div class="popup-meta">
+              <div><span>Date: </span>${esc(String(p.date))}</div>
+              <div><span>Area: </span>${esc(p.area || '—')}</div>
+              <div><span>Zone: </span>${esc(p.zone || '—')}</div>
+            </div>
+            ${hasLink ? `<a class="popup-link" href="${esc(p.link)}" target="_blank" rel="noopener">Read article ↗</a>` : ''}
+          </div>
+        `;
+
+        // Ensure popup doesn't clip off map boundaries
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        new maplibregl.Popup({ offset: 10 })
+          .setLngLat(coordinates)
+          .setHTML(html)
+          .addTo(map);
+      });
+
+      // Toggle cursor pointer on point hover
+      map.on('mouseenter', 'accidents-point', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'accidents-point', () => {
+        map.getCanvas().style.cursor = '';
+      });
+
+      // Load pending data if loaded in backend before style resolved
+      if (pendingData) {
+        updateMap(pendingData);
+        pendingData = null;
+      }
+    });
+
     window.__BAT_MAP = map;
   }
 
-  function makeMarker(feature) {
-    const p   = feature.properties;
-    const sev = p.severity;
-    const [lng, lat] = feature.geometry.coordinates;
-    const color = SEV_COLOR[sev];
-
-    const circle = L.circleMarker([lat, lng], {
-      radius:      sev === 'fatal' ? 8 : sev === 'serious' ? 6 : 5,
-      fillColor:   color,
-      color:       '#ffffff',
-      weight:      1.5,
-      opacity:     1,
-      fillOpacity: 0.85,
-    });
-
-    const hasLink = p.link && p.link !== '#' && /^https?:\/\//i.test(p.link);
-    circle.bindPopup(`
-      <div class="popup-inner">
-        <span class="popup-sev popup-sev--${sev}">${sevLabel(sev)}</span>
-        <div class="popup-title">${esc(p.title)}</div>
-        <div class="popup-meta">
-          <div><span>Date: </span>${esc(String(p.date))}</div>
-          <div><span>Area: </span>${esc(p.area || '—')}</div>
-          <div><span>Zone: </span>${esc(p.zone || '—')}</div>
-        </div>
-        ${hasLink ? `<a class="popup-link" href="${esc(p.link)}" target="_blank" rel="noopener">Read article ↗</a>` : ''}
-      </div>
-    `, { maxWidth: 300 });
-
-    circle.on('click', () => openDetail(p));
-    return circle;
-  }
-
   function updateMap(fc) {
-    if (!map) return;
-    markers.clearLayers();
-    if (heat) { map.removeLayer(heat); heat = null; }
-
-    const pts = [];
-    fc.features.forEach(f => {
-      const [lng, lat] = f.geometry.coordinates;
-      const sev = f.properties.severity;
-      pts.push([lat, lng, sev === 'fatal' ? 1 : sev === 'serious' ? 0.55 : 0.25]);
-      markers.addLayer(makeMarker(f));
-    });
-
-    if (pts.length) {
-      heat = L.heatLayer(pts, {
-        radius: 20, blur: 16, maxZoom: 14,
-        gradient: { 0.2: '#10b981', 0.5: '#f59e0b', 0.8: '#ef4444', 1.0: '#991b1b' },
-      });
-      if (heatOn) { heat.addTo(map); map.removeLayer(markers); }
+    if (!isMapLoaded) {
+      pendingData = fc;
+      return;
+    }
+    const source = map.getSource('accidents');
+    if (source) {
+      source.setData(fc);
     }
   }
 
@@ -285,10 +375,14 @@
 
     el.querySelectorAll('.hotspot-item').forEach(item => {
       item.addEventListener('click', () => {
-        if (map) map.flyTo(
-          [parseFloat(item.dataset.lat), parseFloat(item.dataset.lng)], 14,
-          { animate: true, duration: 1 }
-        );
+        if (map && isMapLoaded) {
+          map.flyTo({
+            center: [parseFloat(item.dataset.lng), parseFloat(item.dataset.lat)],
+            zoom: 14,
+            essential: true,
+            speed: 1.2
+          });
+        }
       });
     });
   }
@@ -355,13 +449,12 @@
 
     document.getElementById('toggle-heatmap')?.addEventListener('change', e => {
       heatOn = e.target.checked;
-      if (!map) return;
-      if (heatOn) {
-        if (heat) heat.addTo(map);
-        map.removeLayer(markers);
-      } else {
-        if (heat) map.removeLayer(heat);
-        if (!map.hasLayer(markers)) markers.addTo(map);
+      if (!map || !isMapLoaded) return;
+      if (map.getLayer('accidents-heat')) {
+        map.setLayoutProperty('accidents-heat', 'visibility', heatOn ? 'visible' : 'none');
+      }
+      if (map.getLayer('accidents-point')) {
+        map.setLayoutProperty('accidents-point', 'visibility', heatOn ? 'none' : 'visible');
       }
     });
 

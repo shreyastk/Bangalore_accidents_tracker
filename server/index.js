@@ -140,7 +140,7 @@ app.get('/api/admin/config', adminAuth, (_req, res) => {
 
 app.get('/api/admin/accidents', adminAuth, async (req, res) => {
   try {
-    const { search, status, severity, page = 1, limit = 50 } = req.query;
+    const { search, status, severity, page = 1, limit = 50, sortBy = 'accident_date', sortOrder = 'desc' } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
     let sb = supabase.from('accidents')
@@ -150,8 +150,11 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
     if (severity && severity !== 'all') sb = sb.eq('severity', severity);
     if (search) sb = sb.or(`title.ilike.%${search}%,location.ilike.%${search}%,area.ilike.%${search}%`);
 
+    const finalSortBy = ['id', 'accident_date', 'severity', 'score'].includes(sortBy) ? sortBy : 'accident_date';
+    const finalSortAsc = sortOrder === 'asc';
+
     const { data, error, count } = await sb
-      .order('accident_date', { ascending: false, nullsFirst: false })
+      .order(finalSortBy, { ascending: finalSortAsc, nullsFirst: false })
       .range(offset, offset + Number(limit) - 1);
 
     if (error) throw error;
@@ -188,7 +191,7 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
 app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, lat, lng } = req.body || {};
+    const { status, lat, lng, location, area } = req.body || {};
     const updates = {};
 
     if (status !== undefined) {
@@ -201,29 +204,42 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
       updates.geom     = `SRID=4326;POINT(${lngN} ${latN})`;
       updates.has_coords = true;
     }
+    if (location !== undefined) {
+      updates.location = location;
+    }
+    if (area !== undefined) {
+      updates.area = area;
+      updates.zone = inferZone(area);
+    }
     if (!Object.keys(updates).length) return res.status(400).json({ error: 'Nothing to update' });
 
     const { error } = await supabase.from('accidents').update(updates).eq('id', id);
     if (error) throw error;
 
     // Sync updates to Frontend/accident_data.json
-    if (lat !== undefined && lng !== undefined) {
-      try {
-        const jsonPath = path.join(__dirname, '..', 'Frontend', 'accident_data.json');
-        if (fs.existsSync(jsonPath)) {
-          const fileData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-          const item = fileData.find(r => r.id === id);
-          if (item) {
+    try {
+      const jsonPath = path.join(__dirname, '..', 'Frontend', 'accident_data.json');
+      if (fs.existsSync(jsonPath)) {
+        const fileData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        const item = fileData.find(r => r.id === id);
+        if (item) {
+          if (lat !== undefined && lng !== undefined) {
             item.lat = parseFloat(lat);
             item.lng = parseFloat(lng);
             item.hasCoords = true;
-            fs.writeFileSync(jsonPath, JSON.stringify(fileData, null, 2), 'utf8');
-            console.log(`Synced coordinates patch to accident_data.json for ID ${id}`);
           }
+          if (location !== undefined) {
+            item.location = location;
+          }
+          if (area !== undefined) {
+            item.area = area;
+          }
+          fs.writeFileSync(jsonPath, JSON.stringify(fileData, null, 2), 'utf8');
+          console.log(`Synced patch updates to accident_data.json for ID ${id}`);
         }
-      } catch (err) {
-        console.error(`Failed to sync patch to JSON:`, err.message);
       }
+    } catch (err) {
+      console.error(`Failed to sync patch to JSON:`, err.message);
     }
 
     res.json({ ok: true });
