@@ -187,24 +187,12 @@
       <a href="report.html">Report</a>
       <a href="login.html">Login</a>
     </div>
-    <div style="text-align:center;">
-      <a href="admin.html" style="
-      font-size:11px;
-      color:var(--text-muted);
-      text-decoration:none;
-      padding:5px 12px;
-      border:1px solid var(--color-border);
-      border-radius:20px;
-      transition:all 0.15s;
-      display:inline-block;
-    " onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--color-primary)'"
-        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--color-border)'">
-         Admin Portal
-      </a>
-    </div>
+
   </footer>
 
+<script src="js/bat-config.js"></script>
 <script src="js/db.js"></script>
+<script type="module" src="js/supabase-auth.js"></script>
 <script src="js/auth.js"></script>
 <script>
   window.Auth.updateNavAuth();
@@ -212,30 +200,30 @@
     document.getElementById('nav-links').classList.toggle('open');
   });
 
-  const page = document.getElementById('page-content');
-  const session = window.DB.getSession();
+  // Role Guard: require authenticated Supabase session (Req 3.6)
+  (async function() {
+    await window.Auth.requireAuth();
 
-  if (!session) {
-    // Show auth gate
-    page.innerHTML = `
-      <div class="auth-gate">
-        <div class="auth-gate-icon"></div>
-        <h2>Login to Report an Accident</h2>
-        <p>You need to be signed in to geotag and submit accident reports. Your submissions help improve road safety for everyone in Bangalore.</p>
-        <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
-          <a href="login.html?returnTo=report.html" class="btn btn-primary btn-lg">Login</a>
-          <a href="login.html?tab=register&returnTo=report.html" class="btn btn-outline btn-lg">Create Account</a>
-        </div>
-        <div class="divider"></div>
-        <p style="font-size:var(--font-size-sm);">Want to see existing accident data? <a href="dashboard.html">View the Dashboard →</a></p>
-      </div>
-    `;
-  } else {
-    // Render form
+    // If we reach here, user is authenticated — get session data from Supabase
+    var client = window.SupabaseAuthClient;
+    var supaSession = client ? await client.getSession() : null;
+
+    if (!supaSession || !supaSession.user) {
+      // Fallback: if session somehow became invalid after check, redirect
+      window.location.href = 'login.html?returnTo=report.html';
+      return;
+    }
+
+    var user = supaSession.user;
+    var userName = (user.user_metadata && user.user_metadata.name) || user.email || 'User';
+
+    const page = document.getElementById('page-content');
+
+    // User is authenticated, render the report form
     page.innerHTML = `
       <div class="report-header">
         <h1> Report an Accident</h1>
-        <p>Geotagging as <strong style="color:var(--color-primary);">${session.name}</strong>. Click the map to place accident location.</p>
+        <p>Geotagging as <strong style="color:var(--color-primary);">${userName}</strong>. Click the map to place accident location.</p>
       </div>
 
       <div class="steps">
@@ -543,17 +531,23 @@
       document.getElementById('step4').classList.add('active');
     });
 
-    // ── Form Submit ──
-    document.getElementById('report-form').addEventListener('submit', function(e) {
+    // ── Form Submit via API (Req 7.1, 7.3) ──
+    document.getElementById('report-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
-      // Read proof as base64 (demo only)
-      const file = fileInput.files[0];
-      function submit(proofData) {
-        const result = window.DB.addAccident({
+      try {
+        // Get current Supabase session for JWT
+        const session = await window.SupabaseAuthClient.getSession();
+        if (!session || !session.access_token) {
+          // User session expired or invalid — redirect to login
+          window.location.href = 'login.html?returnTo=report.html';
+          return;
+        }
+
+        const reportData = {
           lat: parseFloat(selectedLat),
           lng: parseFloat(selectedLng),
           location: document.getElementById('field-location').value,
@@ -561,30 +555,49 @@
           severity: document.getElementById('field-severity').value,
           date: document.getElementById('field-date').value,
           time: document.getElementById('field-time').value,
-          description: document.getElementById('field-description').value,
-          proof: proofData || null,
-          proofName: file ? file.name : null
+          description: document.getElementById('field-description').value
+        };
+
+        const apiBase = window.BAT_CONFIG.apiBase;
+        const response = await fetch(`${apiBase}/api/reports`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify(reportData)
         });
 
-        if (result.success) {
-          // Update steps
+        if (response.status === 201) {
+          // Success — report created
+          const data = await response.json();
           document.getElementById('step5').classList.add('done');
           document.getElementById('step5').querySelector('.step-circle').textContent = '';
           showAlert('success', ` Report submitted successfully! It will appear on the map after verification. <a href="profile.html" style="color:inherit;font-weight:700;">View in your profile →</a>`);
           setTimeout(() => { window.location.href = 'profile.html'; }, 2500);
+        } else if (response.status === 400) {
+          // Validation errors from server
+          const errorData = await response.json();
+          const errorMsg = errorData.errors
+            ? errorData.errors.join(', ')
+            : (errorData.error || 'Invalid report data. Please check your inputs.');
+          showAlert('error', ' ' + errorMsg);
+          btn.disabled = false;
+          btn.innerHTML = ' Submit Accident Report';
+        } else if (response.status === 401) {
+          // Unauthorized — session expired or invalid
+          window.location.href = 'login.html?returnTo=report.html';
         } else {
-          showAlert('error', ' ' + result.error);
+          // Server error (500 or other)
+          showAlert('error', ' An unexpected error occurred. Please try again later.');
           btn.disabled = false;
           btn.innerHTML = ' Submit Accident Report';
         }
-      }
-
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = e => submit(e.target.result);
-        reader.readAsDataURL(file);
-      } else {
-        submit(null);
+      } catch (err) {
+        // Network error or fetch failure
+        showAlert('error', ' Unable to submit report. Please check your connection and try again.');
+        btn.disabled = false;
+        btn.innerHTML = ' Submit Accident Report';
       }
     });
 
@@ -593,7 +606,7 @@
       el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }
+  })();
 </script>
 </body>
 </html>

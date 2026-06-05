@@ -1,9 +1,9 @@
 /**
  * db.js — Data Layer Abstraction for Bangalore Accidents Tracker
  * 
- * This file acts as the single source of truth for all data operations.
- * To connect a real backend (Firebase, Supabase, REST API), replace the
- * localStorage implementations below with real API calls.
+ * This file provides data operations for the dashboard.
+ * Authentication is handled by Supabase Auth (supabase-auth.js).
+ * Legacy localStorage-based auth functions have been removed.
  */
 
 (function () {
@@ -104,62 +104,18 @@
     { id: 'acc055', lat: 12.9930, lng: 77.6140, location: 'Shivajinagar Circle', area: 'Central Bangalore', severity: 'minor', date: '2024-08-30', time: '12:30', description: 'Heavy traffic slow collision.', source: 'demo', verified: true, reportedBy: null },
   ];
 
-  // ─── LOCAL STORAGE KEYS ───────────────────────────────────────────────────
+  // ─── LOCAL STORAGE KEY (data only) ────────────────────────────────────────
   const KEYS = {
-    USERS: 'bat_users',
-    SESSION: 'bat_session',
     USER_REPORTS: 'bat_user_reports',
   };
 
   // ─── HELPERS ──────────────────────────────────────────────────────────────
-  function generateId() {
-    return 'usr_' + Math.random().toString(36).substr(2, 9) + Date.now();
-  }
-
   function getStorage(key) {
     try { return JSON.parse(localStorage.getItem(key)) || []; }
     catch { return []; }
   }
 
-  function setStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-  }
-
-  // ─── AUTH ─────────────────────────────────────────────────────────────────
-  function register(name, email, password) {
-    const users = getStorage(KEYS.USERS);
-    if (users.find(u => u.email === email)) {
-      return { success: false, error: 'Email already registered.' };
-    }
-    const user = { id: generateId(), name, email, password, createdAt: new Date().toISOString() };
-    users.push(user);
-    setStorage(KEYS.USERS, users);
-    return { success: true, user: { id: user.id, name: user.name, email: user.email } };
-  }
-
-  function login(email, password) {
-    const users = getStorage(KEYS.USERS);
-    const user = users.find(u => u.email === email && u.password === password);
-    if (!user) return { success: false, error: 'Invalid email or password.' };
-    const session = { userId: user.id, name: user.name, email: user.email, loginAt: new Date().toISOString() };
-    setStorage(KEYS.SESSION, session);
-    return { success: true, session };
-  }
-
-  function logout() {
-    localStorage.removeItem(KEYS.SESSION);
-  }
-
-  function getSession() {
-    try { return JSON.parse(localStorage.getItem(KEYS.SESSION)); }
-    catch { return null; }
-  }
-
-  function isLoggedIn() {
-    return !!getSession();
-  }
-
-  // ─── ACCIDENTS ────────────────────────────────────────────────────────────
+  // ─── ACCIDENTS (DATA LAYER) ───────────────────────────────────────────────
   function getAccidents(filters = {}) {
     let data = [...DEMO_ACCIDENTS, ...getStorage(KEYS.USER_REPORTS)];
     if (filters.severity && filters.severity !== 'all') {
@@ -178,21 +134,19 @@
   }
 
   function addAccident(accidentData) {
-    const session = getSession();
-    if (!session) return { success: false, error: 'Not logged in.' };
+    // Legacy function kept for backward compatibility.
+    // New reports should use the POST /api/reports endpoint instead.
     const reports = getStorage(KEYS.USER_REPORTS);
     const newReport = {
       id: 'usr_acc_' + Date.now(),
       ...accidentData,
-      reportedBy: session.userId,
-      reportedByName: session.name,
       source: 'user',
       verified: false,
       status: 'pending',
       submittedAt: new Date().toISOString(),
     };
     reports.push(newReport);
-    setStorage(KEYS.USER_REPORTS, reports);
+    localStorage.setItem(KEYS.USER_REPORTS, JSON.stringify(reports));
     return { success: true, report: newReport };
   }
 
@@ -227,15 +181,8 @@
     };
   }
 
-  // ─── EXPORT ───────────────────────────────────────────────────────────────
+  // ─── EXPORT (data functions only — auth is handled by supabase-auth.js) ──
   window.DB = {
-    // Auth
-    register,
-    login,
-    logout,
-    getSession,
-    isLoggedIn,
-    // Data
     getAccidents,
     addAccident,
     getUserReports,

@@ -163,6 +163,35 @@
     .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius-md); object-fit: contain; }
     .lightbox-close { position: absolute; top: var(--space-xl); right: var(--space-xl); color: white; font-size: 2rem; cursor: pointer; }
 
+    /* Status badges (Req 8.2) */
+    .badge-status-pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+    }
+    .badge-status-verified {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+    }
+    .badge-status-rejected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+    }
+
     @media (max-width: 900px) {
       .profile-layout { grid-template-columns: 1fr; }
       .profile-card { position: relative; top: auto; }
@@ -202,24 +231,12 @@
       <a href="report.html">Report</a>
       <a href="login.html">Login</a>
     </div>
-    <div style="text-align:center;">
-      <a href="admin.html" style="
-      font-size:11px;
-      color:var(--text-muted);
-      text-decoration:none;
-      padding:5px 12px;
-      border:1px solid var(--color-border);
-      border-radius:20px;
-      transition:all 0.15s;
-      display:inline-block;
-    " onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--color-primary)'"
-        onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--color-border)'">
-         Admin Portal
-      </a>
-    </div>
+
   </footer>
 
+<script src="js/bat-config.js"></script>
 <script src="js/db.js"></script>
+<script type="module" src="js/supabase-auth.js"></script>
 <script src="js/auth.js"></script>
 <script>
   window.Auth.updateNavAuth();
@@ -227,163 +244,247 @@
     document.getElementById('nav-links').classList.toggle('open');
   });
 
-  const session = window.DB.getSession();
-  const page = document.getElementById('page-content');
+  // Role Guard: require authenticated Supabase session (Req 3.6, 8.5)
+  (async function() {
+    await window.Auth.requireAuth();
 
-  if (!session) {
-    page.innerHTML = `
-      <div style="text-align:center;padding:var(--space-2xl);">
-        <div style="font-size:3rem;margin-bottom:var(--space-lg);"></div>
-        <h2 style="margin-bottom:var(--space-md);">Login Required</h2>
-        <p style="margin-bottom:var(--space-xl);">Please log in to view your profile and accident reports.</p>
-        <a href="login.html?returnTo=profile.html" class="btn btn-primary">Login</a>
-      </div>
-    `;
-  } else {
-    const reports = window.DB.getUserReports(session.userId);
-    const memberSince = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    // Get user info from SupabaseAuthClient.getUser() (Req 8.4)
+    var client = window.SupabaseAuthClient;
+    var user = client ? await client.getUser() : null;
 
-    page.innerHTML = `
-      <div class="profile-layout">
-
-        <!-- ── Profile Card ── -->
-        <div class="profile-card">
-          <div class="profile-avatar">${session.name.charAt(0).toUpperCase()}</div>
-          <div class="profile-name">${session.name}</div>
-          <div class="profile-email">${session.email}</div>
-          <div class="profile-stat">
-            <div class="profile-stat-item">
-              <div class="profile-stat-num" id="p-total">${reports.length}</div>
-              <div class="profile-stat-label">Reports</div>
-            </div>
-            <div class="profile-stat-item">
-              <div class="profile-stat-num" id="p-verified">${reports.filter(r=>r.verified).length}</div>
-              <div class="profile-stat-label">Verified</div>
-            </div>
-            <div class="profile-stat-item">
-              <div class="profile-stat-num" id="p-pending">${reports.filter(r=>!r.verified).length}</div>
-              <div class="profile-stat-label">Pending</div>
-            </div>
-          </div>
-          <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:var(--space-md);">
-            Member since ${memberSince}
-          </div>
-          <a href="report.html" class="btn btn-primary" style="width:100%;margin-bottom:var(--space-sm);">+ Report Accident</a>
-          <button class="btn btn-outline" style="width:100%;font-size:var(--font-size-sm);" id="logout-btn-profile">Logout</button>
-
-          <!-- Mini Map -->
-          <div style="margin-top:var(--space-lg);text-align:left;">
-            <div style="font-size:var(--font-size-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:var(--space-sm);">Your Reported Locations</div>
-            <div id="profile-mini-map"></div>
-            ${reports.length === 0 ? '<p style="font-size:var(--font-size-xs);color:var(--text-muted);text-align:center;margin-top:8px;">No pins yet</p>' : ''}
-          </div>
-        </div>
-
-        <!-- ── Reports Panel ── -->
-        <div class="reports-panel">
-          <div class="reports-header">
-            <h2>My Reports</h2>
-            <span class="badge badge-${reports.length > 0 ? 'verified' : 'pending'}">${reports.length} submitted</span>
-          </div>
-
-          ${reports.length === 0 ? `
-            <div class="no-reports card">
-              <div class="no-reports-icon"></div>
-              <h3>No Reports Yet</h3>
-              <p style="margin-bottom:var(--space-xl);">You haven't submitted any accident reports. Help improve Bangalore's road safety data by reporting accidents you witness.</p>
-              <a href="report.html" class="btn btn-primary">Report Your First Accident</a>
-            </div>
-          ` : reports.map(r => {
-            const sev = r.severity;
-            const sevLabel = sev.charAt(0).toUpperCase() + sev.slice(1);
-            const status = r.verified ? 'verified' : (r.status || 'pending');
-            const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
-            const proofHtml = r.proof ? `
-              <div class="report-proof">
-                <img src="${r.proof}" alt="Proof" onclick="openLightbox('${r.proof}')">
-                <div class="report-proof-label"> Proof uploaded — ${r.proofName || 'Image'}</div>
-              </div>
-            ` : `<div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--space-sm);">No proof file uploaded</div>`;
-
-            return `
-              <div class="report-card ${sev}">
-                <div class="report-top">
-                  <div>
-                    <div class="report-location-name"> ${r.location}</div>
-                    <div class="report-area">${r.area}</div>
-                  </div>
-                  <div class="report-badges">
-                    <span class="badge badge-${sev}">${sevLabel}</span>
-                    <span class="badge badge-${status}">${statusLabel}</span>
-                  </div>
-                </div>
-                <div class="report-meta">
-                  <div class="report-meta-item">
-                    <div class="report-meta-label">Date</div>
-                    <div class="report-meta-value">${r.date}</div>
-                  </div>
-                  <div class="report-meta-item">
-                    <div class="report-meta-label">Time</div>
-                    <div class="report-meta-value">${r.time}</div>
-                  </div>
-                  <div class="report-meta-item">
-                    <div class="report-meta-label">Coords</div>
-                    <div class="report-meta-value">${r.lat}, ${r.lng}</div>
-                  </div>
-                </div>
-                <div class="report-desc">${r.description}</div>
-                ${proofHtml}
-                <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--space-sm);">
-                  Submitted: ${new Date(r.submittedAt).toLocaleString('en-IN')}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-      </div>
-    `;
-
-    // Logout
-    document.getElementById('logout-btn-profile').addEventListener('click', () => {
-      window.DB.logout();
-      window.location.href = 'index.html';
-    });
-
-    // Mini Map
-    const miniMap = L.map('profile-mini-map', {
-      center: [12.9716, 77.5946],
-      zoom: 11,
-      zoomControl: false,
-      scrollWheelZoom: false,
-      dragging: false,
-      attributionControl: false
-    });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd', maxZoom: 19
-    }).addTo(miniMap);
-
-    if (reports.length > 0) {
-      const pinIcon = L.divIcon({
-        className: '',
-        html: `<div style="width:10px;height:10px;border-radius:50%;background:var(--color-primary);border:2px solid white;box-shadow:0 0 8px var(--color-primary);"></div>`,
-        iconSize: [10,10], iconAnchor: [5,5]
-      });
-      const bounds = [];
-      reports.forEach(r => {
-        L.marker([r.lat, r.lng], { icon: pinIcon }).addTo(miniMap).bindPopup(r.location);
-        bounds.push([r.lat, r.lng]);
-      });
-      if (bounds.length > 0) miniMap.fitBounds(bounds, { padding: [20, 20] });
+    if (!user) {
+      // No valid session — redirect to login with returnTo (Req 8.5)
+      window.location.href = 'login.html?returnTo=profile.html';
+      return;
     }
-  }
+
+    var userName = (user.user_metadata && user.user_metadata.name) || user.email || 'User';
+    var userEmail = user.email || '';
+
+    // Get session for JWT token
+    var session = client ? await client.getSession() : null;
+    if (!session || !session.access_token) {
+      window.location.href = 'login.html?returnTo=profile.html';
+      return;
+    }
+
+    var page = document.getElementById('page-content');
+
+    // Fetch reports from Supabase via API (Req 8.1, 8.2, 8.3, 8.6)
+    async function fetchReports() {
+      var apiBase = window.BAT_CONFIG.apiBase;
+      var token = session.access_token;
+
+      var response = await fetch(apiBase + '/api/reports/mine', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to load reports (HTTP ' + response.status + ')');
+      }
+
+      return await response.json();
+    }
+
+    function renderProfile(reports) {
+      var verifiedCount = reports.filter(function(r) { return r.status === 'verified'; }).length;
+      var pendingCount = reports.filter(function(r) { return r.status === 'pending'; }).length;
+      var rejectedCount = reports.filter(function(r) { return r.status === 'rejected'; }).length;
+
+      page.innerHTML = '\
+        <div class="profile-layout">\
+          <div class="profile-card">\
+            <div class="profile-avatar">' + userName.charAt(0).toUpperCase() + '</div>\
+            <div class="profile-name">' + escapeHtml(userName) + '</div>\
+            <div class="profile-email">' + escapeHtml(userEmail) + '</div>\
+            <div class="profile-stat">\
+              <div class="profile-stat-item">\
+                <div class="profile-stat-num" id="p-total">' + reports.length + '</div>\
+                <div class="profile-stat-label">Reports</div>\
+              </div>\
+              <div class="profile-stat-item">\
+                <div class="profile-stat-num" id="p-verified">' + verifiedCount + '</div>\
+                <div class="profile-stat-label">Verified</div>\
+              </div>\
+              <div class="profile-stat-item">\
+                <div class="profile-stat-num" id="p-pending">' + pendingCount + '</div>\
+                <div class="profile-stat-label">Pending</div>\
+              </div>\
+            </div>\
+            <a href="report.html" class="btn btn-primary" style="width:100%;margin-bottom:var(--space-sm);">+ Report Accident</a>\
+            <button class="btn btn-outline" style="width:100%;font-size:var(--font-size-sm);" id="logout-btn-profile">Logout</button>\
+            <div style="margin-top:var(--space-lg);text-align:left;">\
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:var(--space-sm);">Your Reported Locations</div>\
+              <div id="profile-mini-map"></div>\
+              ' + (reports.length === 0 ? '<p style="font-size:var(--font-size-xs);color:var(--text-muted);text-align:center;margin-top:8px;">No pins yet</p>' : '') + '\
+            </div>\
+          </div>\
+          <div class="reports-panel">\
+            <div class="reports-header">\
+              <h2>My Reports</h2>\
+              <span class="badge badge-' + (reports.length > 0 ? 'verified' : 'pending') + '">' + reports.length + ' submitted</span>\
+            </div>\
+            ' + renderReportsList(reports) + '\
+          </div>\
+        </div>\
+      ';
+
+      // Logout via Supabase Auth (Req 2.6)
+      document.getElementById('logout-btn-profile').addEventListener('click', function() {
+        if (window.SupabaseAuthClient) {
+          window.SupabaseAuthClient.signOut().then(function() {
+            window.location.href = 'index.html';
+          });
+        } else {
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Mini Map
+      var miniMap = L.map('profile-mini-map', {
+        center: [12.9716, 77.5946],
+        zoom: 11,
+        zoomControl: false,
+        scrollWheelZoom: false,
+        dragging: false,
+        attributionControl: false
+      });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd', maxZoom: 19
+      }).addTo(miniMap);
+    }
+
+    function renderReportsList(reports) {
+      // Empty state with link to report page (Req 8.3)
+      if (reports.length === 0) {
+        return '\
+          <div class="no-reports card">\
+            <div class="no-reports-icon">📋</div>\
+            <h3>No Reports Yet</h3>\
+            <p style="margin-bottom:var(--space-xl);">No reports submitted yet. Help improve Bangalore\'s road safety data by reporting accidents you witness.</p>\
+            <a href="report.html" class="btn btn-primary">Report Your First Accident</a>\
+          </div>\
+        ';
+      }
+
+      return reports.map(function(r) {
+        var sev = r.severity || 'minor';
+        var sevLabel = sev.charAt(0).toUpperCase() + sev.slice(1);
+        var status = r.status || 'pending';
+        var statusBadgeClass = getStatusBadgeClass(status);
+        var statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+
+        return '\
+          <div class="report-card ' + sev + '">\
+            <div class="report-top">\
+              <div>\
+                <div class="report-location-name">📍 ' + escapeHtml(r.location || '') + '</div>\
+                <div class="report-area">' + escapeHtml(r.area || '') + '</div>\
+              </div>\
+              <div class="report-badges">\
+                <span class="badge badge-' + sev + '">' + sevLabel + '</span>\
+                <span class="badge ' + statusBadgeClass + '">' + statusLabel + '</span>\
+              </div>\
+            </div>\
+            <div class="report-meta">\
+              <div class="report-meta-item">\
+                <div class="report-meta-label">Date</div>\
+                <div class="report-meta-value">' + escapeHtml(r.date || 'N/A') + '</div>\
+              </div>\
+              <div class="report-meta-item">\
+                <div class="report-meta-label">Status</div>\
+                <div class="report-meta-value">' + statusLabel + '</div>\
+              </div>\
+              <div class="report-meta-item">\
+                <div class="report-meta-label">Severity</div>\
+                <div class="report-meta-value">' + sevLabel + '</div>\
+              </div>\
+            </div>\
+            <div class="report-desc">' + escapeHtml(r.description || '') + '</div>\
+          </div>\
+        ';
+      }).join('');
+    }
+
+    // Status badge classes (Req 8.2)
+    function getStatusBadgeClass(status) {
+      switch (status) {
+        case 'verified': return 'badge-status-verified';
+        case 'rejected': return 'badge-status-rejected';
+        case 'pending':
+        default: return 'badge-status-pending';
+      }
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    // Error state with retry control (Req 8.6)
+    function renderError() {
+      page.innerHTML = '\
+        <div class="profile-layout">\
+          <div class="profile-card">\
+            <div class="profile-avatar">' + userName.charAt(0).toUpperCase() + '</div>\
+            <div class="profile-name">' + escapeHtml(userName) + '</div>\
+            <div class="profile-email">' + escapeHtml(userEmail) + '</div>\
+            <a href="report.html" class="btn btn-primary" style="width:100%;margin-top:var(--space-lg);margin-bottom:var(--space-sm);">+ Report Accident</a>\
+            <button class="btn btn-outline" style="width:100%;font-size:var(--font-size-sm);" id="logout-btn-profile">Logout</button>\
+          </div>\
+          <div class="reports-panel">\
+            <div class="reports-header">\
+              <h2>My Reports</h2>\
+            </div>\
+            <div class="no-reports card">\
+              <div class="no-reports-icon">⚠️</div>\
+              <h3>Could Not Load Reports</h3>\
+              <p style="margin-bottom:var(--space-xl);">Reports could not be loaded due to a network error. Please check your connection and try again.</p>\
+              <button class="btn btn-primary" id="retry-btn">Retry</button>\
+            </div>\
+          </div>\
+        </div>\
+      ';
+
+      document.getElementById('retry-btn').addEventListener('click', loadProfile);
+
+      document.getElementById('logout-btn-profile').addEventListener('click', function() {
+        if (window.SupabaseAuthClient) {
+          window.SupabaseAuthClient.signOut().then(function() {
+            window.location.href = 'index.html';
+          });
+        } else {
+          window.location.href = 'index.html';
+        }
+      });
+    }
+
+    async function loadProfile() {
+      // Show loading state
+      page.innerHTML = '<div style="text-align:center;padding:var(--space-2xl);color:var(--text-muted);">Loading your reports...</div>';
+
+      try {
+        var reports = await fetchReports();
+        renderProfile(reports);
+      } catch (err) {
+        console.error('[profile] Failed to fetch reports:', err);
+        renderError();
+      }
+    }
+
+    // Initial load
+    await loadProfile();
+  })();
 
   // Lightbox
   function openLightbox(src) {
-    const lb = document.createElement('div');
+    var lb = document.createElement('div');
     lb.className = 'lightbox';
-    lb.innerHTML = `<span class="lightbox-close"></span><img src="${src}" alt="Proof">`;
-    lb.addEventListener('click', () => lb.remove());
+    lb.innerHTML = '<span class="lightbox-close">✕</span><img src="' + src + '" alt="Proof">';
+    lb.addEventListener('click', function() { lb.remove(); });
     document.body.appendChild(lb);
   }
 </script>

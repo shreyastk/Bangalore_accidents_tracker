@@ -5,7 +5,7 @@
   const TOKEN_KEY = 'bat_admin_token';
   const PAGE_SIZE = 50;
 
-  let token    = localStorage.getItem(TOKEN_KEY) || '';
+  let token    = sessionStorage.getItem(TOKEN_KEY) || '';
   let curPage  = 1;
   let curTotal = 0;
   let editMap  = null;
@@ -14,10 +14,109 @@
   let deleteId   = null;
   let mapboxToken = '';
 
+  // ── Toast notification system ─────────────────────────────────────────────
+
+  /**
+   * Show a toast notification.
+   * @param {string} message - The message to display
+   * @param {'success'|'error'|'warning'} type - Toast type (default: 'success')
+   * @param {number} duration - Auto-dismiss duration in ms (default: 3000)
+   */
+  function toast(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const el = document.createElement('div');
+    el.className = `toast toast--${type}`;
+    el.setAttribute('role', 'alert');
+
+    const icons = { success: '✓', error: '✕', warning: '⚠' };
+    el.innerHTML = `<span class="toast-icon">${icons[type] || icons.success}</span><span class="toast-msg">${message}</span>`;
+
+    container.appendChild(el);
+
+    // Trigger slide-in animation
+    requestAnimationFrame(() => { el.classList.add('toast--visible'); });
+
+    // Auto-dismiss
+    const timer = setTimeout(() => dismissToast(el), duration);
+
+    // Allow manual dismiss on click
+    el.addEventListener('click', () => {
+      clearTimeout(timer);
+      dismissToast(el);
+    });
+  }
+
+  function dismissToast(el) {
+    el.classList.add('toast--dismissing');
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+    // Fallback removal if animationend doesn't fire
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 400);
+  }
+
   // ── Auth helpers ──────────────────────────────────────────────────────────
 
   function authHeaders() {
     return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+  }
+
+  /**
+   * Attempt to refresh the Supabase JWT token.
+   * @returns {boolean} true if refresh succeeded and token was updated
+   */
+  async function refreshToken() {
+    const authClient = window.SupabaseAuthClient;
+    if (!authClient) return false;
+    try {
+      const session = await authClient.getSession();
+      if (session && session.access_token) {
+        token = session.access_token;
+        sessionStorage.setItem(TOKEN_KEY, token);
+        return true;
+      }
+    } catch (e) {
+      console.warn('[admin-app] Token refresh failed:', e);
+    }
+    return false;
+  }
+
+  /**
+   * Authenticated fetch wrapper that handles 401 responses.
+   * On 401: attempts token refresh, retries once with new token.
+   * If refresh fails, redirects to admin login.
+   *
+   * @param {string} url - The URL to fetch
+   * @param {object} options - Fetch options (method, body, etc.). Headers are auto-set.
+   * @returns {Response} The fetch response
+   * @throws {Error} If the fetch fails for non-auth reasons
+   *
+   * Requirements: 5.4, 5.5
+   */
+  async function authenticatedFetch(url, options = {}) {
+    // Merge auth headers with any additional headers
+    options.headers = { ...authHeaders(), ...(options.headers || {}) };
+
+    const r = await fetch(url, options);
+
+    if (r.status === 401) {
+      // Attempt token refresh (Req 5.5)
+      const refreshed = await refreshToken();
+      if (refreshed) {
+        // Retry request with refreshed token (overwrite Authorization)
+        options.headers = { ...(options.headers || {}), ...authHeaders() };
+        return fetch(url, options);
+      } else {
+        // Refresh failed — redirect to admin login (Req 5.5)
+        token = '';
+        sessionStorage.removeItem(TOKEN_KEY);
+        showLogin();
+        // Return original 401 response so callers can handle gracefully
+        return r;
+      }
+    }
+
+    return r;
   }
 
   async function checkAuth() {
@@ -28,20 +127,53 @@
     } catch { return false; }
   }
 
+  /**
+   * Check if user has admin role by inspecting app_metadata or user_metadata.
+   * @param {object} user - Supabase user object
+   * @returns {boolean}
+   */
+  function hasAdminRole(user) {
+    if (!user) return false;
+    // Check app_metadata.role first (preferred, set via Supabase admin API)
+    if (user.app_metadata && user.app_metadata.role === 'admin') return true;
+    // Fallback: check user_metadata.role
+    if (user.user_metadata && user.user_metadata.role === 'admin') return true;
+    return false;
+  }
+
+  /**
+   * Get display name for the admin user (email or display name from metadata).
+   * @param {object} user - Supabase user object
+   * @returns {string}
+   */
+  function getAdminDisplayName(user) {
+    if (!user) return 'Admin';
+    if (user.user_metadata && user.user_metadata.name) return user.user_metadata.name;
+    return user.email || 'Admin';
+  }
+
+  // ── Inactivity Timer State ───────────────────────────────────────────────
+  let inactivityTimer = null;
+
   function showApp(user) {
     document.getElementById('login-screen').hidden = true;
     document.getElementById('admin-app').hidden = false;
     document.getElementById('nav-user').textContent = ' ' + user;
+    inactivityTimer = initInactivityTimer();
   }
 
   function showLogin() {
     document.getElementById('login-screen').hidden = false;
     document.getElementById('admin-app').hidden = true;
+    if (inactivityTimer) {
+      inactivityTimer.stop();
+      inactivityTimer = null;
+    }
   }
 
   async function loadConfig() {
     try {
-      const r = await fetch(`${API}/api/admin/config`, { headers: authHeaders() });
+      const r = await authenticatedFetch(`${API}/api/admin/config`);
       if (r.ok) {
         const data = await r.json();
         mapboxToken = data.mapboxToken;
@@ -51,28 +183,51 @@
     }
   }
 
-  // ── Login ──────────────────────────────────────────────────────────────
+  // ── Login (Supabase Auth with role checking) ──────────────────────────────
 
   document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault();
     const errEl = document.getElementById('login-error');
     const btn   = document.getElementById('login-btn');
-    const user  = document.getElementById('login-user').value.trim();
+    const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-pass').value;
     btn.textContent = 'Signing in…'; btn.disabled = true;
     errEl.hidden = true;
 
     try {
-      const r = await fetch(`${API}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, password: pass }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || 'Login failed');
-      token = data.token;
-      localStorage.setItem(TOKEN_KEY, token);
-      showApp(data.user);
+      // Wait for SupabaseAuthClient to be available (loaded via module script)
+      const authClient = window.SupabaseAuthClient;
+      if (!authClient) {
+        throw new Error('Authentication service is not available. Please refresh the page.');
+      }
+
+      // Authenticate via Supabase Auth signInWithPassword (Req 5.1)
+      const result = await authClient.signIn(email, pass);
+      if (!result.success) {
+        throw new Error(result.error || 'Login failed');
+      }
+
+      const user = result.user;
+
+      // Check admin role in app_metadata or user_metadata (Req 5.2)
+      if (!hasAdminRole(user)) {
+        // Not an admin: display error, sign out, redirect within 3 seconds (Req 5.3)
+        errEl.textContent = 'Access denied. You are not authorized as an administrator.';
+        errEl.hidden = false;
+        await authClient.signOut();
+        setTimeout(() => {
+          showLogin();
+        }, 3000);
+        return;
+      }
+
+      // Admin role confirmed — store Supabase JWT as token (Req 5.4)
+      token = result.session.access_token;
+      sessionStorage.setItem(TOKEN_KEY, token);
+
+      // Display admin identifier (Req 5.5)
+      const displayName = getAdminDisplayName(user);
+      showApp(displayName);
       await loadConfig();
       loadData();
     } catch (err) {
@@ -83,9 +238,14 @@
     }
   });
 
-  document.getElementById('logout-btn').addEventListener('click', () => {
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    // Sign out via Supabase Auth (Req 5.6)
+    const authClient = window.SupabaseAuthClient;
+    if (authClient) {
+      await authClient.signOut();
+    }
     token = '';
-    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
     showLogin();
   });
 
@@ -125,8 +285,8 @@
     tbody.innerHTML = '<tr><td colspan="9" class="t-loading">Loading…</td></tr>';
 
     try {
-      const r = await fetch(`${API}/api/admin/accidents?${qs}`, { headers: authHeaders() });
-      if (r.status === 401) { showLogin(); return; }
+      const r = await authenticatedFetch(`${API}/api/admin/accidents?${qs}`);
+      if (r.status === 401) return; // Already handled by authenticatedFetch (redirect to login)
       const data = await r.json();
       curTotal = data.total;
       renderTable(data.rows);
@@ -266,15 +426,15 @@
   async function toggleStatus(id, current) {
     const newStatus = current === 'active' ? 'hidden' : 'active';
     try {
-      const r = await fetch(`${API}/api/admin/accidents/${encodeURIComponent(id)}`, {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/${encodeURIComponent(id)}`, {
         method: 'PATCH',
-        headers: authHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
+      if (r.status === 401) return; // Handled by authenticatedFetch
       if (!r.ok) throw new Error((await r.json()).error);
       loadData(curPage);
     } catch (e) {
-      alert('Failed to update status: ' + e.message);
+      toast('Failed to update status: ' + e.message, 'error');
     }
   }
 
@@ -471,11 +631,11 @@
     }
 
     try {
-      const r = await fetch(`${API}/api/admin/accidents/${encodeURIComponent(editingId)}`, {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/${encodeURIComponent(editingId)}`, {
         method: 'PATCH',
-        headers: authHeaders(),
         body: JSON.stringify({ lat, lng, location, area }),
       });
+      if (r.status === 401) return; // Handled by authenticatedFetch
       if (!r.ok) throw new Error((await r.json()).error);
       closeEdit();
       updateRowInTable(editingId, lat, lng, location, area);
@@ -505,14 +665,15 @@
 
   document.getElementById('confirm-ok').addEventListener('click', async () => {
     try {
-      const r = await fetch(`${API}/api/admin/accidents/${encodeURIComponent(deleteId)}`, {
-        method: 'DELETE', headers: authHeaders(),
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/${encodeURIComponent(deleteId)}`, {
+        method: 'DELETE',
       });
+      if (r.status === 401) return; // Handled by authenticatedFetch
       if (!r.ok) throw new Error((await r.json()).error);
       closeConfirmDelete();
       loadData(curPage);
     } catch (e) {
-      alert('Delete failed: ' + e.message);
+      toast('Delete failed: ' + e.message, 'error');
     }
   });
 
@@ -565,11 +726,11 @@
     saveBtn.textContent = link ? 'Scraping & Verifying…' : 'Verifying with DeepSeek…';
 
     try {
-      const r = await fetch(`${API}/api/admin/accidents`, {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents`, {
         method: 'POST',
-        headers: authHeaders(),
         body: JSON.stringify({ title, source, link, content }),
       });
+      if (r.status === 401) return; // Handled by authenticatedFetch
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || 'Verification failed');
       closeAddModal();
@@ -591,20 +752,388 @@
   document.getElementById('search-box').addEventListener('keydown', e => { if (e.key === 'Enter') loadData(1); });
   document.getElementById('f-sort').addEventListener('change', () => loadData(1));
 
+  // ── Keyboard Shortcuts ──────────────────────────────────────────────────────
+
+  /** Track the currently highlighted table row index for arrow key navigation */
+  let highlightedRowIndex = -1;
+
+  /**
+   * Check if the user is currently typing in an input, textarea, or contenteditable element.
+   * @param {Event} e - The keyboard event
+   * @returns {boolean} true if the user is typing in a text field
+   */
+  function isTypingInField(e) {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+    if (e.target.isContentEditable) return true;
+    return false;
+  }
+
+  /**
+   * Get all visible table rows in the data table body.
+   * @returns {NodeListOf<HTMLTableRowElement>}
+   */
+  function getTableRows() {
+    return document.querySelectorAll('#table-body tr[data-id]');
+  }
+
+  /**
+   * Highlight a table row by index, removing highlight from others.
+   * @param {number} index - The row index to highlight
+   */
+  function highlightRow(index) {
+    const rows = getTableRows();
+    if (!rows.length) return;
+
+    // Remove previous highlight
+    rows.forEach(row => row.classList.remove('kb-highlighted'));
+
+    // Clamp index to valid range
+    if (index < 0) index = 0;
+    if (index >= rows.length) index = rows.length - 1;
+
+    highlightedRowIndex = index;
+    const row = rows[highlightedRowIndex];
+    row.classList.add('kb-highlighted');
+    row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  /**
+   * Check if any modal is currently visible.
+   * @returns {boolean}
+   */
+  function isAnyModalOpen() {
+    const editModal = document.getElementById('edit-modal');
+    const confirmModal = document.getElementById('confirm-modal');
+    const addModalEl = document.getElementById('add-modal');
+    return !editModal.hidden || !confirmModal.hidden || !addModalEl.hidden;
+  }
+
+  /**
+   * Initialize global keyboard shortcut listener.
+   * - Ctrl+S: Save in edit modal
+   * - Esc: Close any open modal
+   * - Arrow Up/Down: Navigate table rows (when not typing)
+   * - Enter: Open edit for highlighted row (when not typing and no modal open)
+   */
+  function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+S (or Cmd+S on Mac): Save in edit modal
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        const editModal = document.getElementById('edit-modal');
+        if (!editModal.hidden) {
+          e.preventDefault();
+          document.getElementById('modal-save').click();
+          return;
+        }
+        // Also handle add modal save
+        const addModalEl = document.getElementById('add-modal');
+        if (!addModalEl.hidden) {
+          e.preventDefault();
+          document.getElementById('add-modal-save').click();
+          return;
+        }
+      }
+
+      // Escape: Close any open modal
+      if (e.key === 'Escape') {
+        const editModal = document.getElementById('edit-modal');
+        const confirmModal = document.getElementById('confirm-modal');
+        const addModalEl = document.getElementById('add-modal');
+
+        if (!editModal.hidden) {
+          closeEdit();
+          return;
+        }
+        if (!confirmModal.hidden) {
+          closeConfirmDelete();
+          return;
+        }
+        if (!addModalEl.hidden) {
+          closeAddModal();
+          return;
+        }
+      }
+
+      // Arrow keys: Navigate table rows (only when not typing in a field and no modal open)
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !isTypingInField(e) && !isAnyModalOpen()) {
+        const rows = getTableRows();
+        if (!rows.length) return;
+
+        e.preventDefault();
+
+        if (e.key === 'ArrowDown') {
+          highlightRow(highlightedRowIndex + 1);
+        } else if (e.key === 'ArrowUp') {
+          highlightRow(highlightedRowIndex - 1);
+        }
+      }
+
+      // Enter: Open edit for highlighted row (when not typing and no modal open)
+      if (e.key === 'Enter' && !isTypingInField(e) && !isAnyModalOpen()) {
+        const rows = getTableRows();
+        if (highlightedRowIndex >= 0 && highlightedRowIndex < rows.length) {
+          const row = rows[highlightedRowIndex];
+          const editBtn = row.querySelector('[data-action="edit"]');
+          if (editBtn) {
+            e.preventDefault();
+            editBtn.click();
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * Add keyboard shortcut hint tooltips to relevant buttons.
+   */
+  function addShortcutHints() {
+    // Save button in edit modal
+    const modalSave = document.getElementById('modal-save');
+    if (modalSave) {
+      modalSave.title = 'Save Coordinates (Ctrl+S)';
+    }
+
+    // Cancel/Close buttons in edit modal
+    const modalClose = document.getElementById('modal-close');
+    if (modalClose) {
+      modalClose.title = 'Close (Esc)';
+    }
+    const modalCancel = document.getElementById('modal-cancel');
+    if (modalCancel) {
+      modalCancel.title = 'Cancel (Esc)';
+    }
+
+    // Confirm modal close/cancel
+    const confirmClose = document.getElementById('confirm-close');
+    if (confirmClose) {
+      confirmClose.title = 'Close (Esc)';
+    }
+    const confirmCancel = document.getElementById('confirm-cancel');
+    if (confirmCancel) {
+      confirmCancel.title = 'Cancel (Esc)';
+    }
+
+    // Add modal save
+    const addModalSave = document.getElementById('add-modal-save');
+    if (addModalSave) {
+      addModalSave.title = 'Verify & Upload (Ctrl+S)';
+    }
+    const addModalClose = document.getElementById('add-modal-close');
+    if (addModalClose) {
+      addModalClose.title = 'Close (Esc)';
+    }
+    const addModalCancel = document.getElementById('add-modal-cancel');
+    if (addModalCancel) {
+      addModalCancel.title = 'Cancel (Esc)';
+    }
+  }
+
+  // Initialize keyboard shortcuts and hints
+  initKeyboardShortcuts();
+  addShortcutHints();
+
+  // ── Toast Notification System ────────────────────────────────────────────
+
+  function showToast(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('toast--removing');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  // ── Auto-Save Draft to SessionStorage ──────────────────────────────────────
+
+  function hasUnsavedChanges() {
+    // Check if edit modal is open with potentially modified values
+    if (editingId && !document.getElementById('edit-modal').hidden) {
+      return true;
+    }
+    // Check if add modal is open with content
+    const addModal = document.getElementById('add-modal');
+    if (addModal && !addModal.hidden) {
+      const title = document.getElementById('add-title').value.trim();
+      const link = document.getElementById('add-link').value.trim();
+      const content = document.getElementById('add-content').value.trim();
+      if (title || link || content) return true;
+    }
+    return false;
+  }
+
+  function saveDraftToSession() {
+    const draft = {};
+    // Save edit modal state
+    if (editingId && !document.getElementById('edit-modal').hidden) {
+      draft.editModal = {
+        id: editingId,
+        lat: document.getElementById('edit-lat').value,
+        lng: document.getElementById('edit-lng').value,
+        location: document.getElementById('edit-location').value,
+        area: document.getElementById('edit-area').value,
+      };
+    }
+    // Save add modal state
+    const addModal = document.getElementById('add-modal');
+    if (addModal && !addModal.hidden) {
+      draft.addModal = {
+        title: document.getElementById('add-title').value,
+        source: document.getElementById('add-source').value,
+        link: document.getElementById('add-link').value,
+        content: document.getElementById('add-content').value,
+      };
+    }
+    if (Object.keys(draft).length > 0) {
+      sessionStorage.setItem('bat_admin_draft', JSON.stringify(draft));
+    }
+  }
+
+  // ── Inactivity Timer ───────────────────────────────────────────────────────
+
+  function initInactivityTimer(timeoutMs = 30 * 60 * 1000) {
+    const WARNING_BEFORE = 5 * 60 * 1000; // 5 minutes before timeout
+    let logoutTimer = null;
+    let warningTimer = null;
+    let countdownInterval = null;
+    let warningShown = false;
+    let stopped = false;
+
+    const warningModal = document.getElementById('inactivity-modal');
+    const countdownEl = document.getElementById('inactivity-countdown');
+    const stayBtn = document.getElementById('inactivity-stay-btn');
+
+    function hideWarning() {
+      if (warningModal) warningModal.hidden = true;
+      warningShown = false;
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+    }
+
+    function showWarning() {
+      warningShown = true;
+      if (warningModal) warningModal.hidden = false;
+      // Start countdown display
+      let remaining = WARNING_BEFORE;
+      updateCountdown(remaining);
+      countdownInterval = setInterval(() => {
+        remaining -= 1000;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+        } else {
+          updateCountdown(remaining);
+        }
+      }, 1000);
+    }
+
+    function updateCountdown(ms) {
+      if (!countdownEl) return;
+      const minutes = Math.floor(ms / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
+      countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function performTimeout() {
+      if (stopped) return;
+      // Auto-save draft if unsaved changes exist
+      if (hasUnsavedChanges()) {
+        saveDraftToSession();
+      }
+      // Clear session
+      token = '';
+      sessionStorage.removeItem(TOKEN_KEY);
+      const authClient = window.SupabaseAuthClient;
+      if (authClient) {
+        authClient.signOut().catch(() => {});
+      }
+      hideWarning();
+      showLogin();
+      showToast('Session expired due to inactivity', 'warning', 5000);
+    }
+
+    function resetTimer() {
+      if (stopped) return;
+      clearTimeout(logoutTimer);
+      clearTimeout(warningTimer);
+      hideWarning();
+
+      sessionStorage.setItem('bat_admin_last_activity', Date.now().toString());
+
+      // Set warning timer (fires at timeoutMs - WARNING_BEFORE)
+      warningTimer = setTimeout(() => {
+        if (!stopped) showWarning();
+      }, timeoutMs - WARNING_BEFORE);
+
+      // Set logout timer (fires at timeoutMs)
+      logoutTimer = setTimeout(() => {
+        if (!stopped) performTimeout();
+      }, timeoutMs);
+    }
+
+    function stop() {
+      stopped = true;
+      clearTimeout(logoutTimer);
+      clearTimeout(warningTimer);
+      hideWarning();
+      events.forEach(evt => document.removeEventListener(evt, resetTimer));
+    }
+
+    // Track user activity with passive listeners
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(evt => document.addEventListener(evt, resetTimer, { passive: true }));
+
+    // "Stay Logged In" button in warning modal
+    if (stayBtn) {
+      stayBtn.addEventListener('click', () => {
+        resetTimer();
+      });
+    }
+
+    // Initial start
+    resetTimer();
+
+    return { reset: resetTimer, stop };
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────────────
 
   async function boot() {
+    // Wait briefly for SupabaseAuthClient to be available (loaded as ES module)
+    let retries = 0;
+    while (!window.SupabaseAuthClient && retries < 20) {
+      await new Promise(r => setTimeout(r, 50));
+      retries++;
+    }
+
     if (token && await checkAuth()) {
-      showApp(ADMIN_USER || 'admin');
+      // Token still valid on server — try to get display name from Supabase session
+      const authClient = window.SupabaseAuthClient;
+      let displayName = 'Admin';
+      if (authClient) {
+        const session = await authClient.getSession();
+        if (session && session.user) {
+          displayName = getAdminDisplayName(session.user);
+          // Refresh the token from current Supabase session
+          token = session.access_token;
+          sessionStorage.setItem(TOKEN_KEY, token);
+        }
+      }
+      showApp(displayName);
       await loadConfig();
       loadData();
     } else {
       token = '';
-      localStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
       showLogin();
     }
   }
 
-  const ADMIN_USER = 'admin'; // display only
   boot();
 })();
