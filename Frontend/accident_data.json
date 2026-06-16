@@ -435,21 +435,6 @@
     "hasCoords": true
   },
   {
-    "id": "31",
-    "title": "Bengaluru biker dies in Belur accident - The Hindu",
-    "source": "The Hindu",
-    "link": "https://www.thehindu.com/news/national/karnataka/bengaluru-biker-dies-in-belur-accident/article8404348.ece",
-    "location": "Chikkamagaluru",
-    "area": "Chikkamagaluru",
-    "zone": "North",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 13.32,
-    "lng": 75.77,
-    "hasCoords": true
-  },
-  {
     "id": "32",
     "title": "Bangalore Doctor Crashes Mercedes-Benz Injuring 5 & Killing 1: Video - DriveSpark",
     "source": "DriveSpark",
@@ -537,21 +522,6 @@
     "date": null,
     "lat": 13.02,
     "lng": 77.59,
-    "hasCoords": true
-  },
-  {
-    "id": "38",
-    "title": "Horror crash on expressway - Bangalore Mirror",
-    "source": "Bangalore Mirror",
-    "link": "https://bangaloremirror.indiatimes.com/news/india/horror-crash-on-expressway/articleshow/52611214.cms",
-    "location": "an Innova stop",
-    "area": "an Innova stop",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -750,21 +720,6 @@
     "hasCoords": true
   },
   {
-    "id": "52",
-    "title": "Charged Up Mahindra e2o Crashes In Bangalore — The Doomsday Dive? - DriveSpark",
-    "source": "DriveSpark",
-    "link": "https://www.drivespark.com/off-beat/mahindra-e2o-crash-bangalore-020952.html",
-    "location": "Bangalore lost control and flew into an office block",
-    "area": "Bangalore lost control and flew into an office block",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "53",
     "title": "Here’s why roads are turning into a livewire - Bangalore Mirror",
     "source": "Bangalore Mirror",
@@ -867,21 +822,6 @@
     "date": null,
     "lat": 13.02,
     "lng": 77.55,
-    "hasCoords": true
-  },
-  {
-    "id": "61",
-    "title": "Jeep Compass Crashes In Bangalore | Shows Good Build Quality And Safety Features - DriveSpark",
-    "source": "DriveSpark",
-    "link": "https://www.drivespark.com/off-beat/jeep-compass-first-crash-in-india-023455.html",
-    "location": "the Compass ever stop",
-    "area": "the Compass ever stop",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -1605,21 +1545,6 @@
     "hasCoords": true
   },
   {
-    "id": "110",
-    "title": "TVS Apache RTR 160 motorcycles added to Bangalore Police's fleet - Indian Autos Blog",
-    "source": "Indian Autos Blog",
-    "link": "https://indianautosblog.com/tvs-apache-rtr-160-motorcycles-added-to-bangalore-polices-fleet-p315889",
-    "location": "September that the Apache brand has cross",
-    "area": "September that the Apache brand has cross",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "111",
     "title": "Motorists break divider to escape flyover traffic trap - Bangalore Mirror",
     "source": "Bangalore Mirror",
@@ -1920,21 +1845,6 @@
     "hasCoords": true
   },
   {
-    "id": "131",
-    "title": "15 killed after Bangalore bound SRS travels bus hit vehicle in AP's Kurnool district - Oneindia",
-    "source": "Oneindia",
-    "link": "https://www.oneindia.com/india/15-killed-after-bangalore-bound-srs-travels-bus-hit-vehicle-in-aps-kurnool-district-2890212.html",
-    "location": "Andhra Pradesh",
-    "area": "Andhra Pradesh",
-    "zone": "North",
-    "severity": "fatal",
-    "score": 10,
-    "date": null,
-    "lat": 15.9129,
-    "lng": 79.74,
-    "hasCoords": true
-  },
-  {
     "id": "132",
     "title": "Student in Mercedes car runs over man, angry mob targets Bangalore Alliance University campus - The ",
     "source": "The",
@@ -1947,21 +1857,6 @@
     "date": null,
     "lat": 12.95,
     "lng": 77.6,
-    "hasCoords": true
-  },
-  {
-    "id": "133",
-    "title": "5 of family killed in accident in Bengaluru - Deccan Herald",
-    "source": "Deccan Herald",
-    "link": "https://www.deccanherald.com/india/karnataka/bengaluru/5-of-family-killed-in-accident-in-bengaluru-736498.html",
-    "location": "accident in Bengaluru Tragedy on KIA road",
-    "area": "accident in Bengaluru Tragedy on KIA road",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 6,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -2250,21 +2145,6 @@
     "hasCoords": true
   },
   {
-    "id": "153",
-    "title": "Speeding car falls off newly built Hyderabad flyover - Bangalore Mirror",
-    "source": "Bangalore Mirror",
-    "link": "https://bangaloremirror.indiatimes.com/videos/topvideos/speeding-car-falls-off-newly-built-hyderabad-flyover/videoshow/72200931.cms",
-    "location": "you have an ad block",
-    "area": "you have an ad block",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "154",
     "title": "Bengaluru: Four scooter riders crushed to death under truck wheels - The Times of India",
     "source": "The Times of India",
@@ -2277,21 +2157,6 @@
     "date": null,
     "lat": 13.0206,
     "lng": 77.512,
-    "hasCoords": true
-  },
-  {
-    "id": "155",
-    "title": "Pedestrian safety in Bengaluru: The daily risks of walking in the city - The News Minute",
-    "source": "The News Minute",
-    "link": "https://www.thenewsminute.com/karnataka/pedestrian-safety-bengaluru-daily-risks-walking-city-113887",
-    "location": "Bengaluru occurred when they were trying to cross the road",
-    "area": "Bengaluru occurred when they were trying to cross the road",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -3390,21 +3255,6 @@
     "hasCoords": true
   },
   {
-    "id": "229",
-    "title": "Bengaluru: BBMP garbage truck runs over delivery boy - Deccan Herald",
-    "source": "Deccan Herald",
-    "link": "https://www.deccanherald.com/india/karnataka/bengaluru/bengaluru-bbmp-garbage-truck-runs-over-delivery-boy-1109338.html",
-    "location": "Bengaluru Mahanagar",
-    "area": "Bengaluru Mahanagar",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "230",
     "title": "BBMP garbage truck mows down Swiggy delivery boy | Bengaluru - Hindustan Times",
     "source": "Hindustan Times",
@@ -3522,21 +3372,6 @@
     "date": null,
     "lat": 12.966,
     "lng": 77.597,
-    "hasCoords": true
-  },
-  {
-    "id": "238",
-    "title": "KGF actor BS Avinash meets with road accident in Bengaluru | Hindustan Times - Hindustan Times",
-    "source": "Hindustan Times",
-    "link": "https://www.hindustantimes.com/entertainment/telugu-cinema/kgf-actor-bs-avinash-road-accident-in-bengaluru-101656564241556.html",
-    "location": "Avinash was travelling near the Anil Kumble",
-    "area": "Avinash was travelling near the Anil Kumble",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -3915,21 +3750,6 @@
     "hasCoords": true
   },
   {
-    "id": "266",
-    "title": "Bengaluru's potholes claim one more life, 50-year-old woman dies after accident - The News Minute",
-    "source": "The News Minute",
-    "link": "https://www.thenewsminute.com/karnataka/bengalurus-potholes-claim-one-more-life-50-yer-old-woman-dies-after-accident-168983",
-    "location": "Bengaluru Mahanagar",
-    "area": "Bengaluru Mahanagar",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "267",
     "title": "Bengaluru: Birthday boy’s arm severed, girl dies as bike hits crash barrier - The Times of India",
     "source": "The Times of India",
@@ -3987,21 +3807,6 @@
     "date": "2022-10-25",
     "lat": 12.95,
     "lng": 77.6,
-    "hasCoords": true
-  },
-  {
-    "id": "271",
-    "title": "Bengaluru student dies after car-bike collision involving pothole - Deccan Herald",
-    "source": "Deccan Herald",
-    "link": "https://www.deccanherald.com/india/karnataka/bengaluru/bengaluru-student-dies-after-car-bike-collision-involving-pothole-1157995.html",
-    "location": "involving pothole The driver is reported to have lost control of the car while negotiating an elongate",
-    "area": "involving pothole The driver is reported to have lost control of the car while negotiating an elongate",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -4650,21 +4455,6 @@
     "hasCoords": true
   },
   {
-    "id": "315",
-    "title": "Kannada actor Suraj Kumar loses leg after bike accident near Bengaluru - tennews.in",
-    "source": "tennews.in",
-    "link": "https://tennews.in/kannada-actor-suraj-kumar-loses-leg-after-bike-accident-near-bengaluru/",
-    "location": "Hirikati Gate",
-    "area": "Hirikati Gate",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "316",
     "title": "Kannada Actor Suraj Kumar’s Right Leg AMPUTATED After A Horrific Bike Accident In Bengaluru- Read RE",
     "source": "News Article",
@@ -5115,21 +4905,6 @@
     "hasCoords": true
   },
   {
-    "id": "346",
-    "title": "Karnataka: Five dead in tragic accident as car falls into canal | Bengaluru - Hindustan Times",
-    "source": "Hindustan Times",
-    "link": "https://www.hindustantimes.com/cities/bengaluru-news/karnataka-five-dead-in-tragic-accident-as-car-falls-into-canal-101699427891259.html",
-    "location": "Chikkaballapura",
-    "area": "Chikkaballapura",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 10,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "347",
     "title": "Bengaluru fake accident scam: Men chase car, ask woman driver to step out. What happened next - Mone",
     "source": "Mone",
@@ -5505,21 +5280,6 @@
     "hasCoords": true
   },
   {
-    "id": "372",
-    "title": "KSRTC provides ₹10 lakh aid to family of accident victim | Bengaluru - Hindustan Times",
-    "source": "Hindustan Times",
-    "link": "https://www.hindustantimes.com/cities/bengaluru-news/ksrtc-provides-rs-10-lakh-aid-to-family-of-accident-victim-101708404305510.html",
-    "location": "February",
-    "area": "February",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "373",
     "title": "Big truck peril: 2 killed in separate accidents in Bengaluru - Deccan Herald",
     "source": "Deccan Herald",
@@ -5880,21 +5640,6 @@
     "hasCoords": true
   },
   {
-    "id": "397",
-    "title": "Tragic Accident at Zojila Pass: Three Bengaluru Tourists Killed - newskarnataka.com",
-    "source": "newskarnataka.com",
-    "link": "https://newskarnataka.com/karnataka/bengaluru/tragic-accident-at-zojila-pass-three-bengaluru-tourists-killed/17072024",
-    "location": "Zojila Pass in central Kashmir",
-    "area": "Zojila Pass in central Kashmir",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 6,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "398",
     "title": "Medical student killed in accident in Bengaluru - The Hindu",
     "source": "The Hindu",
@@ -6244,8 +5989,8 @@
     "title": "Techie killed in late-night bike crash in Bengaluru - Deccan Herald",
     "source": "Deccan Herald",
     "link": "https://www.deccanherald.com/india/karnataka/bengaluru/techie-killed-in-late-night-bike-crash-3200414",
-    "location": "Bengaluru The Mico Layout",
-    "area": "Bengaluru The Mico Layout",
+    "location": "The Mico Layout",
+    "area": "The Mico Layout",
     "zone": "Central",
     "severity": "fatal",
     "score": 6,
@@ -6927,21 +6672,6 @@
     "date": "2025-01-02",
     "lat": 12.93,
     "lng": 77.68,
-    "hasCoords": true
-  },
-  {
-    "id": "468",
-    "title": "Suffered brain death in accident on New Year's death; Malayali youth's organs to give new lease of l",
-    "source": "News Article",
-    "link": "https://keralakaumudi.com/en/news/mobile/news.php?id=1455439&u=malayali-youths-organs-to-give-new-lease-of-life-to-eight-people-in-bengaluru",
-    "location": "New Year",
-    "area": "New Year",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 6,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -7860,21 +7590,6 @@
     "hasCoords": true
   },
   {
-    "id": "531",
-    "title": "Nine Injured in Road Crash Near Bengaluru Airport; One Critical - Deccan Herald",
-    "source": "Deccan Herald",
-    "link": "https://www.deccanherald.com/india/karnataka/bengaluru/nine-injured-in-road-crash-near-bengaluru-airport-one-critical-3538349",
-    "location": "the construction of the Western Cross",
-    "area": "the construction of the Western Cross",
-    "zone": "Central",
-    "severity": "serious",
-    "score": 5,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "532",
     "title": "One dead, 34 injured in bus accident near Bengaluru airport - The Times of India",
     "source": "The Times of India",
@@ -7960,8 +7675,8 @@
     "severity": "minor",
     "score": 1,
     "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
+    "lat": 13.039683,
+    "lng": 77.573906,
     "hasCoords": true
   },
   {
@@ -8052,21 +7767,6 @@
     "date": null,
     "lat": 13.04,
     "lng": 77.595,
-    "hasCoords": true
-  },
-  {
-    "id": "544",
-    "title": "Malayalam film actor Shine Tom Chacko's father dies in road accident in near Bengaluru, filmstar hos",
-    "source": "News Article",
-    "link": "https://www.livemint.com/entertainment/malayalam-film-actor-shine-tom-chackos-father-dies-in-road-accident-in-near-bengaluru-filmstar-hospitalised-11749199439490.html",
-    "location": "Bengaluru in the early hours of Friday",
-    "area": "Bengaluru in the early hours of Friday",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -8247,21 +7947,6 @@
     "date": null,
     "lat": 12.9698,
     "lng": 77.75,
-    "hasCoords": true
-  },
-  {
-    "id": "557",
-    "title": "Senior citizen robbed by goon in fake accident scam on M.G. Road in Bengaluru, victim struggles to g",
-    "source": "News Article",
-    "link": "https://www.thehindu.com/news/cities/bangalore/senior-citizen-robbed-by-goon-in-fake-accident-scam-on-mg-road-in-bengaluru-victim-struggles-to-get-fir-registered/article69716232.ece",
-    "location": "in Rajasthan Royals IPL team Airtel block",
-    "area": "in Rajasthan Royals IPL team Airtel block",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
@@ -9660,21 +9345,6 @@
     "hasCoords": true
   },
   {
-    "id": "652",
-    "title": "‘Citizen-First Policing’: Bengaluru Gets E-Accident Report System for Quick Claims | How It Works - ",
-    "source": "",
-    "link": "https://www.timesnownews.com/bengaluru/citizen-first-policing-bengaluru-gets-e-accident-report-system-for-quick-claims-how-it-works-bengaluru-news-article-153023871",
-    "location": "Mass Shooting on Holley Avenue",
-    "area": "Mass Shooting on Holley Avenue",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "653",
     "title": "Car overturns as driver swerves to avoid pothole on Tumakuru–Bengaluru National Highway - The Times ",
     "source": "The Times",
@@ -9705,21 +9375,6 @@
     "hasCoords": true
   },
   {
-    "id": "655",
-    "title": "Kurnool Bus Accident: 25 Dead As Hyderabad-Bengaluru Bus Catches Fire After Hitting Bike - curlytale",
-    "source": "curlytale",
-    "link": "https://curlytales.com/india/trending/kurnool-bus-accident-dead-as-hyderabad-bengaluru-bus-catches-fire-after-hitting-bike/",
-    "location": "Chinnatekuru",
-    "area": "Chinnatekuru",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 10,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "656",
     "title": "Tragic memories of 2013 Bengaluru–Hyderabad accident come back to haunt after 12 years - The Hindu",
     "source": "The Hindu",
@@ -9735,36 +9390,6 @@
     "hasCoords": true
   },
   {
-    "id": "657",
-    "title": "Over 20 killed as Bengaluru-bound bus catches fire after collision near Kurnool - The News Minute",
-    "source": "The News Minute",
-    "link": "https://www.thenewsminute.com/andhra-pradesh/over-20-killed-as-bengaluru-bound-bus-catches-fire-after-collision-near-kurnool",
-    "location": "or mitigate",
-    "area": "or mitigate",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 10,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
-    "id": "658",
-    "title": "20 Burnt Alive as Hyderabad–Bengaluru Bus Erupts in Flames After Crash - Kashmir Life",
-    "source": "Kashmir Life",
-    "link": "https://kashmirlife.net/20-burnt-alive-as-hyderabad-bengaluru-bus-erupts-in-flames-after-crash-410324/",
-    "location": "the fuel tank remain",
-    "area": "the fuel tank remain",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "659",
     "title": "Car Accident News: Couple Killed, 3 Injured on Bengaluru Highway - Deccan Herald",
     "source": "Deccan Herald",
@@ -9777,36 +9402,6 @@
     "date": null,
     "lat": 12.95,
     "lng": 77.8,
-    "hasCoords": true
-  },
-  {
-    "id": "660",
-    "title": "At least 18 dead as Hyderabad–Bengaluru bus catches fire near Kurnool after collision - PGurus",
-    "source": "PGurus",
-    "link": "https://www.pgurus.com/at-least-18-dead-as-hyderabad-bengaluru-bus-catches-fire-near-kurnool-after-collision/",
-    "location": "Chinnatekuru",
-    "area": "Chinnatekuru",
-    "zone": "Central",
-    "severity": "fatal",
-    "score": 10,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
-    "id": "661",
-    "title": "T'gana govt sets up helpline for kin of Hyderabad-Bengaluru bus accident victims - Vartha Bharati",
-    "source": "Vartha Bharati",
-    "link": "https://english.varthabharati.in/india/tgana-govt-sets-up-helpline-for-kin-of-hyderabad-bengaluru-bus-accident-victims",
-    "location": "Kurnool district of neighbouring Andhra Pradesh",
-    "area": "Kurnool district of neighbouring Andhra Pradesh",
-    "zone": "North",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 15.9129,
-    "lng": 79.74,
     "hasCoords": true
   },
   {
@@ -10425,36 +10020,6 @@
     "hasCoords": true
   },
   {
-    "id": "704",
-    "title": "Bengaluru ‘Drunk’ Driver Threatens To ‘Crash Bus’ As Passengers Plead Him To Pull Over: ‘We Felt Uns",
-    "source": "News Article",
-    "link": "https://www.news18.com/viral/bengaluru-drunk-driver-threatens-to-kill-crash-bus-passenger-feel-unsafe-video-aa-ws-l-9732058.html",
-    "location": "In Indian Railways Works Passengers Plead With Driver To Stop",
-    "area": "In Indian Railways Works Passengers Plead With Driver To Stop",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
-    "id": "706",
-    "title": "Bengaluru Man Suffers Major Accident Due To Potholes, Ends Up With ₹6 Lakh Hospital Bill - Storypick",
-    "source": "Storypick",
-    "link": "https://storypick.com/bengaluru-man-suffers-major-accident-due-to-potholes/",
-    "location": "Bengaluru Mahanagar",
-    "area": "Bengaluru Mahanagar",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "707",
     "title": "Bescom magic box turns death trap: Bengaluru techie, injured in bike crash, dies after ambulance get",
     "source": "News Article",
@@ -10590,21 +10155,6 @@
     "hasCoords": true
   },
   {
-    "id": "716",
-    "title": "Odisha youth battling for life in Bengaluru after tragic road accident, family seeks MP Baijayant Pa",
-    "source": "News Article",
-    "link": "https://odishatv.in/odisha/odisha-youth-battling-for-life-in-bengaluru-after-tragic-road-accident-family-seeks-mp-baijayant-pandas-help-10908133",
-    "location": "Bengaluru after tragic road",
-    "area": "Bengaluru after tragic road",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
-    "hasCoords": true
-  },
-  {
     "id": "717",
     "title": "SUV owned by former Karnataka minister’s son linked to hit-and-run death on outskirts of Bengaluru -",
     "source": "News Article",
@@ -10617,21 +10167,6 @@
     "date": null,
     "lat": 12.95,
     "lng": 77.6,
-    "hasCoords": true
-  },
-  {
-    "id": "718",
-    "title": "Two Bengaluru medical college students die in TN road accident - The Times of India",
-    "source": "The Times of India",
-    "link": "https://timesofindia.indiatimes.com/city/coimbatore/two-bengaluru-medical-college-students-die-in-tn-road-accident/articleshow/126040829.cms",
-    "location": "AhmedabadPark",
-    "area": "AhmedabadPark",
-    "zone": "Central",
-    "severity": "minor",
-    "score": 1,
-    "date": null,
-    "lat": 12.9716,
-    "lng": 77.5946,
     "hasCoords": true
   },
   {
