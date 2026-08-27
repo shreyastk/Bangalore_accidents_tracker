@@ -367,24 +367,43 @@
         : `<span class="no-coords">No coords</span>`;
       const stClass = r.status === 'active' ? 'status-active' : 'status-hidden';
       const stLabel = r.status === 'active' ? '● Active' : '○ Hidden';
+      // Checkbox cell for bulk actions
+      const checkboxCell = `<td><input type="checkbox" class="row-select" data-id="${esc(r.id)}" aria-label="Select ${esc(r.id)}"></td>`;
+
+      // Approve/Reject buttons for pending user reports
+      let pendingBtns = '';
+      if (r.status === 'pending' && r.reporter_id) {
+        pendingBtns = `
+          <button class="btn-approve" data-action="approve" data-id="${esc(r.id)}">Approve</button>
+          <button class="btn-reject" data-action="reject" data-id="${esc(r.id)}">Reject</button>
+        `;
+      }
+
+      const rejectionNote = r.rejection_reason ? `<div style="font-size:12px;color:#b91c1c;margin-top:6px">Reason: ${esc(r.rejection_reason)}</div>` : '';
+      const proofLink = r.proof_url
+        ? `<a href="${esc(r.proof_url)}" target="_blank" rel="noopener" style="display:block;margin-top:6px">View proof image</a>`
+        : '';
 
       return `<tr data-id="${esc(r.id)}">
+        ${checkboxCell}
         <td class="cell-id">${esc(r.id)}</td>
         <td class="cell-title">${titleHtml}</td>
         <td class="cell-source">${esc(r.source || '—')}</td>
         <td class="cell-date">${esc(r.date || '—')}</td>
-        <td class="cell-loc">${esc(r.location || r.area || '—')}</td>
+        <td class="cell-loc">${esc(r.location || r.area || '—')}${proofLink}</td>
         <td><span class="sev-badge ${sevClass}">${sevLabel}</span></td>
         <td class="cell-coords">${coordHtml}</td>
         <td>
           <button class="status-badge ${stClass}" data-action="toggle-status" data-id="${esc(r.id)}" data-status="${esc(r.status)}">
             ${stLabel}
           </button>
+          ${rejectionNote}
         </td>
         <td>
           <div class="action-btns">
             <button class="btn-edit" data-action="edit" data-id="${esc(r.id)}" data-row='${JSON.stringify({id:r.id,title:r.title,link:r.link||'',lat:r.lat||'',lng:r.lng||'',location:r.location||'',area:r.area||''})}'> Edit</button>
             <button class="btn-del"  data-action="delete" data-id="${esc(r.id)}" data-title="${esc(r.title)}"> Delete</button>
+            ${pendingBtns}
           </div>
         </td>
       </tr>`;
@@ -400,6 +419,29 @@
     tbody.querySelectorAll('[data-action="delete"]').forEach(btn => {
       btn.addEventListener('click', () => openConfirmDelete(btn.dataset.id, btn.dataset.title));
     });
+    // Approve / Reject single items
+    tbody.querySelectorAll('[data-action="approve"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        try {
+          const r = await authenticatedFetch(`${API}/api/admin/accidents/bulk`, { method: 'POST', body: JSON.stringify({ ids: [id], action: 'verify' }) });
+          if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+          toast('Approved', 'success');
+          loadData(curPage);
+        } catch (e) { toast('Approve failed: ' + e.message, 'error'); }
+      });
+    });
+    tbody.querySelectorAll('[data-action="reject"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        // open reject modal for single id
+        openRejectModal([id]);
+      });
+    });
+    // Row selection handlers
+    tbody.querySelectorAll('.row-select').forEach(cb => { cb.addEventListener('change', () => {}); });
+    // Reset header select-all checkbox when table is refreshed
+    const selAll = document.getElementById('select-all'); if (selAll) selAll.checked = false;
   }
 
   // ── Pagination ────────────────────────────────────────────────────────────
@@ -512,20 +554,69 @@
 
     // Sync inputs → marker
     ['edit-lat','edit-lng'].forEach(id => {
-      document.getElementById(id).oninput = () => {
-        const lat = parseFloat(document.getElementById('edit-lat').value);
-        const lng = parseFloat(document.getElementById('edit-lng').value);
-        if (!isNaN(lat) && !isNaN(lng)) {
-          if (editMarker) editMarker.setLngLat([lng, lat]);
-          if (editMap) editMap.setCenter([lng, lat]);
-        }
-      };
+        document.getElementById(id).oninput = () => {
+          const lat = parseFloat(document.getElementById('edit-lat').value);
+          const lng = parseFloat(document.getElementById('edit-lng').value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            if (editMarker) editMarker.setLngLat([lng, lat]);
+            if (editMap) editMap.setCenter([lng, lat]);
+            // Debounced duplicate check when coordinates change
+            scheduleDuplicateCheck(lat, lng);
+          }
+        };
     });
+    // Initial duplicate check for this record (use record id)
+    checkDuplicates(editingId);
   }
 
   function closeEdit() {
     document.getElementById('edit-modal').hidden = true;
     editingId = null;
+  }
+
+  // ── Duplicate detection helpers ─────────────────────────────────────────
+  let dupTimer = null;
+  function scheduleDuplicateCheck(lat, lng) {
+    if (dupTimer) clearTimeout(dupTimer);
+    dupTimer = setTimeout(() => checkDuplicates(editingId, lat, lng), 450);
+  }
+
+  async function checkDuplicates(id, lat = null, lng = null) {
+    const el = document.getElementById('modal-duplicates');
+    if (!el) return;
+    el.textContent = 'Checking for nearby records…';
+    try {
+      const qs = new URLSearchParams();
+      if (lat !== null && lng !== null) {
+        qs.set('lat', String(lat)); qs.set('lng', String(lng));
+      }
+      const url = `${API}/api/admin/accidents/${encodeURIComponent(id)}/duplicates${qs.toString() ? ('?' + qs.toString()) : ''}`;
+      const r = await authenticatedFetch(url);
+      if (r.status === 401) return;
+      const data = await r.json();
+      if (!data || !data.length) {
+        el.innerHTML = '<span style="color:var(--text-muted)">No nearby duplicates found.</span>';
+        return;
+      }
+      // Render small list
+      el.innerHTML = data.map(d => {
+        const dist = d.distance_m ? (Number(d.distance_m).toFixed(0) + 'm') : '';
+        return `<div style="padding:6px 0;border-bottom:1px solid rgba(15,23,42,0.04)"><strong>${esc(d.title || d.location || d.id)}</strong> <span style="color:#64748b;font-size:12px">${esc(d.accident_date||'')} • ${dist}</span><br><a href="#" data-id="${esc(d.id)}" class="dup-open">Open</a></div>`;
+      }).join('');
+      // Attach handlers to open duplicates in editor
+      el.querySelectorAll('.dup-open').forEach(a => {
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          const rid = a.dataset.id;
+          // find row in table and trigger edit if present
+          const rowBtn = document.querySelector(`#table-body [data-action="edit"][data-id="${rid}"]`);
+          if (rowBtn) { rowBtn.click(); }
+          else { toast('Duplicate not currently loaded in table. Refresh table to edit it.', 'warning'); }
+        });
+      });
+    } catch (e) {
+      el.innerHTML = `<span style="color:#dc2626">Duplicate check failed: ${e.message}</span>`;
+    }
   }
 
   async function searchPlaceOnMap() {
@@ -932,6 +1023,77 @@
   // Initialize keyboard shortcuts and hints
   initKeyboardShortcuts();
   addShortcutHints();
+
+  // ── Bulk selection & actions ──────────────────────────────────────────
+  function getSelectedIds() {
+    return Array.from(document.querySelectorAll('.row-select:checked')).map(cb => cb.dataset.id);
+  }
+
+  function openRejectModal(ids) {
+    if (!ids || !ids.length) return toast('No records selected', 'warning');
+    // store ids on modal element
+    const modal = document.getElementById('reject-modal');
+    modal.dataset.ids = JSON.stringify(ids);
+    document.getElementById('bulk-reject-reason').value = '';
+    modal.hidden = false;
+  }
+
+  function closeRejectModal() {
+    const modal = document.getElementById('reject-modal');
+    modal.hidden = true;
+    delete modal.dataset.ids;
+  }
+
+  // select-all checkbox handler
+  const selectAllEl = document.getElementById('select-all');
+  if (selectAllEl) {
+    selectAllEl.addEventListener('change', () => {
+      const checked = selectAllEl.checked;
+      document.querySelectorAll('.row-select').forEach(cb => { cb.checked = checked; });
+    });
+  }
+
+  // Bulk action buttons
+  document.getElementById('approve-selected')?.addEventListener('click', async () => {
+    const ids = getSelectedIds(); if (!ids.length) return toast('No records selected', 'warning');
+    try {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/bulk`, { method: 'POST', body: JSON.stringify({ ids, action: 'verify' }) });
+      if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      toast('Approved selected', 'success'); loadData(curPage);
+    } catch (e) { toast('Bulk approve failed: ' + e.message, 'error'); }
+  });
+
+  document.getElementById('reject-selected')?.addEventListener('click', () => {
+    const ids = getSelectedIds(); if (!ids.length) return toast('No records selected', 'warning');
+    openRejectModal(ids);
+  });
+
+  document.getElementById('delete-selected')?.addEventListener('click', async () => {
+    const ids = getSelectedIds(); if (!ids.length) return toast('No records selected', 'warning');
+    if (!confirm(`Delete ${ids.length} records permanently? This cannot be undone.`)) return;
+    try {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/bulk`, { method: 'POST', body: JSON.stringify({ ids, action: 'delete' }) });
+      if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      toast('Deleted selected', 'success'); loadData(curPage);
+    } catch (e) { toast('Bulk delete failed: ' + e.message, 'error'); }
+  });
+
+  // Reject modal buttons
+  document.getElementById('reject-close')?.addEventListener('click', closeRejectModal);
+  document.getElementById('reject-cancel')?.addEventListener('click', closeRejectModal);
+  document.getElementById('reject-confirm')?.addEventListener('click', async () => {
+    const modal = document.getElementById('reject-modal');
+    const ids = JSON.parse(modal.dataset.ids || '[]');
+    const reason = document.getElementById('bulk-reject-reason').value.trim();
+    if (!ids.length) { closeRejectModal(); return; }
+    try {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/bulk`, { method: 'POST', body: JSON.stringify({ ids, action: 'hide', rejection_reason: reason }) });
+      if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      toast('Rejected selected', 'success');
+      closeRejectModal();
+      loadData(curPage);
+    } catch (e) { toast('Bulk reject failed: ' + e.message, 'error'); }
+  });
 
   // ── Toast Notification System ────────────────────────────────────────────
 

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "seed": "node seed.mjs",
+    "seed:hospitals": "node seed-hospitals.mjs",
     "import:xlsx": "node import-from-xlsx.mjs",
     "import:fewfinal": "node import-few-final.mjs",
     "test": "vitest run"
@@ -13,8 +14,9 @@
     "@openrouter/sdk": "^0.12.35",
     "@supabase/supabase-js": "^2.105.4",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^4.21.0",
+    "express-rate-limit": "^6.8.0",
     "node-fetch": "^3.3.2",
     "pg": "^8.13.0",
     "xlsx": "^0.18.5"

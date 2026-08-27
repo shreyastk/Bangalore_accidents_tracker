@@ -677,3 +677,14 @@ button { font-family: inherit; cursor: pointer; }
   .stats-strip { grid-template-columns: 1fr 1fr; }
   .brand-sub { display: none; }
 }
+
+/* Dashboard receives the same polished entrance motion as the content pages. */
+.has-scroll-reveal .scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .55s cubic-bezier(.22,1,.36,1) var(--reveal-delay, 0ms), transform .55s cubic-bezier(.22,1,.36,1) var(--reveal-delay, 0ms);
+}
+.has-scroll-reveal .scroll-reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .has-scroll-reveal .scroll-reveal { opacity: 1; transform: none; transition: none; }
+}

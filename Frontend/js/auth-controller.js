@@ -15,6 +15,7 @@ const AuthController = {
     this._setupTabs();
     this._setupPasswordToggles();
     this._setupForms();
+    this._setupPasswordReset();
     this._checkUrlParams();
     this._redirectIfAuthenticated();
   },
@@ -186,8 +187,12 @@ const AuthController = {
   async redirectIfAuthenticated(defaultPage = 'dashboard.html') {
     if (!window.SupabaseAuthClient) return;
 
-    const session = await window.SupabaseAuthClient.getSession();
-    if (session) {
+    // Validate the session with getUser() (checks against Supabase and the dev
+    // fallback) instead of getSession() (storage only). Using getSession() here
+    // makes the login page bounce stale/expired sessions straight back to the
+    // protected page, which redirects to login again — an infinite redirect loop.
+    const user = await window.SupabaseAuthClient.getUser();
+    if (user) {
       const params = new URLSearchParams(window.location.search);
       window.location.href = params.get('returnTo') || defaultPage;
     }
@@ -423,6 +428,27 @@ const AuthController = {
         this.handleLogin(email, password);
       });
     }
+  },
+
+  _setupPasswordReset() {
+    const link = document.querySelector('.forgot-link');
+    if (!link) return;
+    link.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const emailInput = document.getElementById('login-email');
+      const email = emailInput?.value.trim();
+      if (!email) {
+        this.showAlert('info', 'Enter your email address first, then select Forgot password.');
+        emailInput?.focus();
+        return;
+      }
+      link.textContent = 'Sending...';
+      const result = await window.SupabaseAuthClient.resetPassword(email);
+      link.textContent = 'Forgot password?';
+      this.showAlert(result.success ? 'success' : 'error', result.success
+        ? 'If that account exists, a password reset link has been sent to the email address.'
+        : 'Unable to send the reset email. Please try again.');
+    });
   },
 
   /**

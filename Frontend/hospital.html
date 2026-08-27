@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hospital Directory — Bangalore Accidents Tracker</title>
+  <meta name="description" content="Browse hospitals across Bangalore, search by name or area, and view emergency alerts for hospital responders.">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <nav class="navbar" id="main-nav">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="BAT Logo" style="height: 48px; width: auto; object-fit: contain;">
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="trends.html" class="nav-link">Trends</a></li>
+      <li><a href="hospital.html" class="nav-link active">Hospital</a></li>
+      <li><a href="report.html" class="nav-link">Report Accident</a></li>
+      <li><a href="profile.html" class="nav-link">My Profile</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth-links"></div>
+    <div class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </nav>
+
+  <main class="hospital-page">
+    <div class="page-head">
+      <span class="page-eyebrow">Emergency Network</span>
+      <h1 class="page-title">Hospital Directory</h1>
+      <p class="page-sub">Find hospitals across Bangalore and nearby areas. Search by name, area or phone, or view live emergency alerts.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="hospital-stats">
+      <div class="stat-card stat-card-total">
+        <div class="stat-number" id="hospital-count">—</div>
+        <div class="stat-label">Hospitals on Record</div>
+      </div>
+      <div class="stat-card stat-card-fatal" id="alert-count-card" hidden>
+        <div class="stat-number" id="alert-count">0</div>
+        <div class="stat-label">Active Alerts</div>
+      </div>
+    </div>
+
+    <!-- Search / Toolbar -->
+    <div class="hospital-toolbar">
+      <div class="search-field">
+        <span class="search-icon">⌕</span>
+        <input type="search" id="hospital-search" class="form-control" placeholder="Search hospital name, area or phone…" autocomplete="off">
+      </div>
+      <button class="btn btn-outline" id="refresh-btn">Refresh</button>
+    </div>
+    <div id="results-info" class="results-info text-muted"></div>
+
+    <!-- Hospital Directory -->
+    <div id="hospital-list" class="hospital-grid">
+      <div class="list-state">Loading hospitals…</div>
+    </div>
+    <div class="load-more-wrap">
+      <button class="btn btn-outline" id="load-more-btn" hidden>Load more</button>
+    </div>
+
+    <!-- Emergency Alerts (hospital responders) -->
+    <section class="alerts-section" aria-label="Emergency alerts">
+      <div class="alerts-head">
+        <div>
+          <h2>Emergency Alerts</h2>
+          <p class="text-muted">Alerts are polled regularly for hospital responders.</p>
+        </div>
+        <span id="poll-status" class="poll-status text-muted">Idle</span>
+      </div>
+      <div id="alerts" class="alerts-list">
+        <div class="list-state">Loading alerts…</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>Copyright &copy; Students of DSATM CSE</strong></p>
+    <p style="margin-bottom:var(--space-md); color: var(--text-muted); font-size: 14px;">Samarth, Shivkumar, Shreyas, Shreejith</p>
+    <div class="footer-links" style="margin-bottom:var(--space-md);">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+      <a href="login.html">Login</a>
+    </div>
+  </footer>
+
+  <script src="js/bat-config.js"></script>
+  <script src="js/db.js"></script>
+  <script type="module" src="js/supabase-auth.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav-active.js"></script>
+  <script src="js/page-effects.js"></script>
+  <script type="module" src="js/hospital-app.js"></script>
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

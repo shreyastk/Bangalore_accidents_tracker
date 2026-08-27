@@ -120,3 +120,197 @@ ALTER TABLE accidents ADD CONSTRAINT accidents_geom_bbox
   );
 
 COMMENT ON CONSTRAINT accidents_geom_bbox ON accidents IS 'Ensures all points fall within the Bangalore metropolitan bounding box';
+
+-- ─── Analytics RPCs: monthly, by-time, by-area ─────────────────────────────────
+
+CREATE OR REPLACE FUNCTION get_stats_monthly()
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) FROM (
+    SELECT to_char(date_trunc('month', accident_date), 'YYYY-MM') AS month,
+           count(*) AS total,
+           sum((severity = 'fatal')::int)    AS fatal,
+           sum((severity = 'serious')::int)  AS serious,
+           sum((severity = 'minor')::int)    AS minor
+    FROM accidents
+    WHERE status = 'active' AND geom IS NOT NULL AND accident_date IS NOT NULL
+    GROUP BY 1
+    ORDER BY 1
+  ) t;
+$$;
+
+COMMENT ON FUNCTION get_stats_monthly IS 'Monthly totals and severity breakdown for active accidents with coords';
+
+CREATE OR REPLACE FUNCTION get_stats_by_time()
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  WITH parsed AS (
+    SELECT
+      -- extract hour from date_raw if it contains HH:MM, else NULL
+      CASE
+        WHEN substring(date_raw from '([0-2][0-9]):([0-5][0-9])') IS NOT NULL
+          THEN EXTRACT(hour FROM (substring(date_raw from '([0-2][0-9]):([0-5][0-9])')::time))::int
+        ELSE NULL
+      END AS hour,
+      -- extract day-of-week from accident_date if present (0=Sunday..6=Saturday)
+      CASE WHEN accident_date IS NOT NULL THEN EXTRACT(dow FROM accident_date)::int ELSE NULL END AS dow
+    FROM accidents
+    WHERE status = 'active' AND geom IS NOT NULL
+  ),
+  hour_counts AS (
+    SELECT g.hour, COALESCE(p.cnt,0) AS cnt
+    FROM generate_series(0,23) AS g(hour)
+    LEFT JOIN (
+      SELECT hour, count(*) AS cnt FROM parsed WHERE hour IS NOT NULL GROUP BY hour
+    ) p USING (hour)
+  ),
+  day_counts AS (
+    SELECT g.dow, COALESCE(p.cnt,0) AS cnt
+    FROM generate_series(0,6) AS g(dow)
+    LEFT JOIN (
+      SELECT dow, count(*) AS cnt FROM parsed WHERE dow IS NOT NULL GROUP BY dow
+    ) p USING (dow)
+  )
+  SELECT jsonb_build_object(
+    'byHour', (SELECT jsonb_agg(cnt ORDER BY hour) FROM hour_counts),
+    'byDay',  (SELECT jsonb_agg(cnt ORDER BY dow) FROM day_counts)
+  );
+$$;
+
+COMMENT ON FUNCTION get_stats_by_time IS 'Returns counts grouped by hour (0-23) and day-of-week (0-6) for active accidents with coords; hour parsed from date_raw when possible.';
+
+CREATE OR REPLACE FUNCTION get_stats_by_area()
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) FROM (
+    SELECT COALESCE(area, 'Unknown') AS area,
+           COALESCE(zone, 'Unknown') AS zone,
+           count(*) AS total,
+           sum((severity = 'fatal')::int)    AS fatal,
+           sum((severity = 'serious')::int)  AS serious,
+           sum((severity = 'minor')::int)    AS minor
+    FROM accidents
+    WHERE status = 'active' AND geom IS NOT NULL
+    GROUP BY COALESCE(area, 'Unknown'), COALESCE(zone, 'Unknown')
+    ORDER BY COALESCE(area, 'Unknown')
+  ) t;
+$$;
+
+COMMENT ON FUNCTION get_stats_by_area IS 'Totals and severity breakdown per area+zone for active accidents with coords';
+
+-- Add rejection_reason column for admin moderation
+ALTER TABLE accidents ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+ALTER TABLE accidents ADD COLUMN IF NOT EXISTS proof_url TEXT;
+
+COMMENT ON COLUMN accidents.rejection_reason IS 'Optional rejection reason provided by an admin when hiding a reported record';
+COMMENT ON COLUMN accidents.proof_url IS 'Supabase Storage URL for user-submitted accident proof';
+
+-- Public proof images are readable on the map/profile, but only authenticated
+-- users may upload them. The object name is prefixed with the uploader id.
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('report-proofs', 'report-proofs', TRUE)
+ON CONFLICT (id) DO UPDATE SET public = TRUE;
+
+DROP POLICY IF EXISTS "Authenticated users upload report proofs" ON storage.objects;
+CREATE POLICY "Authenticated users upload report proofs"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'report-proofs' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+DROP POLICY IF EXISTS "Anyone can read report proofs" ON storage.objects;
+CREATE POLICY "Anyone can read report proofs"
+  ON storage.objects FOR SELECT TO public
+  USING (bucket_id = 'report-proofs');
+
+-- Duplicate detection helper: find nearby records within a radius (meters) on same accident_date
+CREATE OR REPLACE FUNCTION find_duplicates(p_id TEXT, p_radius_m FLOAT DEFAULT 100)
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  WITH target AS (
+    SELECT geom, accident_date FROM accidents WHERE id = p_id
+  )
+  SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) FROM (
+    SELECT a.id, a.title, a.location, a.area, a.zone, a.severity, a.accident_date,
+           ST_AsGeoJSON(a.geom)::jsonb AS geometry,
+           ST_Distance(a.geom::geography, t.geom::geography) AS distance_m
+    FROM accidents a, target t
+    WHERE a.id <> p_id
+      AND a.geom IS NOT NULL
+      AND t.geom IS NOT NULL
+      AND (a.accident_date IS NOT DISTINCT FROM t.accident_date)
+      AND ST_DWithin(a.geom::geography, t.geom::geography, p_radius_m)
+    ORDER BY distance_m ASC
+  ) t;
+$$;
+
+COMMENT ON FUNCTION find_duplicates IS 'Return nearby accidents within radius in meters that share the same accident_date as the target id';
+
+-- ─── Hospitals & Emergency Alerts ────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS hospitals (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT,
+  email TEXT,
+  webhook_url TEXT,
+  address TEXT,
+  location geography(Point, 4326),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS hospitals_location_gix ON hospitals USING GIST (location);
+COMMENT ON TABLE hospitals IS 'Emergency hospital locations and contact information';
+
+CREATE TABLE IF NOT EXISTS emergency_alerts (
+  id TEXT PRIMARY KEY,
+  photo_url TEXT,
+  lat DOUBLE PRECISION,
+  lng DOUBLE PRECISION,
+  address TEXT,
+  severity TEXT CHECK (severity IN ('fatal','serious','minor')) DEFAULT 'minor',
+  description TEXT,
+  status TEXT DEFAULT 'new',
+  notified_hospital_ids TEXT[] DEFAULT ARRAY[]::TEXT[],
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS emergency_alerts_created_idx ON emergency_alerts (created_at DESC);
+COMMENT ON TABLE emergency_alerts IS 'Submitted emergency alerts for hospitals; notified_hospital_ids stores list of hospital ids notified';
+
+-- RPC: nearest hospitals using PostGIS KNN distance operator
+CREATE OR REPLACE FUNCTION get_nearest_hospitals(p_lat DOUBLE PRECISION, p_lng DOUBLE PRECISION, p_limit INT DEFAULT 5)
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) FROM (
+    SELECT id, name, phone, address, ST_Distance(location, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography)::double precision/1000 AS distance_km
+    FROM hospitals
+    WHERE location IS NOT NULL
+    ORDER BY location <-> ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)
+    LIMIT p_limit
+  ) t;
+$$;
+
+COMMENT ON FUNCTION get_nearest_hospitals IS 'Return nearest hospitals ordered by distance (km)';
+
+-- Duplicate detection by arbitrary point: find nearby accidents within radius (meters)
+CREATE OR REPLACE FUNCTION find_duplicates_by_point(p_lat DOUBLE PRECISION, p_lng DOUBLE PRECISION, p_radius_m FLOAT DEFAULT 100, p_date DATE DEFAULT NULL)
+RETURNS JSONB
+LANGUAGE sql STABLE
+AS $$
+  SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) FROM (
+    SELECT a.id, a.title, a.location, a.area, a.zone, a.severity, a.accident_date,
+           ST_AsGeoJSON(a.geom)::jsonb AS geometry,
+           ST_Distance(a.geom::geography, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography) AS distance_m
+    FROM accidents a
+    WHERE a.geom IS NOT NULL
+      AND ST_DWithin(a.geom::geography, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)::geography, p_radius_m)
+      AND (p_date IS NULL OR a.accident_date IS NOT DISTINCT FROM p_date)
+    ORDER BY distance_m ASC
+  ) t;
+$$;
+
+COMMENT ON FUNCTION find_duplicates_by_point IS 'Return nearby accidents within radius from an arbitrary lat/lng; optionally match accident_date';

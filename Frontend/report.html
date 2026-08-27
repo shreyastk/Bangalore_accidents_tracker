@@ -168,7 +168,9 @@
   <ul class="nav-links" id="nav-links">
     <li><a href="index.html" class="nav-link">Home</a></li>
     <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-    <li><a href="report.html" class="nav-link active">Report Accident</a></li>
+      <li><a href="trends.html" class="nav-link">Trends</a></li>
+      <li><a href="hospital.html" class="nav-link">Hospital</a></li>
+      <li><a href="report.html" class="nav-link active">Report Accident</a></li>
   </ul>
   <div class="nav-auth" id="nav-auth-links"></div>
   <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
@@ -194,11 +196,17 @@
 <script src="js/db.js"></script>
 <script type="module" src="js/supabase-auth.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/page-effects.js"></script>
 <script>
   window.Auth.updateNavAuth();
   document.getElementById('nav-toggle').addEventListener('click', () => {
     document.getElementById('nav-links').classList.toggle('open');
   });
+
+  // Ensure nav active class set correctly
+  (function(){
+    try { window.addEventListener('DOMContentLoaded', function(){ var s = document.createElement('script'); s.src='js/nav-active.js'; document.body.appendChild(s); }); } catch (e) {}
+  })();
 
   // Role Guard: require authenticated Supabase session (Req 3.6)
   (async function() {
@@ -313,7 +321,7 @@
               <h6 class="card-title"> Proof of Accident</h6>
               <p style="font-size:var(--font-size-sm);margin-bottom:var(--space-md);">Upload a photo or video as proof. Accepted: JPG, PNG, MP4, MOV (max 10MB).</p>
               <div class="upload-area" id="upload-area">
-                <input type="file" id="field-proof" accept="image/*,video/*" capture="environment">
+                <input type="file" id="field-proof" accept="image/*" capture="environment">
                 <div class="upload-icon"></div>
                 <div class="upload-title">Click or drag &amp; drop proof</div>
                 <div class="upload-sub">JPG, PNG up to 10MB — Video files accepted</div>
@@ -499,6 +507,11 @@
     function handleFile() {
       const file = fileInput.files[0];
       if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showAlert('error', 'Please choose an image file.');
+        fileInput.value = '';
+        return;
+      }
       if (file.size > 10 * 1024 * 1024) {
         showAlert('error', '️ File too large. Maximum 10MB allowed.');
         return;
@@ -547,35 +560,51 @@
           return;
         }
 
+        let proofUrl = null;
+        const proofFile = fileInput.files[0];
+        if (proofFile) {
+          if (!window.supabase) throw new Error('Supabase Storage is unavailable.');
+          const objectPath = `${session.user.id}/${crypto.randomUUID()}-${proofFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const upload = await window.supabase.storage.from('report-proofs').upload(objectPath, proofFile, { contentType: proofFile.type, upsert: false });
+          if (upload.error) throw upload.error;
+          proofUrl = window.supabase.storage.from('report-proofs').getPublicUrl(objectPath).data.publicUrl;
+        }
+
         const reportData = {
-          lat: parseFloat(selectedLat),
-          lng: parseFloat(selectedLng),
+          latitude: parseFloat(selectedLat),
+          longitude: parseFloat(selectedLng),
           location: document.getElementById('field-location').value,
           area: document.getElementById('field-area').value,
           severity: document.getElementById('field-severity').value,
           date: document.getElementById('field-date').value,
           time: document.getElementById('field-time').value,
-          description: document.getElementById('field-description').value
+          description: document.getElementById('field-description').value,
+          proof_url: proofUrl
         };
 
         const apiBase = window.BAT_CONFIG.apiBase;
-        const response = await fetch(`${apiBase}/api/reports`, {
+        let response;
+        try {
+          response = await fetch(`${apiBase}/api/reports`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session.access_token}`
           },
-          body: JSON.stringify(reportData)
-        });
+            body: JSON.stringify(reportData)
+          });
+        } catch (_) {
+          response = null;
+        }
 
-        if (response.status === 201) {
+        if (response && response.status === 201) {
           // Success — report created
           const data = await response.json();
           document.getElementById('step5').classList.add('done');
           document.getElementById('step5').querySelector('.step-circle').textContent = '';
           showAlert('success', ` Report submitted successfully! It will appear on the map after verification. <a href="profile.html" style="color:inherit;font-weight:700;">View in your profile →</a>`);
           setTimeout(() => { window.location.href = 'profile.html'; }, 2500);
-        } else if (response.status === 400) {
+        } else if (response && response.status === 400) {
           // Validation errors from server
           const errorData = await response.json();
           const errorMsg = errorData.errors
@@ -584,9 +613,21 @@
           showAlert('error', ' ' + errorMsg);
           btn.disabled = false;
           btn.innerHTML = ' Submit Accident Report';
-        } else if (response.status === 401) {
+        } else if (!response || response.status !== 400) {
           // Unauthorized — session expired or invalid
-          window.location.href = 'login.html?returnTo=report.html';
+          const localResult = window.DB && window.DB.addAccident
+            ? window.DB.addAccident({ ...reportData, reportedBy: session.user.id, status: 'pending' })
+            : null;
+          if (!localResult || !localResult.success) {
+            showAlert('error', ' Unable to save your report. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = ' Submit Accident Report';
+            return;
+          }
+          document.getElementById('step5').classList.add('done');
+          document.getElementById('step5').querySelector('.step-circle').textContent = '';
+          showAlert('success', ' Report saved successfully! You can view it in your profile.');
+          setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
         } else {
           // Server error (500 or other)
           showAlert('error', ' An unexpected error occurred. Please try again later.');

@@ -213,6 +213,8 @@
   <ul class="nav-links" id="nav-links">
     <li><a href="index.html" class="nav-link">Home</a></li>
     <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    <li><a href="trends.html" class="nav-link">Trends</a></li>
+    <li><a href="hospital.html" class="nav-link">Hospital</a></li>
     <li><a href="report.html" class="nav-link">Report Accident</a></li>
     <li><a href="profile.html" class="nav-link active">My Profile</a></li>
   </ul>
@@ -244,6 +246,9 @@
     document.getElementById('nav-links').classList.toggle('open');
   });
 
+  // Ensure nav active class set correctly
+  (function(){ try { var s = document.createElement('script'); s.src='js/nav-active.js'; document.body.appendChild(s); } catch (e) {} })();
+
   // Role Guard: require authenticated Supabase session (Req 3.6, 8.5)
   (async function() {
     await window.Auth.requireAuth();
@@ -253,7 +258,12 @@
     var user = client ? await client.getUser() : null;
 
     if (!user) {
-      // No valid session — redirect to login with returnTo (Req 8.5)
+      // No valid session — clear any stale session first so the login page
+      // does not bounce us straight back (infinite redirect loop), then
+      // redirect to login with returnTo (Req 8.5)
+      if (client) {
+        try { await client.signOut(); } catch (e) {}
+      }
       window.location.href = 'login.html?returnTo=profile.html';
       return;
     }
@@ -275,17 +285,15 @@
       var apiBase = window.BAT_CONFIG.apiBase;
       var token = session.access_token;
 
-      var response = await fetch(apiBase + '/api/reports/mine', {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      });
+      if (token.indexOf('devtoken_') === 0) return window.DB.getUserReports(user.id);
 
-      if (!response.ok) {
-        throw new Error('Failed to load reports (HTTP ' + response.status + ')');
-      }
-
-      return await response.json();
+      try {
+        var response = await fetch(apiBase + '/api/reports/mine', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (response.ok) return await response.json();
+      } catch (_) {}
+      return window.DB.getUserReports(user.id);
     }
 
     function renderProfile(reports) {
@@ -332,14 +340,9 @@
       ';
 
       // Logout via Supabase Auth (Req 2.6)
-      document.getElementById('logout-btn-profile').addEventListener('click', function() {
-        if (window.SupabaseAuthClient) {
-          window.SupabaseAuthClient.signOut().then(function() {
-            window.location.href = 'index.html';
-          });
-        } else {
-          window.location.href = 'index.html';
-        }
+      document.getElementById('logout-btn-profile').addEventListener('click', async function() {
+        if (window.SupabaseAuthClient) await window.SupabaseAuthClient.signOut();
+        window.location.href = 'index.html';
       });
 
       // Mini Map
@@ -354,6 +357,17 @@
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         subdomains: 'abcd', maxZoom: 19
       }).addTo(miniMap);
+      var locations = reports.filter(function(report) {
+        return Number.isFinite(Number(report.latitude)) && Number.isFinite(Number(report.longitude));
+      });
+      var bounds = [];
+      locations.forEach(function(report) {
+        var latLng = [Number(report.latitude), Number(report.longitude)];
+        bounds.push(latLng);
+        L.marker(latLng).addTo(miniMap).bindPopup(escapeHtml(report.location || 'Reported accident'));
+      });
+      if (bounds.length === 1) miniMap.setView(bounds[0], 14);
+      if (bounds.length > 1) miniMap.fitBounds(bounds, { padding: [18, 18] });
     }
 
     function renderReportsList(reports) {
@@ -451,14 +465,9 @@
 
       document.getElementById('retry-btn').addEventListener('click', loadProfile);
 
-      document.getElementById('logout-btn-profile').addEventListener('click', function() {
-        if (window.SupabaseAuthClient) {
-          window.SupabaseAuthClient.signOut().then(function() {
-            window.location.href = 'index.html';
-          });
-        } else {
-          window.location.href = 'index.html';
-        }
+      document.getElementById('logout-btn-profile').addEventListener('click', async function() {
+        if (window.SupabaseAuthClient) await window.SupabaseAuthClient.signOut();
+        window.location.href = 'index.html';
       });
     }
 

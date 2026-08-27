@@ -361,6 +361,7 @@
     requireAuth: requireAuth,
     updateNavAuth: updateNavAuth,
     isLoggedIn: isLoggedIn,
+    logout: handleLogout,
     // Exposed for testing purposes
     _handleRefreshFailure: handleRefreshFailure,
     _isNetworkError: isNetworkError,

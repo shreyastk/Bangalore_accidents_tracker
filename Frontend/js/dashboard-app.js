@@ -113,7 +113,8 @@
     } else {
       try { fc = await loadJsonFallback(); } catch {}
     }
-    fc = mergeUserReports(fc);
+    // API data is authoritative. Local storage is used only by the offline fallback.
+    if (label !== 'PostgreSQL + PostGIS') fc = mergeUserReports(fc);
     fc = clientFilter(fc, filters);
     return { fc, label };
   }
@@ -417,6 +418,20 @@
     return [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b));
   }
 
+  function setDownloadLinks(filters) {
+    const qs = new URLSearchParams();
+    if (filters.severity && filters.severity !== 'all') qs.set('severity', filters.severity);
+    if (filters.area && filters.area !== 'all') qs.set('area', filters.area);
+    if (filters.zone && filters.zone !== 'all') qs.set('zone', filters.zone);
+    if (filters.from) qs.set('from', filters.from);
+    if (filters.to) qs.set('to', filters.to);
+    const suffix = qs.toString() ? '?' + qs.toString() : '';
+    const csv = document.getElementById('download-csv');
+    const geojson = document.getElementById('download-geojson');
+    if (csv) csv.href = API_BASE + '/api/accidents?format=csv' + (qs.toString() ? '&' + qs.toString() : '');
+    if (geojson) geojson.href = API_BASE + '/api/export/geojson' + suffix;
+  }
+
   // ── Bootstrap ──────────────────────────────────────────────────────────────
 
   async function bootstrap() {
@@ -429,6 +444,7 @@
       const badge = document.getElementById('data-source-badge');
       if (badge) badge.textContent = label;
 
+      setDownloadLinks(filters);
       fillSelect('filter-area', unique(fc.features.map(f => f.properties.area)), filters.area);
       fillSelect('filter-zone', unique(fc.features.map(f => f.properties.zone)), filters.zone);
 

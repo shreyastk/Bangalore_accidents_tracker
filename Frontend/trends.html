@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trends — Bangalore Accidents Tracker</title>
+  <meta name="description" content="Accident trends and analytics for Bangalore: monthly trends, severity breakdowns, area comparisons and time-of-day patterns.">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .trends-page { padding: calc(65px + var(--space-xl)) var(--space-xl) var(--space-2xl); max-width:1200px; margin:0 auto; }
+    .grid { display: grid; grid-template-columns: 1fr 420px; gap: var(--space-lg); align-items:start; }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+    .card { background: var(--glass-bg); border:1px solid var(--glass-border); border-radius:var(--radius-lg); padding:var(--space-md); }
+    .card h3 { margin:0 0 var(--space-sm); }
+    .small-row { display:flex; gap:var(--space-md); }
+    @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } .charts-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation (reuse simple nav) -->
+  <nav class="navbar" id="main-nav">
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="BAT Logo" style="height:44px"></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="trends.html" class="nav-link active">Trends</a></li>
+      <li><a href="hospital.html" class="nav-link">Hospital</a></li>
+      <li><a href="report.html" class="nav-link">Report Accident</a></li>
+    </ul>
+    <div class="nav-auth" id="nav-auth-links"></div>
+    <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+  </nav>
+
+  <main class="trends-page">
+    <div class="section-head">
+      <h2 class="section-title">Trends & Analytics</h2>
+      <p class="section-subtitle">Aggregated accident trends: monthly timelines, severity breakdowns, area comparisons and time-of-day patterns.</p>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card" style="margin-bottom:var(--space-lg);">
+          <h3>Accidents Over Time</h3>
+          <canvas id="chart-trends" height="160"></canvas>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card">
+            <h3>Severity Breakdown</h3>
+            <canvas id="chart-severity" height="200"></canvas>
+          </div>
+          <div class="card">
+            <h3>Top Areas</h3>
+            <canvas id="chart-areas" height="200"></canvas>
+          </div>
+        </div>
+
+        <div class="small-row" style="margin-top:var(--space-lg);">
+          <div class="card" style="flex:1">
+            <h3>By Hour of Day</h3>
+            <canvas id="chart-byhour" height="120"></canvas>
+          </div>
+          <div class="card" style="width:260px">
+            <h3>By Day of Week</h3>
+            <canvas id="chart-byday" height="120"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3>Controls</h3>
+          <p style="margin-bottom:var(--space-sm)">Date range filters will be available in later iterations. Data shown is from active records only.</p>
+          <div style="margin-top:var(--space-md)">
+            <button class="btn btn-primary" id="refresh-btn">Refresh</button>
+            <a class="btn btn-outline" id="download-csv" href="#" style="margin-left:8px">Download CSV</a>
+            <a class="btn btn-outline" id="download-geojson" href="#" style="margin-left:8px">Download GeoJSON</a>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:var(--space-lg);">
+          <h3>Notes</h3>
+          <ul style="margin:0;padding-left:1rem;color:var(--text-muted)">
+            <li>Only records with coordinates and status 'active' are included.</li>
+            <li>Monthly groups are returned as YYYY-MM from the server.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <footer>
+    <p style="text-align:center;padding:var(--space-md);color:var(--text-muted)">&copy; Students of DSATM CSE</p>
+  </footer>
+
+  <script src="js/bat-config.js"></script>
+  <script src="js/db.js"></script>
+  <script type="module" src="js/supabase-auth.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/trends-app.js" type="module"></script>
+  <script src="js/nav-active.js"></script>
+  <script src="js/page-effects.js"></script>
+</body>
+</html>
