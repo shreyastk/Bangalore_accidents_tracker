@@ -10,7 +10,7 @@
 
 ## One-time Supabase setup
 
-1. In Supabase Dashboard, open **SQL Editor** and run `Database/schema.sql`.
+1. In Supabase Dashboard, open **SQL Editor** and run `Database/schema.sql`. Re-run it after every pull — it's idempotent (`CREATE OR REPLACE FUNCTION`, `ADD COLUMN IF NOT EXISTS`) and picks up new RPCs such as `set_accident_geom`, used by `POST /api/reports` to save a user-submitted pin's coordinates.
 2. In **Project Settings > Database > Connect**, copy the **Transaction pooler** URI.
 3. Copy `server/.env.example` to `server/.env` and fill in the database password, project API values, and a private `ADMIN_SLUG`.
 4. Create an admin user in **Authentication > Users**. There is no default admin username or password in this repository.

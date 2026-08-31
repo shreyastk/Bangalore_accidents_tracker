@@ -102,18 +102,26 @@
         <option value="id-asc">Lowest ID first</option>
       </select>
       <button class="btn-apply" id="apply-btn">Apply</button>
+      <button class="btn-apply" id="pending-reports-tab" style="background: var(--color-serious); margin-left: 8px;" title="Show only citizen-submitted reports awaiting review">Pending Reports</button>
       <button class="btn-apply" id="upload-btn" style="background: var(--color-minor); margin-left: 8px;">+ Add Article</button>
       <button class="btn-apply" id="approve-selected" style="margin-left:8px">Approve Selected</button>
       <button class="btn-apply" id="reject-selected" style="margin-left:8px">Reject Selected</button>
       <button class="btn-apply" id="delete-selected" style="margin-left:8px;background:#ef4444;color:#fff">Delete Selected</button>
     </div>
     <div class="toolbar-right">
+      <button class="btn-apply" id="map-view-toggle" style="background:#fff;color:var(--color-primary);border:1px solid var(--color-border);" title="Drag pins on a map to fix accident locations">🗺️ Map View</button>
       <span class="record-count" id="record-count"></span>
     </div>
   </div>
 
+  <!-- Map View: drag pins to reposition accident coordinates -->
+  <div class="map-view-wrap" id="map-view-wrap" hidden>
+    <div class="map-view-hint">📍 Drag any pin and drop it on the correct location to update that accident's coordinates. Changes save automatically.</div>
+    <div id="admin-map"></div>
+  </div>
+
   <!-- Table -->
-  <div class="table-wrap">
+  <div class="table-wrap" id="table-wrap">
     <table class="data-table" id="data-table">
       <thead>
         <tr>
@@ -160,7 +168,34 @@
   </div>
 </div>
 
-<!-- ── Edit Modal ─────────────────────────────────────────────────────────── -->
+<!-- ── Review User Submission Modal ──────────────────────────────────── -->
+<div id="review-modal" class="modal-backdrop" hidden>
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Review User Submission</span>
+      <button class="modal-close" id="review-close"></button>
+    </div>
+    <div class="modal-body">
+      <div id="review-photo-wrap"></div>
+      <div id="review-info"></div>
+
+      <div class="modal-section-label">Description (from reporter)</div>
+      <p id="review-description" style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;margin:0 0 14px;"></p>
+
+      <div class="modal-section-label">Rejection Reason (only needed if rejecting)</div>
+      <textarea id="review-reject-reason" class="field-input" rows="3" placeholder="Provide a brief reason to store with the record..."></textarea>
+
+      <div id="review-error" class="modal-error" hidden></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="review-close-btn">Close</button>
+      <button class="btn-save" id="review-reject-btn" style="background:#ef4444;border:none;">Reject</button>
+      <button class="btn-save" id="review-approve-btn" style="background: var(--color-minor); border: none;">Approve &amp; Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Edit Modal ──────────────────────────────────────────────── -->
 <div id="edit-modal" class="modal-backdrop" hidden>
   <div class="modal-box">
     <div class="modal-header">

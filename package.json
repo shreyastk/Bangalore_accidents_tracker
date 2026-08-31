@@ -1,0 +1,15 @@
+{
+  "name": "bangalore-accidents-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bangalore Accidents Tracker - Web App & API",
+  "scripts": {
+    "start": "npm --prefix server start",
+    "server": "npm --prefix server start",
+    "test": "npm --prefix server test && npm --prefix Frontend test",
+    "test:server": "npm --prefix server test",
+    "test:frontend": "npm --prefix Frontend test",
+    "seed": "npm --prefix server run seed",
+    "seed:hospitals": "npm --prefix server run seed:hospitals"
+  }
+}

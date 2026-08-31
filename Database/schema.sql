@@ -172,10 +172,25 @@ AS $$
     LEFT JOIN (
       SELECT dow, count(*) AS cnt FROM parsed WHERE dow IS NOT NULL GROUP BY dow
     ) p USING (dow)
+  ),
+  -- joint distribution for the day x hour heatmap; only rows where both are known
+  matrix_cells AS (
+    SELECT d.dow, h.hour, COALESCE(p.cnt, 0) AS cnt
+    FROM generate_series(0,6) AS d(dow)
+    CROSS JOIN generate_series(0,23) AS h(hour)
+    LEFT JOIN (
+      SELECT dow, hour, count(*) AS cnt FROM parsed WHERE dow IS NOT NULL AND hour IS NOT NULL GROUP BY dow, hour
+    ) p ON p.dow = d.dow AND p.hour = h.hour
+  ),
+  matrix_rows AS (
+    SELECT dow, jsonb_agg(cnt ORDER BY hour) AS row
+    FROM matrix_cells
+    GROUP BY dow
   )
   SELECT jsonb_build_object(
     'byHour', (SELECT jsonb_agg(cnt ORDER BY hour) FROM hour_counts),
-    'byDay',  (SELECT jsonb_agg(cnt ORDER BY dow) FROM day_counts)
+    'byDay',  (SELECT jsonb_agg(cnt ORDER BY dow) FROM day_counts),
+    'matrix', (SELECT jsonb_agg(row ORDER BY dow) FROM matrix_rows)
   );
 $$;
 
@@ -223,6 +238,22 @@ DROP POLICY IF EXISTS "Anyone can read report proofs" ON storage.objects;
 CREATE POLICY "Anyone can read report proofs"
   ON storage.objects FOR SELECT TO public
   USING (bucket_id = 'report-proofs');
+
+-- The Supabase REST client (PostgREST) cannot accept raw WKT/PostGIS values
+-- for a `geometry` column through a JSON insert payload, so user reports
+-- saved via supabase.from('accidents').insert(...) are created without a
+-- geom. This RPC lets the API backfill the point immediately afterwards so
+-- every user-submitted report still gets a map location.
+CREATE OR REPLACE FUNCTION set_accident_geom(p_id TEXT, p_lat DOUBLE PRECISION, p_lng DOUBLE PRECISION)
+RETURNS VOID
+LANGUAGE sql
+AS $$
+  UPDATE accidents
+  SET geom = ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326)
+  WHERE id = p_id;
+$$;
+
+COMMENT ON FUNCTION set_accident_geom IS 'Backfills geom for a record inserted via the Supabase client, which cannot pass raw PostGIS WKT through PostgREST';
 
 -- Duplicate detection helper: find nearby records within a radius (meters) on same accident_date
 CREATE OR REPLACE FUNCTION find_duplicates(p_id TEXT, p_radius_m FLOAT DEFAULT 100)

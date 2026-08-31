@@ -532,6 +532,108 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 
+/* Locate Me floating button */
+.locate-btn {
+  position: absolute;
+  top: 90px;
+  right: 10px;
+  z-index: 500;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, transform 0.15s;
+}
+.locate-btn:hover { background: #f1f5f9; }
+.locate-btn:active { transform: scale(0.94); }
+
+.locate-btn-icon {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--text-2);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.locate-btn-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 5px; height: 5px;
+  background: var(--text-2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.15s;
+}
+.locate-btn.has-location .locate-btn-icon { border-color: #2563eb; }
+.locate-btn.has-location .locate-btn-icon::before { background: #2563eb; }
+.locate-btn.is-locating .locate-btn-icon { animation: locate-spin 0.9s linear infinite; border-top-color: transparent; }
+
+@keyframes locate-spin { to { transform: rotate(360deg); } }
+
+/* Live user-location marker (pulsing dot) on the map */
+.user-location-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.35);
+  position: relative;
+}
+.user-location-marker::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  background: rgba(37,99,235,0.25);
+  animation: user-pulse 2s ease-out infinite;
+}
+@keyframes user-pulse {
+  0%   { transform: scale(0.35); opacity: 0.85; }
+  100% { transform: scale(1.5);  opacity: 0; }
+}
+
+/* "Near You" list (reuses .hotspot-item / .h-info / .h-dots layout) */
+.ny-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.h-distance {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ny-retry-btn {
+  margin-left: 4px;
+  background: none;
+  border: none;
+  color: var(--blue);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  font-family: inherit;
+}
+.zone-pill[data-state="locating"] { background: #e2e8f0; color: var(--text-2); }
+.zone-pill[data-state="ok"]       { background: #dcfce7; color: #15803d; }
+.zone-pill[data-state="denied"]   { background: #fee2e2; color: #b91c1c; }
+
 /* Detail slide-in panel */
 .detail-panel {
   position: absolute;

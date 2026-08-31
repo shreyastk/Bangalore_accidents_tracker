@@ -33,6 +33,19 @@
 
   function emptyFC() { return { type: 'FeatureCollection', features: [] }; }
 
+  function haversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function formatDistance(km) {
+    return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+  }
+
   // ── Data loading ───────────────────────────────────────────────────────────
 
   function rowToFeature(row) {
@@ -99,6 +112,12 @@
     if (filters.zone     && filters.zone     !== 'all') feats = feats.filter(f => f.properties.zone     === filters.zone);
     if (filters.from) feats = feats.filter(f => { const d = f.properties.date; return d && d !== '—' && String(d) >= filters.from; });
     if (filters.to)   feats = feats.filter(f => { const d = f.properties.date; return d && d !== '—' && String(d) <= filters.to;   });
+    if (filters.distanceKm && userLocation) {
+      feats = feats.filter(f => {
+        const [lng, lat] = f.geometry.coordinates;
+        return haversineKm(userLocation.lat, userLocation.lng, lat, lng) <= filters.distanceKm;
+      });
+    }
     return { type: 'FeatureCollection', features: feats };
   }
 
@@ -125,6 +144,11 @@
   let isMapLoaded  = false;
   let pendingData  = null;
   let heatOn       = false;
+  let lastFC        = emptyFC();
+  let userLocation  = null;
+  let userMarker    = null;
+  let hasAutoCentered = false;
+  let watchId       = null;
 
   function initMap() {
     if (map) return;
@@ -278,6 +302,10 @@
         updateMap(pendingData);
         pendingData = null;
       }
+
+      // If the browser already resolved a location fix before the map style
+      // finished loading, place the live marker now.
+      if (userLocation) updateUserMarker();
     });
 
     window.__BAT_MAP = map;
@@ -291,6 +319,159 @@
     const source = map.getSource('accidents');
     if (source) {
       source.setData(fc);
+    }
+  }
+
+  // ── Live geolocation ("Near You") ─────────────────────────────────────
+
+  let refreshDashboard = null; // set by bootstrap(); lets geolocation callbacks trigger a re-filter
+
+  function updateUserMarker() {
+    if (!map || !isMapLoaded || !userLocation) return;
+    if (!userMarker) {
+      const el = document.createElement('div');
+      el.className = 'user-location-marker';
+      userMarker = new maplibregl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([userLocation.lng, userLocation.lat])
+        .addTo(map);
+    } else {
+      userMarker.setLngLat([userLocation.lng, userLocation.lat]);
+    }
+  }
+
+  function setLocateStatus(state, text) {
+    const btn = document.getElementById('locate-btn');
+    if (btn) {
+      btn.classList.remove('is-locating', 'has-location');
+      if (state === 'locating') btn.classList.add('is-locating');
+      if (state === 'ok')       btn.classList.add('has-location');
+      btn.title = text || 'Find my location';
+    }
+    const pill = document.getElementById('near-you-status');
+    if (pill) {
+      pill.textContent = text || '';
+      pill.dataset.state = state;
+    }
+  }
+
+  function refreshNearYou(fc) {
+    const list = document.getElementById('near-you-list');
+    if (!list) return;
+
+    if (!userLocation) {
+      list.innerHTML = '<li class="hotspot-empty">Enable location to see nearby accidents. ' +
+        '<button class="ny-retry-btn" id="ny-retry-btn" type="button">Try again</button></li>';
+      document.getElementById('ny-retry-btn')?.addEventListener('click', () => requestLocation({ recenter: true, watch: true }));
+      return;
+    }
+
+    const source = (fc || lastFC).features;
+    if (!source.length) {
+      list.innerHTML = '<li class="hotspot-empty">No accidents match the current filters.</li>';
+      return;
+    }
+
+    const nearest = source
+      .map(f => {
+        const [lng, lat] = f.geometry.coordinates;
+        return { f, distance: haversineKm(userLocation.lat, userLocation.lng, lat, lng) };
+      })
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 8);
+
+    list.innerHTML = nearest.map(({ f, distance }) => {
+      const p = f.properties;
+      const dotColor = SEV_COLOR[p.severity] || '#94a3b8';
+      const meta = [p.area, p.date && p.date !== '—' ? p.date : null].filter(Boolean).join(' · ');
+      return `
+        <li class="hotspot-item near-you-item" data-lat="${f.geometry.coordinates[1]}" data-lng="${f.geometry.coordinates[0]}">
+          <span class="ny-dot" style="background:${dotColor}"></span>
+          <div class="h-info">
+            <div class="h-name">${esc(p.title || p.area || 'Accident')}</div>
+            <div class="h-dots">${esc(meta || '—')}</div>
+          </div>
+          <div class="h-distance">${formatDistance(distance)}</div>
+        </li>`;
+    }).join('');
+
+    list.querySelectorAll('.near-you-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (map && isMapLoaded) {
+          map.flyTo({
+            center: [parseFloat(item.dataset.lng), parseFloat(item.dataset.lat)],
+            zoom: 15,
+            essential: true,
+            speed: 1.2,
+          });
+        }
+      });
+    });
+  }
+
+  function handlePosition(pos, { recenter = false } = {}) {
+    userLocation = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      accuracy: pos.coords.accuracy,
+    };
+    setLocateStatus('ok', 'Location found · tap to re-center');
+    updateUserMarker();
+
+    if ((recenter || !hasAutoCentered) && map) {
+      hasAutoCentered = true;
+      map.flyTo({ center: [userLocation.lng, userLocation.lat], zoom: 14, essential: true, speed: 1.1 });
+    }
+
+    refreshNearYou(lastFC);
+
+    // If a "within X km" filter is active, re-run the main query/filter now that we have a fix.
+    const distSel = document.getElementById('filter-distance');
+    if (distSel && distSel.value !== 'all' && refreshDashboard) refreshDashboard();
+  }
+
+  function handleLocationError(err) {
+    console.warn('Geolocation error:', err && err.message);
+    let msg = 'Location unavailable';
+    if (err && err.code === 1) msg = 'Location access denied';
+    else if (err && err.code === 2) msg = 'Location unavailable';
+    else if (err && err.code === 3) msg = 'Location request timed out';
+
+    setLocateStatus('denied', msg);
+    refreshNearYou(lastFC);
+
+    // Don't silently filter by distance if we no longer trust the location fix.
+    const distSel = document.getElementById('filter-distance');
+    if (distSel && distSel.value !== 'all') {
+      distSel.value = 'all';
+      if (refreshDashboard) refreshDashboard();
+    }
+  }
+
+  function requestLocation({ recenter = false, watch = false } = {}) {
+    console.log('[BAT] requestLocation called. isSecureContext =', window.isSecureContext, 'protocol =', window.location.protocol);
+
+    if (!('geolocation' in navigator)) {
+      console.warn('[BAT] navigator.geolocation is not available in this browser/context.');
+      setLocateStatus('denied', 'Geolocation not supported by this browser');
+      refreshNearYou(lastFC);
+      return;
+    }
+    if (!window.isSecureContext) {
+      console.warn('[BAT] Not a secure context — browsers block geolocation outside https/localhost. Serve the site via the Express server (http://localhost:3000) rather than opening the file directly.');
+    }
+
+    setLocateStatus('locating', 'Locating…');
+    navigator.geolocation.getCurrentPosition(
+      pos => { console.log('[BAT] getCurrentPosition success', pos.coords); handlePosition(pos, { recenter }); },
+      err => { console.error('[BAT] getCurrentPosition error', err); handleLocationError(err); },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+    );
+    if (watch && watchId == null) {
+      watchId = navigator.geolocation.watchPosition(
+        pos => handlePosition(pos, { recenter: false }),
+        err => { console.error('[BAT] watchPosition error', err); handleLocationError(err); },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 15000 }
+      );
     }
   }
 
@@ -391,12 +572,14 @@
   // ── Filter helpers ─────────────────────────────────────────────────────────
 
   function readFilters() {
+    const distanceRaw = document.getElementById('filter-distance')?.value || 'all';
     return {
-      severity: document.getElementById('filter-severity')?.value || 'all',
-      area:     document.getElementById('filter-area')?.value     || 'all',
-      zone:     document.getElementById('filter-zone')?.value     || 'all',
-      from:     document.getElementById('filter-from')?.value     || '',
-      to:       document.getElementById('filter-to')?.value       || '',
+      severity:   document.getElementById('filter-severity')?.value || 'all',
+      area:       document.getElementById('filter-area')?.value     || 'all',
+      zone:       document.getElementById('filter-zone')?.value     || 'all',
+      from:       document.getElementById('filter-from')?.value     || '',
+      to:         document.getElementById('filter-to')?.value       || '',
+      distanceKm: distanceRaw !== 'all' ? parseFloat(distanceRaw) : null,
     };
   }
 
@@ -435,11 +618,12 @@
   // ── Bootstrap ──────────────────────────────────────────────────────────────
 
   async function bootstrap() {
-    initMap();
+    try { initMap(); } catch (e) { console.error('[BAT] Map init failed:', e); }
 
     async function refresh() {
       const filters = readFilters();
       const { fc, label } = await loadAll(filters);
+      lastFC = fc;
 
       const badge = document.getElementById('data-source-badge');
       if (badge) badge.textContent = label;
@@ -451,16 +635,26 @@
       updateStats(fc);
       updateHotspots(fc);
       updateMap(fc);
+      refreshNearYou(fc);
     }
+    refreshDashboard = refresh;
 
     document.getElementById('apply-filters-btn')?.addEventListener('click', refresh);
     document.getElementById('reset-filters-btn')?.addEventListener('click', () => {
-      ['filter-severity', 'filter-area', 'filter-zone', 'filter-from', 'filter-to'].forEach(id => {
+      ['filter-severity', 'filter-area', 'filter-zone', 'filter-distance', 'filter-from', 'filter-to'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.value = el.tagName === 'SELECT' ? 'all' : '';
       });
       refresh();
+    });
+
+    document.getElementById('filter-distance')?.addEventListener('change', e => {
+      if (e.target.value !== 'all' && !userLocation) requestLocation({ recenter: true, watch: true });
+    });
+
+    document.getElementById('locate-btn')?.addEventListener('click', () => {
+      requestLocation({ recenter: true, watch: true });
     });
 
     document.getElementById('toggle-heatmap')?.addEventListener('change', e => {
@@ -476,7 +670,20 @@
 
     document.getElementById('detail-panel-close')?.addEventListener('click', closeDetail);
 
-    await refresh();
+    window.addEventListener('beforeunload', () => {
+      if (watchId != null) navigator.geolocation.clearWatch(watchId);
+    });
+
+    // Live location fetch: ask for permission as soon as the dashboard opens.
+    // This runs before/independently of the accident-data fetch below so a
+    // slow or failed API/map load can never prevent the permission prompt.
+    requestLocation({ recenter: true, watch: true });
+
+    try {
+      await refresh();
+    } catch (e) {
+      console.error('[BAT] Dashboard refresh failed:', e);
+    }
   }
 
   if (document.readyState === 'loading') {

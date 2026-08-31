@@ -26,6 +26,7 @@ async function renderAll() {
     renderAreasChart(byArea || []);
     renderByHourChart(byTime?.byHour || []);
     renderByDayChart(byTime?.byDay || []);
+    renderHeatmap(byTime?.matrix || []);
   } catch (e) {
     console.error('Failed to load trends data', e);
   }
@@ -93,6 +94,45 @@ function renderByDayChart(days) {
   const data = (days && days.length===7) ? days.map(n=>Number(n||0)) : labels.map(()=>0);
   const ctx = document.getElementById('chart-byday').getContext('2d');
   new Chart(ctx, { type:'bar', data:{ labels, datasets:[{ label:'Incidents', data, backgroundColor:'#f59e0b' }] }, options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } });
+}
+
+function renderHeatmap(matrix) {
+  const container = document.getElementById('heatmap');
+  if (!container) return;
+  const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const rows = (matrix && matrix.length === 7) ? matrix : dayLabels.map(() => new Array(24).fill(0));
+
+  let max = 0;
+  rows.forEach(row => row.forEach(v => { if (Number(v) > max) max = Number(v); }));
+
+  container.innerHTML = '';
+
+  // Header row: blank corner cell + hour labels
+  const corner = document.createElement('div');
+  container.appendChild(corner);
+  for (let h = 0; h < 24; h++) {
+    const label = document.createElement('div');
+    label.className = 'heatmap-hour-label';
+    label.textContent = (h % 3 === 0) ? String(h) : '';
+    container.appendChild(label);
+  }
+
+  // One row per day: label + 24 hour cells
+  rows.forEach((row, dayIdx) => {
+    const dayLabel = document.createElement('div');
+    dayLabel.className = 'heatmap-label';
+    dayLabel.textContent = dayLabels[dayIdx];
+    container.appendChild(dayLabel);
+
+    row.forEach((count, hourIdx) => {
+      const cell = document.createElement('div');
+      cell.className = 'heatmap-cell';
+      const intensity = max > 0 ? Number(count) / max : 0;
+      cell.style.background = hexToRGBA('#dc2626', 0.06 + intensity * 0.9);
+      cell.title = `${dayLabels[dayIdx]} ${String(hourIdx).padStart(2,'0')}:00 — ${count} incident${count === 1 ? '' : 's'}`;
+      container.appendChild(cell);
+    });
+  });
 }
 
 // Refresh & CSV download (CSV will call existing /api/accidents?format=csv if implemented later)

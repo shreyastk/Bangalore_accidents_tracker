@@ -13,6 +13,10 @@
   let editingId  = null;
   let deleteId   = null;
   let mapboxToken = '';
+  let lastRows   = [];   // most recently loaded table rows (used to populate the map view)
+  let mapViewActive = false;
+  let adminMap   = null; // MapLibre map instance for the drag-to-reposition view
+  let adminPins  = new Map(); // accident id -> maplibregl.Marker
 
   // ── Toast notification system ─────────────────────────────────────────────
 
@@ -22,7 +26,7 @@
    * @param {'success'|'error'|'warning'} type - Toast type (default: 'success')
    * @param {number} duration - Auto-dismiss duration in ms (default: 3000)
    */
-  function toast(message, type = 'success', duration = 3000) {
+  function toast(message, type = 'success', duration = 3000, actionLabel = null, onAction = null) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
@@ -33,15 +37,30 @@
     const icons = { success: '✓', error: '✕', warning: '⚠' };
     el.innerHTML = `<span class="toast-icon">${icons[type] || icons.success}</span><span class="toast-msg">${message}</span>`;
 
+    let timer;
+    if (actionLabel && onAction) {
+      const actionBtn = document.createElement('button');
+      actionBtn.type = 'button';
+      actionBtn.className = 'toast-action';
+      actionBtn.textContent = actionLabel;
+      actionBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearTimeout(timer);
+        dismissToast(el);
+        onAction();
+      });
+      el.appendChild(actionBtn);
+    }
+
     container.appendChild(el);
 
     // Trigger slide-in animation
     requestAnimationFrame(() => { el.classList.add('toast--visible'); });
 
     // Auto-dismiss
-    const timer = setTimeout(() => dismissToast(el), duration);
+    timer = setTimeout(() => dismissToast(el), duration);
 
-    // Allow manual dismiss on click
+    // Allow manual dismiss on click (but not when the action button was clicked)
     el.addEventListener('click', () => {
       clearTimeout(timer);
       dismissToast(el);
@@ -289,11 +308,13 @@
       if (r.status === 401) return; // Already handled by authenticatedFetch (redirect to login)
       const data = await r.json();
       curTotal = data.total;
+      lastRows = data.rows;
       renderTable(data.rows);
       renderPagination(data.total, isIdSort ? 1 : page, limit);
       document.getElementById('record-count').textContent =
         `${data.total} record${data.total !== 1 ? 's' : ''}`;
       updateStats(data.rows);
+      if (mapViewActive) renderMapPins(data.rows);
     } catch (e) {
       tbody.innerHTML = `<tr><td colspan="9" class="t-loading" style="color:#dc2626">Error: ${e.message}</td></tr>`;
     }
@@ -348,6 +369,13 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // Safely embed a JSON blob inside a single-quoted HTML attribute (data-row='...').
+  // JSON.stringify only escapes double quotes, so any apostrophe in free text
+  // (e.g. a citizen's report description) would otherwise break out of the attribute.
+  function jsonAttr(obj) {
+    return JSON.stringify(obj).replace(/'/g, '&#39;');
+  }
+
   function renderTable(rows) {
     const tbody = document.getElementById('table-body');
     if (!rows.length) {
@@ -370,10 +398,19 @@
       // Checkbox cell for bulk actions
       const checkboxCell = `<td><input type="checkbox" class="row-select" data-id="${esc(r.id)}" aria-label="Select ${esc(r.id)}"></td>`;
 
-      // Approve/Reject buttons for pending user reports
+      // A compact snapshot of this row's fields for the Review modal / buttons.
+      const reviewData = jsonAttr({
+        id: r.id, title: r.title, area: r.area || '', location: r.location || '',
+        severity: r.severity, date: r.date || r.date_raw || '', description: r.description || '',
+        proof_url: r.proof_url || '', reporter_id: r.reporter_id || '', created_at: r.created_at || '',
+        lat: r.lat || '', lng: r.lng || '', status: r.status,
+      });
+
+      // Approve/Reject/Review buttons for pending user reports
       let pendingBtns = '';
       if (r.status === 'pending' && r.reporter_id) {
         pendingBtns = `
+          <button class="btn-review" data-action="review" data-row='${reviewData}'>Review</button>
           <button class="btn-approve" data-action="approve" data-id="${esc(r.id)}">Approve</button>
           <button class="btn-reject" data-action="reject" data-id="${esc(r.id)}">Reject</button>
         `;
@@ -381,7 +418,9 @@
 
       const rejectionNote = r.rejection_reason ? `<div style="font-size:12px;color:#b91c1c;margin-top:6px">Reason: ${esc(r.rejection_reason)}</div>` : '';
       const proofLink = r.proof_url
-        ? `<a href="${esc(r.proof_url)}" target="_blank" rel="noopener" style="display:block;margin-top:6px">View proof image</a>`
+        ? `<div class="proof-thumb" data-action="review" data-row='${reviewData}' title="Click to review this user submission">
+             <img src="${esc(r.proof_url)}" alt="Uploaded proof photo" loading="lazy">
+           </div>`
         : '';
 
       return `<tr data-id="${esc(r.id)}">
@@ -401,7 +440,7 @@
         </td>
         <td>
           <div class="action-btns">
-            <button class="btn-edit" data-action="edit" data-id="${esc(r.id)}" data-row='${JSON.stringify({id:r.id,title:r.title,link:r.link||'',lat:r.lat||'',lng:r.lng||'',location:r.location||'',area:r.area||''})}'> Edit</button>
+            <button class="btn-edit" data-action="edit" data-id="${esc(r.id)}" data-row='${jsonAttr({id:r.id,title:r.title,link:r.link||'',lat:r.lat||'',lng:r.lng||'',location:r.location||'',area:r.area||''})}'> Edit</button>
             <button class="btn-del"  data-action="delete" data-id="${esc(r.id)}" data-title="${esc(r.title)}"> Delete</button>
             ${pendingBtns}
           </div>
@@ -437,6 +476,10 @@
         // open reject modal for single id
         openRejectModal([id]);
       });
+    });
+    // Review a user submission (photo + full details) before approving/rejecting
+    tbody.querySelectorAll('[data-action="review"]').forEach(el => {
+      el.addEventListener('click', () => openReview(JSON.parse(el.dataset.row)));
     });
     // Row selection handlers
     tbody.querySelectorAll('.row-select').forEach(cb => { cb.addEventListener('change', () => {}); });
@@ -573,6 +616,137 @@
     document.getElementById('edit-modal').hidden = true;
     editingId = null;
   }
+
+  // ── Map View: drag pins to reposition accident coordinates ───────────────
+
+  const PIN_COLORS = { fatal: '#dc2626', serious: '#f59e0b', minor: '#3b82f6' };
+
+  function pinSvg(color) {
+    return `<svg width="26" height="34" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13 0C5.8 0 0 5.8 0 13c0 9.75 13 21 13 21s13-11.25 13-21C26 5.8 20.2 0 13 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="13" cy="13" r="5" fill="#fff"/>
+    </svg>`;
+  }
+
+  function initAdminMap() {
+    if (adminMap) return;
+    adminMap = new maplibregl.Map({
+      container: 'admin-map',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      center: [77.5946, 12.9716],
+      zoom: 11,
+    });
+    adminMap.addControl(new maplibregl.NavigationControl(), 'top-right');
+  }
+
+  function clearMapPins() {
+    adminPins.forEach(marker => marker.remove());
+    adminPins.clear();
+  }
+
+  function renderMapPins(rows) {
+    if (!adminMap) return;
+    clearMapPins();
+
+    const withCoords = (rows || []).filter(r => {
+      const lat = parseFloat(r.lat), lng = parseFloat(r.lng);
+      return !isNaN(lat) && !isNaN(lng);
+    });
+    if (!withCoords.length) return;
+
+    const bounds = new maplibregl.LngLatBounds();
+
+    withCoords.forEach(r => {
+      const lat = parseFloat(r.lat), lng = parseFloat(r.lng);
+      const color = PIN_COLORS[r.severity] || '#64748b';
+
+      const el = document.createElement('div');
+      el.className = 'admin-pin';
+      el.innerHTML = pinSvg(color);
+
+      const popup = new maplibregl.Popup({ offset: 20, closeButton: false }).setHTML(`
+        <div class="admin-pin-popup">
+          <div class="pp-title">${esc(r.title || r.id)}</div>
+          <div class="pp-meta">
+            ${esc((r.severity || '').toUpperCase())} · ${esc(r.status || '')}<br>
+            ${esc(r.location || r.area || '—')}
+          </div>
+        </div>`);
+
+      const marker = new maplibregl.Marker({ element: el, draggable: true, anchor: 'bottom' })
+        .setLngLat([lng, lat])
+        .setPopup(popup)
+        .addTo(adminMap);
+
+      let dragStart = { lat, lng };
+      marker.on('dragstart', () => {
+        dragStart = marker.getLngLat();
+        el.classList.add('is-dragging');
+      });
+      marker.on('dragend', () => {
+        el.classList.remove('is-dragging');
+        const { lat: newLat, lng: newLng } = marker.getLngLat();
+        savePinLocation(r, { lat: dragStart.lat, lng: dragStart.lng }, { lat: newLat, lng: newLng }, marker);
+      });
+
+      adminPins.set(r.id, marker);
+      bounds.extend([lng, lat]);
+    });
+
+    if (!bounds.isEmpty()) {
+      adminMap.fitBounds(bounds, { padding: 60, maxZoom: 15, duration: 400 });
+    }
+  }
+
+  async function savePinLocation(row, prevPos, newPos, marker) {
+    try {
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/${encodeURIComponent(row.id)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ lat: newPos.lat, lng: newPos.lng }),
+      });
+      if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+
+      // Keep the table view's cached row + coords column in sync without a full reload.
+      row.lat = newPos.lat; row.lng = newPos.lng;
+      updateRowInTable(row.id, newPos.lat, newPos.lng, row.location, row.area);
+
+      toast(
+        `Updated location for "${row.title || row.id}"`,
+        'success', 6000, 'Undo',
+        () => {
+          marker.setLngLat([prevPos.lng, prevPos.lat]);
+          savePinLocation(row, newPos, prevPos, marker);
+        }
+      );
+    } catch (e) {
+      marker.setLngLat([prevPos.lng, prevPos.lat]); // revert the pin since the save failed
+      toast('Failed to update location: ' + e.message, 'error');
+    }
+  }
+
+  function toggleMapView() {
+    mapViewActive = !mapViewActive;
+    const mapWrap = document.getElementById('map-view-wrap');
+    const tableWrap = document.getElementById('table-wrap');
+    const pagination = document.getElementById('pagination');
+    const btn = document.getElementById('map-view-toggle');
+
+    if (mapWrap) mapWrap.hidden = !mapViewActive;
+    if (tableWrap) tableWrap.hidden = mapViewActive;
+    if (pagination) pagination.hidden = mapViewActive;
+    if (btn) {
+      btn.textContent = mapViewActive ? '📋 Table View' : '🗺️ Map View';
+      btn.style.background = mapViewActive ? 'var(--color-primary)' : '#fff';
+      btn.style.color = mapViewActive ? '#fff' : 'var(--color-primary)';
+    }
+
+    if (mapViewActive) {
+      initAdminMap();
+      setTimeout(() => { adminMap.resize(); renderMapPins(lastRows); }, 50);
+    }
+  }
+
+  document.getElementById('map-view-toggle')?.addEventListener('click', toggleMapView);
 
   // ── Duplicate detection helpers ─────────────────────────────────────────
   let dupTimer = null;
@@ -842,6 +1016,11 @@
   document.getElementById('apply-btn').addEventListener('click', () => loadData(1));
   document.getElementById('search-box').addEventListener('keydown', e => { if (e.key === 'Enter') loadData(1); });
   document.getElementById('f-sort').addEventListener('change', () => loadData(1));
+  document.getElementById('pending-reports-tab')?.addEventListener('click', () => {
+    document.getElementById('f-status').value = 'pending';
+    document.getElementById('search-box').value = '';
+    loadData(1);
+  });
 
   // ── Keyboard Shortcuts ──────────────────────────────────────────────────────
 
@@ -897,7 +1076,10 @@
     const editModal = document.getElementById('edit-modal');
     const confirmModal = document.getElementById('confirm-modal');
     const addModalEl = document.getElementById('add-modal');
-    return !editModal.hidden || !confirmModal.hidden || !addModalEl.hidden;
+    const reviewModal = document.getElementById('review-modal');
+    const rejectModal = document.getElementById('reject-modal');
+    return !editModal.hidden || !confirmModal.hidden || !addModalEl.hidden ||
+      !(reviewModal?.hidden ?? true) || !(rejectModal?.hidden ?? true);
   }
 
   /**
@@ -1044,6 +1226,70 @@
     delete modal.dataset.ids;
   }
 
+  // ── Review User Submission modal ────────────────────────────────────────
+
+  function openReview(row) {
+    const modal = document.getElementById('review-modal');
+    modal.dataset.id = row.id;
+
+    const photoWrap = document.getElementById('review-photo-wrap');
+    photoWrap.innerHTML = row.proof_url
+      ? `<img class="review-photo" src="${esc(row.proof_url)}" alt="Uploaded proof photo">`
+      : `<div class="review-photo-empty">No photo was attached to this report.</div>`;
+
+    const coords = (row.lat && row.lng) ? `${parseFloat(row.lat).toFixed(5)}, ${parseFloat(row.lng).toFixed(5)}` : 'No coordinates';
+    const submittedAt = row.created_at ? new Date(row.created_at).toLocaleString() : '—';
+    const reporter = row.reporter_id ? row.reporter_id.slice(0, 8) + '…' : '—';
+
+    document.getElementById('review-info').innerHTML = `
+      <div class="review-info-grid">
+        <div class="review-info-item"><div class="ri-label">Title</div><div class="ri-value">${esc(row.title || '—')}</div></div>
+        <div class="review-info-item"><div class="ri-label">Severity</div><div class="ri-value">${esc((row.severity||'').toUpperCase() || '—')}</div></div>
+        <div class="review-info-item"><div class="ri-label">Location</div><div class="ri-value">${esc(row.location || '—')}</div></div>
+        <div class="review-info-item"><div class="ri-label">Area</div><div class="ri-value">${esc(row.area || '—')}</div></div>
+        <div class="review-info-item"><div class="ri-label">Accident Date</div><div class="ri-value">${esc(row.date || '—')}</div></div>
+        <div class="review-info-item"><div class="ri-label">Coordinates</div><div class="ri-value">${esc(coords)}</div></div>
+        <div class="review-info-item"><div class="ri-label">Submitted</div><div class="ri-value">${esc(submittedAt)}</div></div>
+        <div class="review-info-item"><div class="ri-label">Reporter ID</div><div class="ri-value">${esc(reporter)}</div></div>
+      </div>`;
+
+    document.getElementById('review-description').textContent = row.description || 'No description provided.';
+    document.getElementById('review-reject-reason').value = '';
+    document.getElementById('review-error').hidden = true;
+
+    const isPending = row.status === 'pending';
+    document.getElementById('review-approve-btn').style.display = isPending ? '' : 'none';
+    document.getElementById('review-reject-btn').style.display = isPending ? '' : 'none';
+
+    modal.hidden = false;
+  }
+
+  function closeReview() {
+    const modal = document.getElementById('review-modal');
+    modal.hidden = true;
+    delete modal.dataset.id;
+  }
+
+  async function reviewAction(action) {
+    const modal = document.getElementById('review-modal');
+    const id = modal.dataset.id;
+    if (!id) return;
+    const errorEl = document.getElementById('review-error');
+    errorEl.hidden = true;
+    try {
+      const body = { ids: [id], action };
+      if (action === 'hide') body.rejection_reason = document.getElementById('review-reject-reason').value.trim();
+      const r = await authenticatedFetch(`${API}/api/admin/accidents/bulk`, { method: 'POST', body: JSON.stringify(body) });
+      if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      toast(action === 'verify' ? 'Report approved and published' : 'Report rejected', 'success');
+      closeReview();
+      loadData(curPage);
+    } catch (e) {
+      errorEl.textContent = 'Action failed: ' + e.message;
+      errorEl.hidden = false;
+    }
+  }
+
   // select-all checkbox handler
   const selectAllEl = document.getElementById('select-all');
   if (selectAllEl) {
@@ -1094,6 +1340,12 @@
       loadData(curPage);
     } catch (e) { toast('Bulk reject failed: ' + e.message, 'error'); }
   });
+
+  // Review submission modal buttons
+  document.getElementById('review-close')?.addEventListener('click', closeReview);
+  document.getElementById('review-close-btn')?.addEventListener('click', closeReview);
+  document.getElementById('review-approve-btn')?.addEventListener('click', () => reviewAction('verify'));
+  document.getElementById('review-reject-btn')?.addEventListener('click', () => reviewAction('hide'));
 
   // ── Toast Notification System ────────────────────────────────────────────
 

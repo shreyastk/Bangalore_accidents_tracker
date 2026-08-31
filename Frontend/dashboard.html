@@ -81,6 +81,14 @@
       <select class="f-select" id="filter-area">
         <option value="all">All Areas</option>
       </select>
+      <select class="f-select" id="filter-distance">
+        <option value="all">Any Distance</option>
+        <option value="1">Within 1 km</option>
+        <option value="3">Within 3 km</option>
+        <option value="5">Within 5 km</option>
+        <option value="10">Within 10 km</option>
+        <option value="25">Within 25 km</option>
+      </select>
       <div class="date-row">
         <input type="date" class="f-select" id="filter-from" title="From date">
         <input type="date" class="f-select" id="filter-to"   title="To date">
@@ -89,6 +97,17 @@
         <button class="btn-apply" id="apply-filters-btn">Apply</button>
         <button class="btn-reset" id="reset-filters-btn">Reset</button>
       </div>
+    </div>
+
+    <!-- Near You (live geolocation) -->
+    <div class="sidebar-card" id="near-you-card">
+      <div class="card-label">
+        Near You
+        <span class="zone-pill" id="near-you-status" data-state="locating">Locating…</span>
+      </div>
+      <ul class="hotspot-list near-you-list" id="near-you-list">
+        <li class="hotspot-empty">Requesting your location…</li>
+      </ul>
     </div>
 
     <!-- Top Hotspots -->
@@ -113,6 +132,11 @@
   <!-- ── MAP AREA ───────────────────────────────────────────────── -->
   <div class="map-area">
     <div id="accident-map"></div>
+
+    <!-- Locate Me floating button -->
+    <button class="locate-btn" id="locate-btn" type="button" title="Find my location" aria-label="Find my location">
+      <span class="locate-btn-icon"></span>
+    </button>
 
     <!-- Bottom-left overlay: heatmap + legend -->
     <div class="map-overlay">

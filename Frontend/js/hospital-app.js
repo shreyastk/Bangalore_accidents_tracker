@@ -143,6 +143,32 @@ async function loadHospitals(reset = true) {
 }
 
 /* ── Emergency alerts ──────────────────────────────────────────────── */
+let myLocation = null;
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { myLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+    () => { myLocation = null; },
+    { enableHighAccuracy: false, timeout: 8000 }
+  );
+}
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function initMiniMap(el, lat, lng) {
+  if (!window.L || lat == null || lng == null) return;
+  try {
+    const map = L.map(el, { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false }).setView([lat, lng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+    L.marker([lat, lng]).addTo(map);
+  } catch (e) { console.error('Mini-map init failed', e); }
+}
+
 function renderAlerts(list) {
   const container = document.getElementById('alerts');
   if (!container) return;
@@ -166,6 +192,31 @@ function renderAlerts(list) {
     const mapsHref = (a.lat != null && a.lng != null)
       ? `https://www.google.com/maps?q=${a.lat},${a.lng}`
       : null;
+
+    // Photo + mini-map + distance
+    const media = document.createElement('div');
+    media.className = 'alert-media';
+    if (a.photo_url) {
+      const img = document.createElement('img');
+      img.className = 'alert-photo';
+      img.src = a.photo_url;
+      img.alt = 'Emergency scene photo';
+      img.loading = 'lazy';
+      media.appendChild(img);
+    }
+    if (a.lat != null && a.lng != null) {
+      const mapEl = document.createElement('div');
+      mapEl.className = 'alert-minimap';
+      media.appendChild(mapEl);
+      setTimeout(() => initMiniMap(mapEl, Number(a.lat), Number(a.lng)), 0);
+    }
+    if (a.lat != null && a.lng != null && myLocation) {
+      const dist = haversineKm(myLocation.lat, myLocation.lng, Number(a.lat), Number(a.lng));
+      const distEl = document.createElement('span');
+      distEl.className = 'alert-distance';
+      distEl.textContent = `${dist.toFixed(1)} km away`;
+      media.appendChild(distEl);
+    }
 
     const actions = document.createElement('div');
     actions.className = 'alert-actions';
@@ -209,6 +260,7 @@ function renderAlerts(list) {
     desc.className = 'text-muted';
     desc.textContent = a.description || '';
 
+    if (media.childNodes.length) el.appendChild(media);
     el.appendChild(body);
     body.appendChild(head);
     body.appendChild(title);

@@ -8,29 +8,44 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import pg from 'pg';
 import { OpenRouter } from '@openrouter/sdk';
+import { createClient } from '@supabase/supabase-js';
 import { notifyHospitals } from './notify.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error('Set SUPABASE_DATABASE_URL (recommended) or DATABASE_URL before starting the API.');
-}
+const supabaseUrl = process.env.SUPABASE_URL || 'https://xcjzfifybnzocyjlktpo.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+export const supabase = (supabaseUrl && supabaseServiceKey)
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null;
 
-const pool = new pg.Pool({
-  connectionString: databaseUrl,
-  max: 10,
-  connectionTimeoutMillis: 10000,
-});
+const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
+let pool = null;
+
+if (databaseUrl) {
+  try {
+    pool = new pg.Pool({
+      connectionString: databaseUrl,
+      max: 10,
+      connectionTimeoutMillis: 5000,
+    });
+    pool.on('error', (err) => {
+      console.warn('PostgreSQL pool event error:', err.message);
+    });
+  } catch (err) {
+    console.warn('PostgreSQL pool init failed, falling back to Supabase REST / local data:', err.message);
+  }
+}
 
 const openrouter = new OpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY
 });
 
-// ── Local Postgres helpers (replaces Supabase REST) ─────────────────────────
+// ── Database & Fallback helpers ──────────────────────────────────────────────
 
 async function q(text, params = []) {
+  if (!pool) throw new Error('PostgreSQL pool is not configured');
   const res = await pool.query(text, params);
   return res.rows;
 }
@@ -40,17 +55,113 @@ async function rpcResult(sql, params = []) {
   return rows[0]?.result ?? null;
 }
 
-const getAccidentsFC = (from, to, severity, area, zone) => rpcResult(
-  `SELECT get_accidents_fc($1::text, $2::text, $3::text, $4::text, $5::text) AS result`,
-  [from || null, to || null, severity && severity !== 'all' ? severity : null, area && area !== 'all' ? area : null, zone && zone !== 'all' ? zone : null]
-);
+const HOSPITALS_JSON_PATH = path.join(__dirname, 'seed-hospitals.json');
+const JSON_PATH = path.join(__dirname, '..', 'Frontend', 'accident_data.json');
+let localHospitalsCache = null;
+
+function getLocalHospitals() {
+  if (!localHospitalsCache) {
+    try {
+      if (fs.existsSync(HOSPITALS_JSON_PATH)) {
+        const raw = JSON.parse(fs.readFileSync(HOSPITALS_JSON_PATH, 'utf8'));
+        localHospitalsCache = raw.map(h => {
+          let lat = null, lng = null;
+          if (h.location) {
+            const m = String(h.location).match(/POINT\s*\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+            if (m) {
+              lng = parseFloat(m[1]);
+              lat = parseFloat(m[2]);
+            }
+          }
+          return {
+            id: h.id,
+            name: h.name,
+            phone: h.phone || null,
+            address: h.address || null,
+            lat,
+            lng
+          };
+        });
+      } else {
+        localHospitalsCache = [];
+      }
+    } catch (e) {
+      console.error('Error reading seed-hospitals.json:', e.message);
+      localHospitalsCache = [];
+    }
+  }
+  return localHospitalsCache;
+}
+
+function haversineDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+async function getAccidentsFC(from, to, severity, area, zone) {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.rpc('get_accidents_fc', {
+        p_from: from || null,
+        p_to: to || null,
+        p_severity: severity && severity !== 'all' ? severity : null,
+        p_area: area && area !== 'all' ? area : null,
+        p_zone: zone && zone !== 'all' ? zone : null
+      });
+      if (!error && data) return data;
+      if (error) console.warn('Supabase get_accidents_fc RPC warning:', error.message);
+    } catch (e) {
+      console.warn('Supabase get_accidents_fc error:', e.message);
+    }
+  }
+  if (pool) {
+    try {
+      return await rpcResult(
+        `SELECT get_accidents_fc($1::text, $2::text, $3::text, $4::text, $5::text) AS result`,
+        [from || null, to || null, severity && severity !== 'all' ? severity : null, area && area !== 'all' ? area : null, zone && zone !== 'all' ? zone : null]
+      );
+    } catch (e) { }
+  }
+  return null;
+}
 
 const getNearestHospitals = (lat, lng, limit) => rpcResult(
   `SELECT get_nearest_hospitals($1::double precision, $2::double precision, $3::int) AS result`,
   [lat, lng, limit]
 );
 
-const app  = express();
+// Analytics RPC helpers — prefer server-side aggregation (Supabase RPC, then
+// direct Postgres RPC) so full tables are never pulled into the client.
+async function callStatsRpc(fnName) {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.rpc(fnName);
+      if (!error && data) return data;
+      if (error) console.warn(`Supabase ${fnName} RPC warning:`, error.message);
+    } catch (e) {
+      console.warn(`Supabase ${fnName} error:`, e.message);
+    }
+  }
+  if (pool) {
+    try {
+      return await rpcResult(`SELECT ${fnName}() AS result`);
+    } catch (e) { }
+  }
+  return null;
+}
+
+const getStatsMonthly = () => callStatsRpc('get_stats_monthly');
+const getStatsByTimeRpc = () => callStatsRpc('get_stats_by_time');
+const getStatsByAreaRpc = () => callStatsRpc('get_stats_by_area');
+
+const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
 const corsOrigin = process.env.CORS_ORIGIN?.split(',').map(s => s.trim()).filter(Boolean);
@@ -173,7 +284,53 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 app.get('/api/accidents', limiterPublic, async (req, res) => {
   try {
     const { from, to, severity, area, zone } = req.query;
-    const data = await getAccidentsFC(from, to, severity, area, zone);
+    let data = null;
+
+    try {
+      if (pool) {
+        data = await getAccidentsFC(from, to, severity, area, zone);
+      }
+    } catch (dbErr) {
+      // Database query failed
+    }
+
+    if (!data || !data.features || !data.features.length) {
+      // Fallback to local / Supabase data
+      try {
+        if (fs.existsSync(JSON_PATH)) {
+          let list = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
+          if (severity && severity !== 'all') list = list.filter(d => d.severity === severity);
+          if (area && area !== 'all') list = list.filter(d => d.area === area);
+          if (zone && zone !== 'all') list = list.filter(d => d.zone === zone);
+          if (from) list = list.filter(d => !d.date || d.date >= from);
+          if (to) list = list.filter(d => !d.date || d.date <= to);
+
+          const features = list
+            .filter(d => d.hasCoords && d.lat != null && d.lng != null)
+            .map(d => ({
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [d.lng, d.lat] },
+              properties: {
+                id: String(d.id),
+                title: d.title,
+                source: d.source,
+                link: d.link,
+                location: d.location,
+                area: d.area,
+                zone: d.zone,
+                severity: d.severity,
+                score: d.score,
+                date: d.date || '—',
+                isUser: Boolean(d.isUser || d.reporter_id)
+              }
+            }));
+          data = { type: 'FeatureCollection', features };
+        }
+      } catch (jsonErr) {
+        console.error('Fallback accidents error:', jsonErr.message);
+      }
+    }
+
     // Support CSV export as a convenience: ?format=csv
     const format = (req.query.format || '').toLowerCase();
     if (format === 'csv') {
@@ -188,7 +345,7 @@ app.get('/api/accidents', limiterPublic, async (req, res) => {
         return s;
       };
       const rows = [];
-      rows.push(['id','date','severity','area','zone','lat','lng','location'].join(','));
+      rows.push(['id', 'date', 'severity', 'area', 'zone', 'lat', 'lng', 'location'].join(','));
       for (const f of features) {
         const p = f.properties || {};
         const g = f.geometry || {};
@@ -202,7 +359,7 @@ app.get('/api/accidents', limiterPublic, async (req, res) => {
       return res.send(csv);
     }
 
-    res.json(data);
+    res.json(data || { type: 'FeatureCollection', features: [] });
   } catch (e) {
     console.error('/api/accidents error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -211,26 +368,63 @@ app.get('/api/accidents', limiterPublic, async (req, res) => {
 
 app.get('/api/meta', limiterPublic, async (_req, res) => {
   try {
-    const [areas, zones, counts] = await Promise.all([
-      q(`SELECT DISTINCT area FROM accidents WHERE geom IS NOT NULL AND status = 'active' AND area IS NOT NULL ORDER BY area`),
-      q(`SELECT DISTINCT zone FROM accidents WHERE geom IS NOT NULL AND status = 'active' AND zone IS NOT NULL ORDER BY zone`),
-      q(`SELECT
-           count(*) AS total,
-           count(*) FILTER (WHERE severity = 'fatal')   AS fatal,
-           count(*) FILTER (WHERE severity = 'serious') AS serious,
-           count(*) FILTER (WHERE severity = 'minor')   AS minor
-         FROM accidents WHERE geom IS NOT NULL AND status = 'active'`),
-    ]);
-    res.json({
-      areas: areas.map(r => r.area),
-      zones: zones.map(r => r.zone),
-      counts: {
-        total:   Number(counts[0]?.total   || 0),
-        fatal:   Number(counts[0]?.fatal   || 0),
-        serious: Number(counts[0]?.serious || 0),
-        minor:   Number(counts[0]?.minor   || 0),
-      },
-    });
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('accidents')
+          .select('area, zone, severity')
+          .eq('status', 'active');
+        if (!error && data && data.length > 0) {
+          const areas = [...new Set(data.map(d => d.area).filter(Boolean))].sort();
+          const zones = [...new Set(data.map(d => d.zone).filter(Boolean))].sort();
+          const counts = {
+            total: data.length,
+            fatal: data.filter(d => d.severity === 'fatal').length,
+            serious: data.filter(d => d.severity === 'serious').length,
+            minor: data.filter(d => d.severity === 'minor').length,
+          };
+          return res.json({ areas, zones, counts });
+        }
+      } catch (sbErr) {
+        console.warn('Supabase meta error:', sbErr.message);
+      }
+    }
+
+    if (pool) {
+      try {
+        const [areas, zones, counts] = await Promise.all([
+          q(`SELECT DISTINCT area FROM accidents WHERE geom IS NOT NULL AND status = 'active' AND area IS NOT NULL ORDER BY area`),
+          q(`SELECT DISTINCT zone FROM accidents WHERE geom IS NOT NULL AND status = 'active' AND zone IS NOT NULL ORDER BY zone`),
+          q(`SELECT
+               count(*) AS total,
+               count(*) FILTER (WHERE severity = 'fatal')   AS fatal,
+               count(*) FILTER (WHERE severity = 'serious') AS serious,
+               count(*) FILTER (WHERE severity = 'minor')   AS minor
+             FROM accidents WHERE geom IS NOT NULL AND status = 'active'`),
+        ]);
+        return res.json({
+          areas: areas.map(r => r.area),
+          zones: zones.map(r => r.zone),
+          counts: {
+            total: Number(counts[0]?.total || 0),
+            fatal: Number(counts[0]?.fatal || 0),
+            serious: Number(counts[0]?.serious || 0),
+            minor: Number(counts[0]?.minor || 0),
+          },
+        });
+      } catch (dbErr) { }
+    }
+
+    const data = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
+    const areas = [...new Set(data.map(d => d.area).filter(Boolean))].sort();
+    const zones = [...new Set(data.map(d => d.zone).filter(Boolean))].sort();
+    const counts = {
+      total: data.length,
+      fatal: data.filter(d => d.severity === 'fatal').length,
+      serious: data.filter(d => d.severity === 'serious').length,
+      minor: data.filter(d => d.severity === 'minor').length,
+    };
+    res.json({ areas, zones, counts });
   } catch (e) {
     console.error('/api/meta error:', e.message);
     res.status(500).json({ error: 'Failed meta', detail: e.message });
@@ -241,8 +435,41 @@ app.get('/api/meta', limiterPublic, async (_req, res) => {
 
 app.get('/api/stats/trends', limiterPublic, async (_req, res) => {
   try {
-    const data = await rpcResult(`SELECT get_stats_monthly() AS result`);
-    res.json(data);
+    const rpcData = await getStatsMonthly();
+    if (rpcData) return res.json(rpcData);
+
+    // Fallback: aggregate in Node if the RPC isn't available yet (e.g. schema.sql not run).
+    let rows = [];
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('accidents')
+          .select('accident_date, date_raw, severity')
+          .eq('status', 'active');
+        if (!error && data && data.length) rows = data;
+      } catch (sbErr) {
+        console.warn('Supabase trends error:', sbErr.message);
+      }
+    }
+
+    if (!rows.length && fs.existsSync(JSON_PATH)) {
+      rows = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
+    }
+
+    const monthly = {};
+    for (const d of rows) {
+      const dt = d.accident_date || d.date || d.date_raw;
+      if (!dt || typeof dt !== 'string') continue;
+      const m = dt.slice(0, 7);
+      if (!/^\d{4}-\d{2}$/.test(m)) continue;
+      if (!monthly[m]) monthly[m] = { month: m, total: 0, fatal: 0, serious: 0, minor: 0 };
+      monthly[m].total++;
+      if (d.severity === 'fatal') monthly[m].fatal++;
+      else if (d.severity === 'serious') monthly[m].serious++;
+      else monthly[m].minor++;
+    }
+    const result = Object.values(monthly).sort((a, b) => a.month.localeCompare(b.month));
+    res.json(result);
   } catch (e) {
     console.error('/api/stats/trends error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -251,8 +478,51 @@ app.get('/api/stats/trends', limiterPublic, async (_req, res) => {
 
 app.get('/api/stats/by-time', limiterPublic, async (_req, res) => {
   try {
-    const data = await rpcResult(`SELECT get_stats_by_time() AS result`);
-    res.json(data);
+    const rpcData = await getStatsByTimeRpc();
+    if (rpcData) return res.json(rpcData);
+
+    // Fallback: aggregate in Node if the RPC isn't available yet (e.g. schema.sql not run).
+    let rows = [];
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('accidents')
+          .select('accident_date, date_raw')
+          .eq('status', 'active');
+        if (!error && data && data.length) rows = data;
+      } catch (sbErr) {
+        console.warn('Supabase by-time error:', sbErr.message);
+      }
+    }
+
+    if (!rows.length && fs.existsSync(JSON_PATH)) {
+      rows = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
+    }
+
+    const byHour = new Array(24).fill(0);
+    const byDay = new Array(7).fill(0);
+    const matrix = Array.from({ length: 7 }, () => new Array(24).fill(0));
+    for (const d of rows) {
+      let dow = null;
+      const dtStr = d.accident_date || d.date || d.date_raw;
+      if (dtStr) {
+        const dt = new Date(dtStr);
+        if (!isNaN(dt.getTime())) {
+          dow = dt.getDay();
+          byDay[dow]++;
+        }
+      }
+      const raw = String(d.date_raw || d.time || '');
+      const m = raw.match(/([0-2]?[0-9]):([0-5][0-9])/);
+      let hour = null;
+      if (m) {
+        hour = parseInt(m[1], 10);
+        if (hour >= 0 && hour < 24) byHour[hour]++;
+        else hour = null;
+      }
+      if (dow !== null && hour !== null) matrix[dow][hour]++;
+    }
+    res.json({ byHour, byDay, matrix });
   } catch (e) {
     console.error('/api/stats/by-time error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -261,8 +531,40 @@ app.get('/api/stats/by-time', limiterPublic, async (_req, res) => {
 
 app.get('/api/stats/by-area', limiterPublic, async (_req, res) => {
   try {
-    const data = await rpcResult(`SELECT get_stats_by_area() AS result`);
-    res.json(data);
+    const rpcData = await getStatsByAreaRpc();
+    if (rpcData) return res.json(rpcData);
+
+    // Fallback: aggregate in Node if the RPC isn't available yet (e.g. schema.sql not run).
+    let rows = [];
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('accidents')
+          .select('area, zone, severity')
+          .eq('status', 'active');
+        if (!error && data && data.length) rows = data;
+      } catch (sbErr) {
+        console.warn('Supabase by-area error:', sbErr.message);
+      }
+    }
+
+    if (!rows.length && fs.existsSync(JSON_PATH)) {
+      rows = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
+    }
+
+    const map = {};
+    for (const d of rows) {
+      const area = d.area || 'Unknown';
+      const zone = d.zone || 'Unknown';
+      const k = `${area}||${zone}`;
+      if (!map[k]) map[k] = { area, zone, total: 0, fatal: 0, serious: 0, minor: 0 };
+      map[k].total++;
+      if (d.severity === 'fatal') map[k].fatal++;
+      else if (d.severity === 'serious') map[k].serious++;
+      else map[k].minor++;
+    }
+    const result = Object.values(map).sort((a, b) => b.total - a.total);
+    res.json(result);
   } catch (e) {
     console.error('/api/stats/by-area error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -277,8 +579,32 @@ app.get('/api/hospitals/near', limiterPublic, async (req, res) => {
     const lng = parseFloat(req.query.lng);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit || '5')));
     if (isNaN(lat) || isNaN(lng)) return res.status(400).json({ error: 'lat and lng required' });
-    const data = await getNearestHospitals(lat, lng, limit);
-    res.json(data || []);
+
+    try {
+      if (pool) {
+        const data = await getNearestHospitals(lat, lng, limit);
+        if (data && data.length > 0) {
+          return res.json(data);
+        }
+      }
+    } catch (dbErr) {
+      // Postgres query failed or table does not exist
+    }
+
+    const all = getLocalHospitals();
+    const withDist = all
+      .filter(h => h.lat != null && h.lng != null)
+      .map(h => ({
+        id: h.id,
+        name: h.name,
+        phone: h.phone,
+        address: h.address,
+        distance_km: Math.round(haversineDistanceKm(lat, lng, h.lat, h.lng) * 100) / 100
+      }))
+      .sort((a, b) => a.distance_km - b.distance_km)
+      .slice(0, limit);
+
+    return res.json(withDist);
   } catch (e) {
     console.error('/api/hospitals/near error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -300,22 +626,44 @@ app.get('/api/hospitals', limiterPublic, async (req, res) => {
       where = `WHERE (name ILIKE $1 OR address ILIKE $1 OR phone ILIKE $1)`;
     }
 
-    const hospitals = await q(
-      `SELECT id, name, phone, address,
-              ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng
-       FROM hospitals
-       ${where}
-       ORDER BY name
-       LIMIT ${limit} OFFSET ${offset}`,
-      params
-    );
+    try {
+      if (pool) {
+        const hospitals = await q(
+          `SELECT id, name, phone, address,
+                  ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng
+           FROM hospitals
+           ${where}
+           ORDER BY name
+           LIMIT ${limit} OFFSET ${offset}`,
+          params
+        );
 
-    const countRows = await q(
-      `SELECT count(*)::int AS total FROM hospitals ${where}`,
-      params
-    );
+        const countRows = await q(
+          `SELECT count(*)::int AS total FROM hospitals ${where}`,
+          params
+        );
 
-    res.json({ total: countRows[0]?.total ?? 0, offset, limit, hospitals: hospitals || [] });
+        if (hospitals && hospitals.length > 0) {
+          return res.json({ total: countRows[0]?.total ?? 0, offset, limit, hospitals: hospitals || [] });
+        }
+      }
+    } catch (dbErr) {
+      // Postgres query failed or table does not exist
+    }
+
+    // Supabase REST or local dataset fallback
+    let all = getLocalHospitals();
+    if (search) {
+      const s = search.toLowerCase();
+      all = all.filter(h =>
+        (h.name && h.name.toLowerCase().includes(s)) ||
+        (h.address && h.address.toLowerCase().includes(s)) ||
+        (h.phone && h.phone.toLowerCase().includes(s))
+      );
+    }
+    const total = all.length;
+    const paged = all.slice(offset, offset + limit);
+    return res.json({ total, offset, limit, hospitals: paged });
   } catch (e) {
     console.error('/api/hospitals error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -477,17 +825,15 @@ app.post('/api/reports', validateJwt, async (req, res) => {
     const lng = parseFloat(longitude);
     const reporterId = req.jwtPayload.sub;
 
-    let nextId;
-    try {
-      const maxRows = await q(`SELECT id FROM accidents ORDER BY id DESC LIMIT 1`);
-      if (maxRows && maxRows.length) {
-        const maxIdNum = parseInt(maxRows[0].id, 10);
-        nextId = Number.isNaN(maxIdNum) ? `rpt_${Date.now()}` : (maxIdNum + 1).toString();
-      } else {
-        nextId = `rpt_${Date.now()}`;
-      }
-    } catch {
-      nextId = `rpt_${Date.now()}`;
+    let nextId = `rpt_${Date.now()}`;
+    if (supabase) {
+      try {
+        const { data: maxRows } = await supabase.from('accidents').select('id').order('id', { ascending: false }).limit(1);
+        if (maxRows && maxRows.length) {
+          const maxIdNum = parseInt(maxRows[0].id, 10);
+          if (!Number.isNaN(maxIdNum)) nextId = (maxIdNum + 1).toString();
+        }
+      } catch { }
     }
 
     const wkt = `SRID=4326;POINT(${lng} ${lat})`;
@@ -511,18 +857,62 @@ app.post('/api/reports', validateJwt, async (req, res) => {
       proof_url: typeof proof_url === 'string' ? proof_url : null
     };
 
-    try {
-      await q(
-        `INSERT INTO accidents (id, title, source, link, location, area, zone, severity, score, date_raw, accident_date, has_coords, geom, status, reporter_id, description, proof_url)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::geometry, $14, $15, $16, $17)`,
-        [newRecord.id, newRecord.title, newRecord.source, newRecord.link, newRecord.location, newRecord.area, newRecord.zone, newRecord.severity, newRecord.score, newRecord.date_raw, newRecord.accident_date, newRecord.has_coords, newRecord.geom, newRecord.status, newRecord.reporter_id, newRecord.description, newRecord.proof_url]
-      );
-    } catch (e) {
-      console.error('Report insert error:', e.message);
-      return res.status(500).json({ error: 'Report could not be saved' });
+    let saved = false;
+    if (supabase) {
+      try {
+        const { error: insErr } = await supabase.from('accidents').insert({
+          id: newRecord.id,
+          title: newRecord.title,
+          source: newRecord.source,
+          link: newRecord.link,
+          location: newRecord.location,
+          area: newRecord.area,
+          zone: newRecord.zone,
+          severity: newRecord.severity,
+          score: newRecord.score,
+          date_raw: newRecord.date_raw,
+          accident_date: newRecord.accident_date,
+          has_coords: newRecord.has_coords,
+          status: newRecord.status,
+          reporter_id: newRecord.reporter_id,
+          description: newRecord.description,
+          proof_url: newRecord.proof_url
+        });
+        if (!insErr) {
+          saved = true;
+          // PostgREST can't accept raw PostGIS WKT for a `geometry` column via
+          // a JSON insert, so set the pin location via RPC right afterwards.
+          try {
+            const { error: geomErr } = await supabase.rpc('set_accident_geom', { p_id: newRecord.id, p_lat: lat, p_lng: lng });
+            if (geomErr) console.error('set_accident_geom RPC error:', geomErr.message);
+          } catch (geomEx) {
+            console.error('set_accident_geom RPC exception:', geomEx.message);
+          }
+        }
+      } catch (e) {
+        console.warn('Supabase report insert error:', e.message);
+      }
     }
 
-    return res.status(201).json({ id: nextId });
+    if (!saved && pool) {
+      try {
+        await q(
+          `INSERT INTO accidents (id, title, source, link, location, area, zone, severity, score, date_raw, accident_date, has_coords, geom, status, reporter_id, description, proof_url)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::geometry, $14, $15, $16, $17)`,
+          [newRecord.id, newRecord.title, newRecord.source, newRecord.link, newRecord.location, newRecord.area, newRecord.zone, newRecord.severity, newRecord.score, newRecord.date_raw, newRecord.accident_date, newRecord.has_coords, newRecord.geom, newRecord.status, newRecord.reporter_id, newRecord.description, newRecord.proof_url]
+        );
+        saved = true;
+      } catch (e) {
+        console.error('Report insert error:', e.message);
+      }
+    }
+
+    if (saved) {
+      syncNewToJson(newRecord);
+      return res.status(201).json({ id: nextId });
+    }
+
+    return res.status(500).json({ error: 'Report could not be saved' });
   } catch (e) {
     console.error('POST /api/reports error:', e.message);
     return res.status(500).json({ error: 'Report could not be saved' });
@@ -532,30 +922,76 @@ app.post('/api/reports', validateJwt, async (req, res) => {
 app.get('/api/reports/mine', validateJwt, async (req, res) => {
   try {
     const userId = req.jwtPayload.sub;
-    const data = await q(
-      `SELECT id, title, location, area, severity, accident_date, status, description, proof_url,
-              ST_Y(geom) AS latitude, ST_X(geom) AS longitude
-       FROM accidents WHERE reporter_id = $1 ORDER BY accident_date DESC NULLS LAST`,
-      [userId]
-    );
+    if (supabase) {
+      try {
+        const { data: rows, error } = await supabase
+          .from('accidents')
+          .select('*')
+          .eq('reporter_id', userId)
+          .order('accident_date', { ascending: false });
+        if (!error && rows) {
+          const reports = rows.map(report => {
+            let lat = null, lng = null;
+            if (report.geom) {
+              if (typeof report.geom === 'object' && report.geom.coordinates) {
+                lng = report.geom.coordinates[0];
+                lat = report.geom.coordinates[1];
+              } else if (typeof report.geom === 'string') {
+                const m = report.geom.match(/POINT\s*\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+                if (m) { lng = parseFloat(m[1]); lat = parseFloat(m[2]); }
+              }
+            }
+            return {
+              id: report.id,
+              title: report.title,
+              location: report.location,
+              area: report.area,
+              severity: report.severity,
+              date: report.accident_date,
+              status: report.status === 'active' ? 'verified'
+                : report.status === 'hidden' ? 'rejected'
+                  : report.status || 'pending',
+              description: report.description,
+              proof_url: report.proof_url || null,
+              latitude: lat,
+              longitude: lng
+            };
+          });
+          return res.json(reports);
+        }
+      } catch (sbErr) {
+        console.warn('Supabase reports/mine error:', sbErr.message);
+      }
+    }
 
-    const reports = (data || []).map(report => ({
-      id: report.id,
-      title: report.title,
-      location: report.location,
-      area: report.area,
-      severity: report.severity,
-      date: report.accident_date,
-      status: report.status === 'active' ? 'verified'
-            : report.status === 'hidden' ? 'rejected'
+    if (pool) {
+      const data = await q(
+        `SELECT id, title, location, area, severity, accident_date, status, description, proof_url,
+                ST_Y(geom) AS latitude, ST_X(geom) AS longitude
+         FROM accidents WHERE reporter_id = $1 ORDER BY accident_date DESC NULLS LAST`,
+        [userId]
+      );
+
+      const reports = (data || []).map(report => ({
+        id: report.id,
+        title: report.title,
+        location: report.location,
+        area: report.area,
+        severity: report.severity,
+        date: report.accident_date,
+        status: report.status === 'active' ? 'verified'
+          : report.status === 'hidden' ? 'rejected'
             : report.status || 'pending',
-      description: report.description,
-      proof_url: report.proof_url || null,
-      latitude: report.latitude === null ? null : Number(report.latitude),
-      longitude: report.longitude === null ? null : Number(report.longitude)
-    }));
+        description: report.description,
+        proof_url: report.proof_url || null,
+        latitude: report.latitude === null ? null : Number(report.latitude),
+        longitude: report.longitude === null ? null : Number(report.longitude)
+      }));
 
-    return res.json(reports);
+      return res.json(reports);
+    }
+
+    return res.json([]);
   } catch (e) {
     console.error('GET /api/reports/mine error:', e.message);
     return res.status(500).json({ error: 'Failed to fetch reports' });
@@ -577,35 +1013,95 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
     const { search, status, severity, page = 1, limit = 50, sortBy = 'accident_date', sortOrder = 'desc' } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
-    const where = [];
-    const params = [];
-    if (status && status !== 'all') { params.push(status); where.push(`status = $${params.length}`); }
-    if (severity && severity !== 'all') { params.push(severity); where.push(`severity = $${params.length}`); }
-    if (search) { params.push(`%${search}%`); where.push(`(title ILIKE $${params.length} OR location ILIKE $${params.length} OR area ILIKE $${params.length})`); }
-    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    if (supabase) {
+      try {
+        let query = supabase.from('accidents').select('*', { count: 'exact' });
+        // (description, created_at, reporter_id, proof_url are included via '*')
+        if (status && status !== 'all') query = query.eq('status', status);
+        if (severity && severity !== 'all') query = query.eq('severity', severity);
+        if (search) {
+          query = query.or(`title.ilike.%${search}%,location.ilike.%${search}%,area.ilike.%${search}%`);
+        }
+        const finalSortBy = ['id', 'accident_date', 'severity', 'score'].includes(sortBy) ? sortBy : 'accident_date';
+        query = query.order(finalSortBy, { ascending: sortOrder === 'asc', nullsFirst: false })
+          .range(offset, offset + Number(limit) - 1);
 
-    const finalSortBy = ['id', 'accident_date', 'severity', 'score'].includes(sortBy) ? sortBy : 'accident_date';
-    const dir = sortOrder === 'asc' ? 'ASC' : 'DESC';
+        const { data: rows, count, error } = await query;
+        if (!error && rows) {
+          const mapped = rows.map(r => {
+            let lat = null, lng = null;
+            if (r.geom) {
+              if (typeof r.geom === 'object' && r.geom.coordinates) {
+                lng = r.geom.coordinates[0];
+                lat = r.geom.coordinates[1];
+              } else if (typeof r.geom === 'string') {
+                const m = r.geom.match(/POINT\s*\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+                if (m) { lng = parseFloat(m[1]); lat = parseFloat(m[2]); }
+              }
+            }
+            return {
+              id: r.id,
+              title: r.title,
+              source: r.source,
+              link: r.link,
+              location: r.location,
+              area: r.area,
+              zone: r.zone,
+              severity: r.severity,
+              score: r.score,
+              status: r.status,
+              date: r.accident_date,
+              date_raw: r.date_raw,
+              lat,
+              lng,
+              reporter_id: r.reporter_id || null,
+              rejection_reason: r.rejection_reason || null,
+              proof_url: r.proof_url || null,
+              description: r.description || null,
+              created_at: r.created_at || null
+            };
+          });
+          return res.json({ total: count ?? mapped.length, page: Number(page), limit: Number(limit), rows: mapped });
+        }
+      } catch (sbErr) {
+        console.warn('Supabase admin/accidents error:', sbErr.message);
+      }
+    }
 
-    const rows = await q(
-            `SELECT id, title, source, link, location, area, zone, severity, score, status,
-              accident_date, date_raw, ST_AsGeoJSON(geom) AS geom, reporter_id, rejection_reason, proof_url,
-              count(*) OVER() AS total
-       FROM accidents ${whereSql}
-       ORDER BY ${finalSortBy} ${dir} NULLS LAST
-       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-      [...params, Number(limit), offset]
-    );
+    if (pool) {
+      const where = [];
+      const params = [];
+      if (status && status !== 'all') { params.push(status); where.push(`status = $${params.length}`); }
+      if (severity && severity !== 'all') { params.push(severity); where.push(`severity = $${params.length}`); }
+      if (search) { params.push(`%${search}%`); where.push(`(title ILIKE $${params.length} OR location ILIKE $${params.length} OR area ILIKE $${params.length})`); }
+      const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-    const total = rows.length ? Number(rows[0].total) : 0;
-    const mapped = rows.map(r => {
-      const g = r.geom ? JSON.parse(r.geom) : null;
-      const lat = g?.coordinates?.[1] ?? null;
-      const lng = g?.coordinates?.[0] ?? null;
-      return { id: r.id, title: r.title, source: r.source, link: r.link, location: r.location, area: r.area, zone: r.zone, severity: r.severity, score: r.score, status: r.status, date: r.accident_date, date_raw: r.date_raw, lat, lng, reporter_id: r.reporter_id || null, rejection_reason: r.rejection_reason || null, proof_url: r.proof_url || null };
-    });
+      const finalSortBy = ['id', 'accident_date', 'severity', 'score'].includes(sortBy) ? sortBy : 'accident_date';
+      const dir = sortOrder === 'asc' ? 'ASC' : 'DESC';
 
-    res.json({ total, page: Number(page), limit: Number(limit), rows: mapped });
+      const rows = await q(
+        `SELECT id, title, source, link, location, area, zone, severity, score, status,
+                accident_date, date_raw, ST_AsGeoJSON(geom) AS geom, reporter_id, rejection_reason, proof_url,
+                description, created_at,
+                count(*) OVER() AS total
+         FROM accidents ${whereSql}
+         ORDER BY ${finalSortBy} ${dir} NULLS LAST
+         LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+        [...params, Number(limit), offset]
+      );
+
+      const total = rows.length ? Number(rows[0].total) : 0;
+      const mapped = rows.map(r => {
+        const g = r.geom ? JSON.parse(r.geom) : null;
+        const lat = g?.coordinates?.[1] ?? null;
+        const lng = g?.coordinates?.[0] ?? null;
+        return { id: r.id, title: r.title, source: r.source, link: r.link, location: r.location, area: r.area, zone: r.zone, severity: r.severity, score: r.score, status: r.status, date: r.accident_date, date_raw: r.date_raw, lat, lng, reporter_id: r.reporter_id || null, rejection_reason: r.rejection_reason || null, proof_url: r.proof_url || null, description: r.description || null, created_at: r.created_at || null };
+      });
+
+      return res.json({ total, page: Number(page), limit: Number(limit), rows: mapped });
+    }
+
+    return res.json({ total: 0, page: Number(page), limit: Number(limit), rows: [] });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -621,7 +1117,6 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
     if (status !== undefined) {
       if (!['active', 'hidden'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
       updates.status = status;
-      // If verifying, clear rejection_reason; if hiding, allow setting rejection_reason
       if (status === 'active') updates.rejection_reason = null;
       if (status === 'hidden' && rejection_reason !== undefined) updates.rejection_reason = rejection_reason;
     }
@@ -635,14 +1130,35 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
     if (area !== undefined) { updates.area = area; updates.zone = inferZone(area); }
     if (!Object.keys(updates).length) return res.status(400).json({ error: 'Nothing to update' });
 
-    const sets = [];
-    const params = [];
-    for (const [k, v] of Object.entries(updates)) {
-      params.push(v);
-      sets.push(`${k} = $${params.length}${k === 'geom' ? '::geometry' : ''}`);
+    if (supabase) {
+      try {
+        const sbUpdates = { ...updates };
+        const hasGeom = Boolean(sbUpdates.geom);
+        if (hasGeom) delete sbUpdates.geom; // PostgREST can't accept raw WKT for a geometry column
+        if (Object.keys(sbUpdates).length) {
+          await supabase.from('accidents').update(sbUpdates).eq('id', id);
+        }
+        if (hasGeom) {
+          // Set the point via RPC instead — same approach used by POST /api/reports.
+          const latN = parseFloat(lat), lngN = parseFloat(lng);
+          const { error: geomErr } = await supabase.rpc('set_accident_geom', { p_id: id, p_lat: latN, p_lng: lngN });
+          if (geomErr) console.error('set_accident_geom RPC error (admin patch):', geomErr.message);
+        }
+      } catch (sbErr) {
+        console.warn('Supabase patch error:', sbErr.message);
+      }
     }
-    params.push(id);
-    await q(`UPDATE accidents SET ${sets.join(', ')} WHERE id = $${params.length}`, params);
+
+    if (pool) {
+      const sets = [];
+      const params = [];
+      for (const [k, v] of Object.entries(updates)) {
+        params.push(v);
+        sets.push(`${k} = $${params.length}${k === 'geom' ? '::geometry' : ''}`);
+      }
+      params.push(id);
+      await q(`UPDATE accidents SET ${sets.join(', ')} WHERE id = $${params.length}`, params);
+    }
 
     syncPatchToJson(id, { lat, lng, location, area });
     res.json({ ok: true });
@@ -654,7 +1170,16 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
 
 app.delete('/api/admin/accidents/:id', adminAuth, async (req, res) => {
   try {
-    await q(`DELETE FROM accidents WHERE id = $1`, [req.params.id]);
+    if (supabase) {
+      try {
+        await supabase.from('accidents').delete().eq('id', req.params.id);
+      } catch (sbErr) {
+        console.warn('Supabase delete error:', sbErr.message);
+      }
+    }
+    if (pool) {
+      await q(`DELETE FROM accidents WHERE id = $1`, [req.params.id]);
+    }
     syncDeleteToJson(req.params.id);
     res.json({ ok: true });
   } catch (e) {
@@ -666,13 +1191,31 @@ app.delete('/api/admin/accidents/:id', adminAuth, async (req, res) => {
 // Get pending reports (user-submitted) for admin review
 app.get('/api/admin/reports/pending', adminAuth, async (_req, res) => {
   try {
-    const data = await q(
-      `SELECT id, title, location, area, severity, accident_date, reporter_id, description
-       FROM accidents
-       WHERE status = 'pending' AND reporter_id IS NOT NULL
-       ORDER BY accident_date DESC NULLS LAST`
-    );
-    res.json(data || []);
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('accidents')
+          .select('id, title, location, area, severity, accident_date, reporter_id, description')
+          .eq('status', 'pending')
+          .not('reporter_id', 'is', null)
+          .order('accident_date', { ascending: false });
+        if (!error && data) return res.json(data);
+      } catch (sbErr) {
+        console.warn('Supabase admin/reports/pending error:', sbErr.message);
+      }
+    }
+
+    if (pool) {
+      const data = await q(
+        `SELECT id, title, location, area, severity, accident_date, reporter_id, description
+         FROM accidents
+         WHERE status = 'pending' AND reporter_id IS NOT NULL
+         ORDER BY accident_date DESC NULLS LAST`
+      );
+      return res.json(data || []);
+    }
+
+    res.json([]);
   } catch (e) {
     console.error('/api/admin/reports/pending error:', e.message);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -684,21 +1227,36 @@ app.post('/api/admin/accidents/bulk', adminAuth, async (req, res) => {
   try {
     const { ids, action, rejection_reason } = req.body || {};
     if (!Array.isArray(ids) || ids.length === 0) return res.status(400).json({ error: 'ids required' });
-    if (!['verify','hide','delete'].includes(action)) return res.status(400).json({ error: 'invalid action' });
+    if (!['verify', 'hide', 'delete'].includes(action)) return res.status(400).json({ error: 'invalid action' });
 
     if (action === 'delete') {
-      await q(`DELETE FROM accidents WHERE id = ANY($1::text[])`, [ids]);
+      if (supabase) {
+        try { await supabase.from('accidents').delete().in('id', ids); } catch (e) { }
+      }
+      if (pool) {
+        await q(`DELETE FROM accidents WHERE id = ANY($1::text[])`, [ids]);
+      }
       ids.forEach(id => syncDeleteToJson(id));
       return res.json({ ok: true });
     }
 
     if (action === 'verify') {
-      await q(`UPDATE accidents SET status = 'active', rejection_reason = NULL WHERE id = ANY($1::text[])`, [ids]);
+      if (supabase) {
+        try { await supabase.from('accidents').update({ status: 'active', rejection_reason: null }).in('id', ids); } catch (e) { }
+      }
+      if (pool) {
+        await q(`UPDATE accidents SET status = 'active', rejection_reason = NULL WHERE id = ANY($1::text[])`, [ids]);
+      }
       return res.json({ ok: true });
     }
 
     if (action === 'hide') {
-      await q(`UPDATE accidents SET status = 'hidden', rejection_reason = COALESCE($2, rejection_reason) WHERE id = ANY($1::text[])`, [ids, rejection_reason ?? null]);
+      if (supabase) {
+        try { await supabase.from('accidents').update({ status: 'hidden', rejection_reason: rejection_reason || null }).in('id', ids); } catch (e) { }
+      }
+      if (pool) {
+        await q(`UPDATE accidents SET status = 'hidden', rejection_reason = COALESCE($2, rejection_reason) WHERE id = ANY($1::text[])`, [ids, rejection_reason ?? null]);
+      }
       return res.json({ ok: true });
     }
 
@@ -941,17 +1499,19 @@ async function callVisionLLM(imageUrl) {
     const prompt = `You are a vision assistant for road accidents. Analyze the image and return a JSON object with exactly these keys: { "severity": "fatal|serious|minor", "description": "one short sentence describing visible damage or injuries" }. Respond with JSON only, no markdown.`;
     const isHttp = /^https?:\/\//i.test(String(imageUrl || ''));
     const messages = isHttp
-      ? [{ role: 'user', content: [
+      ? [{
+        role: 'user', content: [
           { type: 'text', text: prompt },
           { type: 'image_url', image_url: { url: imageUrl } }
-        ] }]
+        ]
+      }]
       : [{ role: 'user', content: `${prompt}\nImage URL (could not be loaded as image): ${imageUrl}` }];
     const response = await openrouter.chat.send({ chatRequest: { model, messages, stream: false } });
     const rawText = response.choices?.[0]?.message?.content || '';
     const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
     const parsed = JSON.parse(cleaned);
     return {
-      severity: ['fatal','serious','minor'].includes(parsed.severity) ? parsed.severity : 'minor',
+      severity: ['fatal', 'serious', 'minor'].includes(parsed.severity) ? parsed.severity : 'minor',
       description: parsed.description || ''
     };
   } catch (e) {
@@ -961,8 +1521,6 @@ async function callVisionLLM(imageUrl) {
 }
 
 // ── JSON Sync Helpers ──────────────────────────────────────────────────────
-
-const JSON_PATH = path.join(__dirname, '..', 'Frontend', 'accident_data.json');
 
 function syncPatchToJson(id, { lat, lng, location, area }) {
   try {

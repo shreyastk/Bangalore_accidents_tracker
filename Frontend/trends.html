@@ -15,6 +15,12 @@
     .card h3 { margin:0 0 var(--space-sm); }
     .small-row { display:flex; gap:var(--space-md); }
     @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } .charts-grid { grid-template-columns: 1fr; } }
+    /* Time-of-day heatmap (day-of-week x hour-of-day) */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap { display: grid; grid-template-columns: 40px repeat(24, minmax(20px, 1fr)); gap: 2px; min-width: 640px; }
+    .heatmap-cell { aspect-ratio: 1 / 1; border-radius: 3px; background: var(--color-primary); }
+    .heatmap-label { font-size: 11px; color: var(--text-muted); display:flex; align-items:center; justify-content:flex-end; padding-right:4px; }
+    .heatmap-hour-label { font-size: 10px; color: var(--text-muted); text-align:center; }
   </style>
 </head>
 <body>
@@ -65,6 +71,14 @@
           <div class="card" style="width:260px">
             <h3>By Day of Week</h3>
             <canvas id="chart-byday" height="120"></canvas>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:var(--space-lg);">
+          <h3>Time-of-Day Heatmap</h3>
+          <p class="section-subtitle" style="margin:0 0 var(--space-sm)">Darker cells indicate more accidents at that hour on that day of the week.</p>
+          <div class="heatmap-wrap">
+            <div id="heatmap" class="heatmap" role="img" aria-label="Accident heatmap by day of week and hour of day"></div>
           </div>
         </div>
       </div>
