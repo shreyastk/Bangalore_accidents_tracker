@@ -1266,48 +1266,95 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
       if (status === 'active') updates.rejection_reason = null;
       if (status === 'hidden' && rejection_reason !== undefined) updates.rejection_reason = rejection_reason;
     }
+
+    let latN = undefined, lngN = undefined;
     if (lat !== undefined && lng !== undefined) {
-      const latN = parseFloat(lat), lngN = parseFloat(lng);
+      latN = parseFloat(lat);
+      lngN = parseFloat(lng);
       if (isNaN(latN) || isNaN(lngN)) return res.status(400).json({ error: 'Invalid coords' });
-      updates.geom = `SRID=4326;POINT(${lngN} ${latN})`;
       updates.has_coords = true;
+
+      // Reverse geocode new address & area if location was not explicitly provided (e.g. pin drag-and-drop)
+      if (!location) {
+        try {
+          const geoInfo = await reverseGeocodeDetails(latN, lngN);
+          if (geoInfo) {
+            if (geoInfo.location) updates.location = geoInfo.location;
+            if (geoInfo.area && !area) {
+              updates.area = geoInfo.area;
+              updates.zone = inferZone(geoInfo.area);
+            }
+          }
+        } catch (e) {
+          console.warn('Reverse geocode warning during patch:', e.message);
+        }
+      }
     }
+
     if (location !== undefined) updates.location = location;
-    if (area !== undefined) { updates.area = area; updates.zone = inferZone(area); }
+    if (area !== undefined) {
+      updates.area = area;
+      updates.zone = inferZone(area);
+    }
+
     if (!Object.keys(updates).length) return res.status(400).json({ error: 'Nothing to update' });
 
+    // 1. Supabase update with native GeoJSON Point
     if (supabase) {
       try {
         const sbUpdates = { ...updates };
-        const hasGeom = Boolean(sbUpdates.geom);
-        if (hasGeom) delete sbUpdates.geom; // PostgREST can't accept raw WKT for a geometry column
-        if (Object.keys(sbUpdates).length) {
-          await supabase.from('accidents').update(sbUpdates).eq('id', id);
+        if (latN !== undefined && lngN !== undefined) {
+          sbUpdates.geom = { type: 'Point', coordinates: [lngN, latN] };
         }
-        if (hasGeom) {
-          // Set the point via RPC instead — same approach used by POST /api/reports.
-          const latN = parseFloat(lat), lngN = parseFloat(lng);
-          const { error: geomErr } = await supabase.rpc('set_accident_geom', { p_id: id, p_lat: latN, p_lng: lngN });
-          if (geomErr) console.error('set_accident_geom RPC error (admin patch):', geomErr.message);
-        }
+        const { error: sbErr } = await supabase.from('accidents').update(sbUpdates).eq('id', String(id));
+        if (sbErr) console.warn('Supabase patch error:', sbErr.message);
       } catch (sbErr) {
-        console.warn('Supabase patch error:', sbErr.message);
+        console.warn('Supabase patch exception:', sbErr.message);
       }
     }
 
+    // 2. Direct Postgres Pool update (if pool is active)
     if (pool) {
-      const sets = [];
-      const params = [];
-      for (const [k, v] of Object.entries(updates)) {
-        params.push(v);
-        sets.push(`${k} = $${params.length}${k === 'geom' ? '::geometry' : ''}`);
+      try {
+        const poolUpdates = { ...updates };
+        if (latN !== undefined && lngN !== undefined) {
+          poolUpdates.geom = `SRID=4326;POINT(${lngN} ${latN})`;
+        }
+        const sets = [];
+        const params = [];
+        for (const [k, v] of Object.entries(poolUpdates)) {
+          params.push(v);
+          sets.push(`${k} = $${params.length}${k === 'geom' ? '::geometry' : ''}`);
+        }
+        params.push(String(id));
+        await q(`UPDATE accidents SET ${sets.join(', ')} WHERE id = $${params.length}`, params);
+      } catch (poolErr) {
+        console.warn('PostgreSQL pool patch error:', poolErr.message);
       }
-      params.push(id);
-      await q(`UPDATE accidents SET ${sets.join(', ')} WHERE id = $${params.length}`, params);
     }
 
-    syncPatchToJson(id, { lat, lng, location, area });
-    res.json({ ok: true });
+    // 3. Sync to local accident_data.json fallback
+    syncPatchToJson(id, {
+      lat: latN,
+      lng: lngN,
+      location: updates.location,
+      area: updates.area,
+      zone: updates.zone,
+      status: updates.status
+    });
+
+    res.json({
+      ok: true,
+      accident: {
+        id,
+        lat: latN,
+        lng: lngN,
+        location: updates.location,
+        area: updates.area,
+        zone: updates.zone,
+        status: updates.status
+      }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed', detail: e.message });
@@ -1626,6 +1673,32 @@ The JSON object must have exactly these keys:
 }
 
 // Reverse geocode lat/lng to address using Nominatim
+async function reverseGeocodeDetails(lat, lng) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&format=jsonv2`;
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'BangaloreAccidentsTracker/1.0' },
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (res.ok) {
+      const data = await res.json();
+      const addr = data.address || {};
+      const road = addr.road || addr.pedestrian || addr.cycleway || addr.path || '';
+      const suburb = addr.suburb || addr.neighbourhood || addr.quarter || addr.residential || '';
+      const loc = road ? (suburb && road !== suburb ? `${road}, ${suburb}` : road) : (suburb || data.name || data.display_name?.split(',')[0]);
+      return {
+        location: loc || null,
+        area: suburb || addr.city_district || 'Bangalore',
+        displayName: data.display_name || null
+      };
+    }
+  } catch (e) { }
+  return null;
+}
+
 async function reverseGeocode(lat, lng) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&format=jsonv2`;
@@ -1668,15 +1741,23 @@ async function callVisionLLM(imageUrl) {
 
 // ── JSON Sync Helpers ──────────────────────────────────────────────────────
 
-function syncPatchToJson(id, { lat, lng, location, area }) {
+function syncPatchToJson(id, { lat, lng, location, area, zone, status }) {
   try {
     if (!fs.existsSync(JSON_PATH)) return;
     const data = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
-    const item = data.find(r => r.id === id);
+    const item = data.find(r => String(r.id) === String(id));
     if (!item) return;
-    if (lat !== undefined && lng !== undefined) { item.lat = parseFloat(lat); item.lng = parseFloat(lng); item.hasCoords = true; }
+    if (lat !== undefined && lng !== undefined) {
+      item.lat = parseFloat(lat);
+      item.lng = parseFloat(lng);
+      item.hasCoords = true;
+    }
     if (location !== undefined) item.location = location;
-    if (area !== undefined) item.area = area;
+    if (area !== undefined) {
+      item.area = area;
+      item.zone = zone || inferZone(area);
+    }
+    if (status !== undefined) item.status = status;
     fs.writeFileSync(JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
   } catch (e) { console.error('JSON sync patch error:', e.message); }
 }

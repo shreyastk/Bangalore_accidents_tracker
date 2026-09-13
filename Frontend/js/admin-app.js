@@ -13,7 +13,8 @@
   let editingId  = null;
   let deleteId   = null;
   let mapboxToken = '';
-  let lastRows   = [];   // most recently loaded table rows (used to populate the map view)
+  let lastRows   = [];   // most recently loaded table rows
+  let allMapRows = [];   // every accident matching current filters (for map view)
   let mapViewActive = false;
   let adminMap   = null; // MapLibre map instance for the drag-to-reposition view
   let adminPins  = new Map(); // accident id -> maplibregl.Marker
@@ -314,15 +315,17 @@
       document.getElementById('record-count').textContent =
         `${data.total} record${data.total !== 1 ? 's' : ''}`;
       updateStats(data.rows);
-      if (mapViewActive) renderMapPins(data.rows);
+      if (mapViewActive) {
+        loadMapPins();
+      }
     } catch (e) {
       tbody.innerHTML = `<tr><td colspan="9" class="t-loading" style="color:#dc2626">Error: ${e.message}</td></tr>`;
     }
   }
 
   function updateStats(rows) {
-    const all = rows;
-    document.getElementById('s-total').textContent   = curTotal;
+    const all = (allMapRows && allMapRows.length > 0) ? allMapRows : rows;
+    document.getElementById('s-total').textContent   = curTotal || all.length;
     document.getElementById('s-active').textContent  = all.filter(r => r.status === 'active').length;
     document.getElementById('s-hidden').textContent  = all.filter(r => r.status === 'hidden').length;
     document.getElementById('s-fatal').textContent   = all.filter(r => r.severity === 'fatal').length;
@@ -635,6 +638,7 @@
       style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
       center: [77.5946, 12.9716],
       zoom: 11,
+      cooperativeGestures: true,
     });
     adminMap.addControl(new maplibregl.NavigationControl(), 'top-right');
   }
@@ -642,6 +646,21 @@
   function clearMapPins() {
     adminPins.forEach(marker => marker.remove());
     adminPins.clear();
+  }
+
+  function createPinPopupContent(r) {
+    const latStr = r.lat != null ? parseFloat(r.lat).toFixed(5) : '—';
+    const lngStr = r.lng != null ? parseFloat(r.lng).toFixed(5) : '—';
+    const sev = (r.severity || 'minor').toLowerCase();
+    return `
+      <div class="admin-pin-popup">
+        <div class="pp-title">${esc(r.title || r.id)}</div>
+        <div class="pp-meta">
+          <span class="sev-badge sev-${sev}">${esc(sev.toUpperCase())}</span> · <span style="text-transform:capitalize;font-weight:600">${esc(r.status || 'active')}</span><br>
+          <strong>Location:</strong> ${esc(r.location || r.area || '—')}<br>
+          <span style="font-family:monospace;font-size:11px;color:#64748b;display:inline-block;margin-top:4px">📍 ${latStr}, ${lngStr}</span>
+        </div>
+      </div>`;
   }
 
   function renderMapPins(rows) {
@@ -664,14 +683,7 @@
       el.className = 'admin-pin';
       el.innerHTML = pinSvg(color);
 
-      const popup = new maplibregl.Popup({ offset: 20, closeButton: false }).setHTML(`
-        <div class="admin-pin-popup">
-          <div class="pp-title">${esc(r.title || r.id)}</div>
-          <div class="pp-meta">
-            ${esc((r.severity || '').toUpperCase())} · ${esc(r.status || '')}<br>
-            ${esc(r.location || r.area || '—')}
-          </div>
-        </div>`);
+      const popup = new maplibregl.Popup({ offset: 20, closeButton: false }).setHTML(createPinPopupContent(r));
 
       const marker = new maplibregl.Marker({ element: el, draggable: true, anchor: 'bottom' })
         .setLngLat([lng, lat])
@@ -705,13 +717,61 @@
         body: JSON.stringify({ lat: newPos.lat, lng: newPos.lng }),
       });
       if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      const resData = await r.json();
+      const updated = resData.accident || {};
 
-      // Keep the table view's cached row + coords column in sync without a full reload.
-      row.lat = newPos.lat; row.lng = newPos.lng;
+      // 1. Update row object
+      row.lat = newPos.lat;
+      row.lng = newPos.lng;
+      if (updated.location) row.location = updated.location;
+      if (updated.area) row.area = updated.area;
+      if (updated.zone) row.zone = updated.zone;
+
+      // 2. Update allMapRows in-memory cache
+      const cachedMap = allMapRows.find(m => String(m.id) === String(row.id));
+      if (cachedMap) {
+        cachedMap.lat = newPos.lat;
+        cachedMap.lng = newPos.lng;
+        if (updated.location) cachedMap.location = updated.location;
+        if (updated.area) cachedMap.area = updated.area;
+        if (updated.zone) cachedMap.zone = updated.zone;
+      }
+
+      // 3. Update lastRows in-memory cache
+      const cachedTable = lastRows.find(m => String(m.id) === String(row.id));
+      if (cachedTable) {
+        cachedTable.lat = newPos.lat;
+        cachedTable.lng = newPos.lng;
+        if (updated.location) cachedTable.location = updated.location;
+        if (updated.area) cachedTable.area = updated.area;
+        if (updated.zone) cachedTable.zone = updated.zone;
+      }
+
+      // 4. Update the DOM table row if present
       updateRowInTable(row.id, newPos.lat, newPos.lng, row.location, row.area);
 
+      // 5. Update marker popup content with new coords & location
+      if (marker && marker.getPopup()) {
+        marker.getPopup().setHTML(createPinPopupContent(row));
+      }
+
+      // 6. Update edit modal inputs if currently open for this accident
+      if (editingId && String(editingId) === String(row.id)) {
+        const latInput = document.getElementById('edit-lat');
+        const lngInput = document.getElementById('edit-lng');
+        const locInput = document.getElementById('edit-location');
+        const areaInput = document.getElementById('edit-area');
+        if (latInput) latInput.value = Number(newPos.lat).toFixed(6);
+        if (lngInput) lngInput.value = Number(newPos.lng).toFixed(6);
+        if (locInput && row.location) locInput.value = row.location;
+        if (areaInput && row.area) areaInput.value = row.area;
+        if (editMarker) editMarker.setLngLat([newPos.lng, newPos.lat]);
+        if (editMap) editMap.setCenter([newPos.lng, newPos.lat]);
+      }
+
+      const locText = row.location ? ` to ${row.location}` : ` (${newPos.lat.toFixed(4)}, ${newPos.lng.toFixed(4)})`;
       toast(
-        `Updated location for "${row.title || row.id}"`,
+        `Updated location for "${row.title || row.id}"${locText}`,
         'success', 6000, 'Undo',
         () => {
           marker.setLngLat([prevPos.lng, prevPos.lat]);
@@ -721,6 +781,60 @@
     } catch (e) {
       marker.setLngLat([prevPos.lng, prevPos.lat]); // revert the pin since the save failed
       toast('Failed to update location: ' + e.message, 'error');
+    }
+  }
+
+  let mapLoading = false;
+
+  async function loadMapPins() {
+    if (!adminMap && mapViewActive) initAdminMap();
+    if (adminMap) adminMap.resize();
+
+    const search   = document.getElementById('search-box').value.trim();
+    const status   = document.getElementById('f-status').value;
+    const severity = document.getElementById('f-severity').value;
+
+    const qs = new URLSearchParams({ limit: 10000, page: 1 });
+    if (search)            qs.set('search', search);
+    if (status !== 'all')   qs.set('status', status);
+    if (severity !== 'all') qs.set('severity', severity);
+
+    const hintEl = document.querySelector('.map-view-hint');
+    if (hintEl && mapViewActive && !allMapRows.length) {
+      hintEl.innerHTML = `📍 Loading points of every accident…`;
+    }
+
+    try {
+      mapLoading = true;
+      const r = await authenticatedFetch(`${API}/api/admin/accidents?${qs}`);
+      if (r.status === 401) return;
+      const data = await r.json();
+      allMapRows = data.rows || [];
+
+      if (mapViewActive) {
+        renderMapPins(allMapRows);
+      }
+
+      const withCoordsCount = allMapRows.filter(r => {
+        const lat = parseFloat(r.lat), lng = parseFloat(r.lng);
+        return !isNaN(lat) && !isNaN(lng);
+      }).length;
+
+      if (hintEl) {
+        hintEl.innerHTML = `📍 Showing all <strong>${withCoordsCount}</strong> accidents on the map. Drag any pin to update coordinates. Changes save automatically.`;
+      }
+
+      if (!search && status === 'all' && severity === 'all') {
+        updateStats(allMapRows);
+      }
+    } catch (e) {
+      console.error('Failed to load all map pins:', e);
+      if (mapViewActive) renderMapPins(lastRows);
+      if (hintEl) {
+        hintEl.innerHTML = `📍 Drag any pin and drop it on the correct location to update that accident's coordinates. Changes save automatically.`;
+      }
+    } finally {
+      mapLoading = false;
     }
   }
 
@@ -742,7 +856,18 @@
 
     if (mapViewActive) {
       initAdminMap();
-      setTimeout(() => { adminMap.resize(); renderMapPins(lastRows); }, 50);
+      setTimeout(() => {
+        adminMap.resize();
+        if (allMapRows && allMapRows.length > 0) {
+          renderMapPins(allMapRows);
+          const withCoordsCount = allMapRows.filter(r => !isNaN(parseFloat(r.lat)) && !isNaN(parseFloat(r.lng))).length;
+          const hintEl = document.querySelector('.map-view-hint');
+          if (hintEl) {
+            hintEl.innerHTML = `📍 Showing all <strong>${withCoordsCount}</strong> accidents on the map. Drag any pin to update coordinates. Changes save automatically.`;
+          }
+        }
+        loadMapPins();
+      }, 50);
     }
   }
 
@@ -904,6 +1029,15 @@
       if (!r.ok) throw new Error((await r.json()).error);
       closeEdit();
       updateRowInTable(editingId, lat, lng, location, area);
+      const mr = allMapRows.find(m => String(m.id) === String(editingId));
+      if (mr) { mr.lat = lat; mr.lng = lng; mr.location = location; mr.area = area; }
+      const marker = adminPins.get(editingId);
+      if (marker) {
+        marker.setLngLat([lng, lat]);
+        if (marker.getPopup() && mr) {
+          marker.getPopup().setHTML(createPinPopupContent(mr));
+        }
+      }
     } catch (e) {
       errEl.textContent = 'Save failed: ' + e.message;
       errEl.hidden = false;
@@ -1542,6 +1676,7 @@
       showApp(displayName);
       await loadConfig();
       loadData();
+      loadMapPins();
     } else {
       token = '';
       sessionStorage.removeItem(TOKEN_KEY);
