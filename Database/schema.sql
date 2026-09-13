@@ -367,3 +367,138 @@ CREATE TABLE IF NOT EXISTS civic_issues (
 CREATE INDEX IF NOT EXISTS civic_issues_status_created_ix ON civic_issues (status, created_at DESC);
 CREATE INDEX IF NOT EXISTS civic_issues_area_ix ON civic_issues (area);
 COMMENT ON TABLE civic_issues IS 'Community near-miss, road-hazard, and civic-action observations; deliberately separate from confirmed accidents';
+
+-- ─── Row Level Security (RLS) Policies ──────────────────────────────────────
+
+-- 1. accidents table
+ALTER TABLE accidents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read active accidents" ON accidents
+  FOR SELECT
+  USING (
+    status = 'active'
+    OR (auth.role() = 'authenticated' AND (
+      reporter_id = auth.uid()::text
+      OR auth.jwt() -> 'app_metadata' ->> 'role' = 'admin'
+    ))
+  );
+
+CREATE POLICY "Authenticated users submit accident reports" ON accidents
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    reporter_id = auth.uid()::text
+    AND status = 'pending'
+  );
+
+CREATE POLICY "Admin update accidents" ON accidents
+  FOR UPDATE
+  TO authenticated
+  USING (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin')
+  WITH CHECK (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+CREATE POLICY "Admin delete accidents" ON accidents
+  FOR DELETE
+  TO authenticated
+  USING (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+-- 2. hospitals table
+ALTER TABLE hospitals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read hospitals" ON hospitals
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "Admin insert hospitals" ON hospitals
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+CREATE POLICY "Admin update hospitals" ON hospitals
+  FOR UPDATE
+  TO authenticated
+  USING (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+CREATE POLICY "Admin delete hospitals" ON hospitals
+  FOR DELETE
+  TO authenticated
+  USING (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+-- 3. emergency_alerts table
+ALTER TABLE emergency_alerts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public and authenticated submit emergency alerts" ON emergency_alerts
+  FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Hospital and admin read emergency alerts" ON emergency_alerts
+  FOR SELECT
+  TO authenticated
+  USING (
+    auth.jwt() -> 'app_metadata' ->> 'role' IN ('hospital', 'admin')
+  );
+
+CREATE POLICY "Hospital acknowledge emergency alerts" ON emergency_alerts
+  FOR UPDATE
+  TO authenticated
+  USING (
+    auth.jwt() -> 'app_metadata' ->> 'role' IN ('hospital', 'admin')
+  )
+  WITH CHECK (
+    auth.jwt() -> 'app_metadata' ->> 'role' IN ('hospital', 'admin')
+  );
+
+-- 4. civic_issues table
+ALTER TABLE civic_issues ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read civic issues" ON civic_issues
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users submit civic issues" ON civic_issues
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (reporter_id = auth.uid()::text);
+
+CREATE POLICY "Reporter or admin update civic issues" ON civic_issues
+  FOR UPDATE
+  TO authenticated
+  USING (
+    reporter_id = auth.uid()::text
+    OR auth.jwt() -> 'app_metadata' ->> 'role' = 'admin'
+  );
+
+-- ─── Supabase Storage Buckets & Policies ──────────────────────────────────
+-- Enforces 5MB max file size and strictly allowed image MIME types.
+
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'report-proofs',
+  'report-proofs',
+  false,
+  5242880, -- 5MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp']
+)
+ON CONFLICT (id) DO UPDATE SET
+  public = false,
+  file_size_limit = 5242880,
+  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp'];
+
+CREATE POLICY "Authenticated users upload report proof images"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'report-proofs'
+  AND (storage.foldername(name))[1] = auth.uid()::text
+);
+
+CREATE POLICY "Users and admins read report proofs"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (
+  bucket_id = 'report-proofs'
+  AND (
+    (storage.foldername(name))[1] = auth.uid()::text
+    OR auth.jwt() -> 'app_metadata' ->> 'role' = 'admin'
+  )
+);

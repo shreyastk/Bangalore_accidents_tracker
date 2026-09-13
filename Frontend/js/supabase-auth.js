@@ -53,27 +53,11 @@ function initSupabaseClient() {
 const supabase = initSupabaseClient();
 window.supabase = supabase;
 
-// Development fallback helpers used when remote Supabase calls fail due to network/DNS.
-function devLoadUsers() { try { return JSON.parse(localStorage.getItem('dev_users_v1') || '[]'); } catch { return []; } }
-function devSaveUsers(u) { localStorage.setItem('dev_users_v1', JSON.stringify(u)); }
-function devCreateSessionFor(user) { const s = { user, access_token: 'devtoken_' + user.id }; localStorage.setItem('dev_session_v1', JSON.stringify(s)); return s; }
-function devSignUp(email, password, name) {
-  const users = devLoadUsers();
-  if (users.find(u => u.email === email)) return { success: false, error: 'User already registered' };
-  const id = 'dev_' + Date.now();
-  const user = { id, email, user_metadata: { name }, created_at: new Date().toISOString() };
-  users.push({ id, email, password, user_metadata: user.user_metadata }); devSaveUsers(users);
-  const session = devCreateSessionFor(user);
-  return { success: true, user, session };
-}
-function devSignIn(email, password) {
-  const users = devLoadUsers();
-  const found = users.find(u => u.email === email && u.password === password);
-  if (!found) return { success: false, error: 'Invalid login' };
-  const user = { id: found.id, email: found.email, user_metadata: found.user_metadata };
-  const session = devCreateSessionFor(user);
-  return { success: true, session, user };
-}
+// Wipe any legacy plaintext dev credentials stored previously
+try {
+  localStorage.removeItem('dev_users_v1');
+  localStorage.removeItem('dev_session_v1');
+} catch (_) {}
 
 /**
  * SupabaseAuthClient — public API for authentication operations.
@@ -101,21 +85,11 @@ const SupabaseAuthClient = {
       });
 
       if (error) {
-        // If request failed due to network/DNS, fall back to local dev auth
-        const lower = (error.message || '').toLowerCase();
-        if (lower.includes('network') || lower.includes('name') || lower.includes('dns') || lower.includes('fetch') || lower.includes('offline')) {
-          return devSignUp(email, password, name);
-        }
         return { success: false, error: error.message };
       }
 
       return { success: true, user: data.user, session: data.session };
     } catch (err) {
-      // Try local dev fallback if remote is unreachable
-      const msg = (err && err.message) ? err.message.toLowerCase() : '';
-      if (msg.includes('network') || msg.includes('dns') || msg.includes('name') || msg.includes('fetch') || msg.includes('offline')) {
-        return devSignUp(email, password, name);
-      }
       return { success: false, error: 'Authentication service is temporarily unavailable. Please try again.' };
     }
   },
@@ -138,19 +112,11 @@ const SupabaseAuthClient = {
       });
 
       if (error) {
-        const lower = (error.message || '').toLowerCase();
-        if (lower.includes('network') || lower.includes('name') || lower.includes('dns') || lower.includes('fetch') || lower.includes('offline')) {
-          return devSignIn(email, password);
-        }
         return { success: false, error: error.message };
       }
 
       return { success: true, session: data.session, user: data.user };
     } catch (err) {
-      const msg = (err && err.message) ? err.message.toLowerCase() : '';
-      if (msg.includes('network') || msg.includes('dns') || msg.includes('name') || msg.includes('fetch') || msg.includes('offline')) {
-        return devSignIn(email, password);
-      }
       return { success: false, error: 'Authentication service is temporarily unavailable. Please try again.' };
     }
   },
@@ -167,8 +133,10 @@ const SupabaseAuthClient = {
    * @returns {Promise<void>}
    */
   async signOut() {
-    // Clear the offline-development session too, otherwise it survives logout.
-    try { localStorage.removeItem('dev_session_v1'); } catch (_) {}
+    try {
+      localStorage.removeItem('dev_session_v1');
+      localStorage.removeItem('dev_users_v1');
+    } catch (_) {}
     if (!supabase) return;
 
     try {
@@ -192,8 +160,6 @@ const SupabaseAuthClient = {
       const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error || !session) {
-        // If remote Supabase is unavailable, fall back to local dev session.
-        try { const s = JSON.parse(localStorage.getItem('dev_session_v1') || 'null'); if (s) return { user: s.user, access_token: s.access_token }; } catch {};
         return null;
       }
 
@@ -203,7 +169,6 @@ const SupabaseAuthClient = {
       };
     } catch (err) {
       console.error('[supabase-auth] getSession error:', err);
-      try { const s = JSON.parse(localStorage.getItem('dev_session_v1') || 'null'); if (s) return { user: s.user, access_token: s.access_token }; } catch {}
       return null;
     }
   },
@@ -221,11 +186,6 @@ const SupabaseAuthClient = {
       const { data: { user }, error } = await supabase.auth.getUser();
 
       if (error || !user) {
-        // If remote Supabase is unavailable or the session is stale, fall back
-        // to the local dev session so getSession() and getUser() stay consistent
-        // (otherwise protected pages redirect to login while the login page
-        // bounces straight back, causing an infinite redirect loop).
-        try { const s = JSON.parse(localStorage.getItem('dev_session_v1') || 'null'); if (s) return s.user; } catch {};
         return null;
       }
 
@@ -236,7 +196,6 @@ const SupabaseAuthClient = {
       };
     } catch (err) {
       console.error('[supabase-auth] getUser error:', err);
-      try { const s = JSON.parse(localStorage.getItem('dev_session_v1') || 'null'); if (s) return s.user; } catch {}
       return null;
     }
   },

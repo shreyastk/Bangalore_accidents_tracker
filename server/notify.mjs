@@ -1,3 +1,5 @@
+import { validateExternalUrl } from './ssrf.js';
+
 const TWILIO_SID = process.env.TWILIO_SID || '';
 const TWILIO_TOKEN = process.env.TWILIO_TOKEN || '';
 const TWILIO_FROM = process.env.TWILIO_FROM || '';
@@ -10,6 +12,12 @@ function buildAlertMessage(alert) {
 }
 
 async function postWebhook(url, payload) {
+  try {
+    await validateExternalUrl(url);
+  } catch (e) {
+    return { ok: false, error: `Blocked webhook URL: ${e.message}` };
+  }
+
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), 10000);
   try {

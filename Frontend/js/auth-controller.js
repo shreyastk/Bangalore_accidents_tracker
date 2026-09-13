@@ -71,7 +71,7 @@ const AuthController = {
 
       setTimeout(() => {
         const params = new URLSearchParams(window.location.search);
-        window.location.href = params.get('returnTo') || 'dashboard.html';
+        window.location.href = this._sanitizeReturnTo(params.get('returnTo'), 'dashboard.html');
       }, 1500);
 
     } catch (err) {
@@ -147,7 +147,7 @@ const AuthController = {
       // Redirect based on returnTo param (Req 2.3, 2.4)
       const params = new URLSearchParams(window.location.search);
       const returnTo = params.get('returnTo');
-      window.location.href = returnTo || 'dashboard.html';
+      window.location.href = this._sanitizeReturnTo(returnTo, 'dashboard.html');
 
     } catch (err) {
       // Timeout or unexpected network error (Req 2.8)
@@ -194,7 +194,7 @@ const AuthController = {
     const user = await window.SupabaseAuthClient.getUser();
     if (user) {
       const params = new URLSearchParams(window.location.search);
-      window.location.href = params.get('returnTo') || defaultPage;
+      window.location.href = this._sanitizeReturnTo(params.get('returnTo'), defaultPage);
     }
   },
 
@@ -211,6 +211,40 @@ const AuthController = {
   },
 
   // ─── Private Methods ──────────────────────────────────────────────
+
+  /**
+   * Sanitize redirect target URL to prevent Open Redirects and javascript: URI DOM XSS (CWE-601, CWE-79).
+   * Only allows valid relative HTML page paths within the application.
+   * @param {string|null} raw - Raw returnTo query parameter
+   * @param {string} fallback - Fallback page if raw is invalid (default: 'dashboard.html')
+   * @returns {string}
+   */
+  _sanitizeReturnTo(raw, fallback = 'dashboard.html') {
+    if (!raw || typeof raw !== 'string') return fallback;
+    const trimmed = raw.trim();
+    // Block protocol specifications (http:, https:, javascript:, data:, etc.) and protocol-relative URLs (//)
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed) || /^\/\//.test(trimmed)) {
+      return fallback;
+    }
+    // Whitelist relative page paths (e.g. 'profile.html', 'report.html', 'dashboard.html', optionally with query params)
+    const pageMatch = trimmed.replace(/^\/+/, '').match(/^([a-zA-Z0-9_-]+\.html)(\?[a-zA-Z0-9_=&%-]*)?$/);
+    if (pageMatch) {
+      const allowedPages = [
+        'dashboard.html',
+        'report.html',
+        'profile.html',
+        'trends.html',
+        'civic.html',
+        'hospital.html',
+        'emergency.html',
+        'index.html'
+      ];
+      if (allowedPages.includes(pageMatch[1])) {
+        return pageMatch[0];
+      }
+    }
+    return fallback;
+  },
 
   /**
    * Validate registration inputs.

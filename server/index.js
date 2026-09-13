@@ -10,6 +10,7 @@ import pg from 'pg';
 import { OpenRouter } from '@openrouter/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { notifyHospitals } from './notify.mjs';
+import { safeFetch, readSafeResponseText } from './ssrf.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -162,12 +163,31 @@ const getStatsByTimeRpc = () => callStatsRpc('get_stats_by_time');
 const getStatsByAreaRpc = () => callStatsRpc('get_stats_by_area');
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = Number(process.env.PORT || 3000);
 
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
 const corsOrigin = process.env.CORS_ORIGIN?.split(',').map(s => s.trim()).filter(Boolean);
-const allowedOrigins = corsOrigin?.length ? [...corsOrigin, 'null'] : true;
-app.use(cors({ origin: allowedOrigins }));
+const allowedOrigins = corsOrigin?.length ? corsOrigin : defaultOrigins;
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
+
+// Security Headers
+app.use((_req, res, next) => {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(self), camera=(), microphone=()');
+  next();
+});
 
 // Rate limiting for public API endpoints (100 requests per 15 minutes per IP)
 const limiterPublic = rateLimit({
@@ -181,6 +201,13 @@ const limiterPublic = rateLimit({
 const limiterEmergency = rateLimit({ windowMs: 60 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false });
 const limiterContributions = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false });
 
+const limiterAdminSlug = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ── Discrete Admin Access ───────────────────────────────────────────────────
 
 const frontendDir = path.join(__dirname, '..', 'Frontend');
@@ -188,7 +215,7 @@ const ADMIN_SLUG = process.env.ADMIN_SLUG || '';
 
 app.get('/admin.html', (_req, res) => res.status(404).send('Not Found'));
 
-app.get('/manage-:slug', (req, res) => {
+app.get('/manage-:slug', limiterAdminSlug, (req, res) => {
   const requestSlug = req.params.slug || '';
   if (!ADMIN_SLUG || requestSlug.length !== ADMIN_SLUG.length) {
     return res.status(404).send('Not Found');
@@ -380,7 +407,7 @@ app.get('/api/accidents', limiterPublic, async (req, res) => {
     res.json(data || { type: 'FeatureCollection', features: [] });
   } catch (e) {
     console.error('/api/accidents error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -445,7 +472,7 @@ app.get('/api/meta', limiterPublic, async (_req, res) => {
     res.json({ areas, zones, counts });
   } catch (e) {
     console.error('/api/meta error:', e.message);
-    res.status(500).json({ error: 'Failed meta', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -490,7 +517,7 @@ app.get('/api/stats/trends', limiterPublic, async (_req, res) => {
     res.json(result);
   } catch (e) {
     console.error('/api/stats/trends error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -543,7 +570,7 @@ app.get('/api/stats/by-time', limiterPublic, async (_req, res) => {
     res.json({ byHour, byDay, matrix });
   } catch (e) {
     console.error('/api/stats/by-time error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -585,7 +612,7 @@ app.get('/api/stats/by-area', limiterPublic, async (_req, res) => {
     res.json(result);
   } catch (e) {
     console.error('/api/stats/by-area error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -721,7 +748,7 @@ app.get('/api/hospitals/near', limiterPublic, async (req, res) => {
     return res.json(withDist);
   } catch (e) {
     console.error('/api/hospitals/near error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -780,7 +807,7 @@ app.get('/api/hospitals', limiterPublic, async (req, res) => {
     return res.json({ total, offset, limit, hospitals: paged });
   } catch (e) {
     console.error('/api/hospitals error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -870,7 +897,7 @@ app.post('/api/emergency', limiterEmergency, async (req, res) => {
     res.json({ alertId, hospitals: hospitals || [], severity: vision.severity, description: vision.description });
   } catch (e) {
     console.error('/api/emergency error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -883,7 +910,7 @@ app.get('/api/hospital/alerts', hospitalAuth, async (req, res) => {
     res.json(data || []);
   } catch (e) {
     console.error('/api/hospital/alerts error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -898,7 +925,7 @@ app.get('/api/export/geojson', limiterPublic, async (req, res) => {
     res.send(JSON.stringify(geojson));
   } catch (e) {
     console.error('/api/export/geojson error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1156,8 +1183,10 @@ app.get('/api/admin/config', adminAuth, (_req, res) => {
 
 app.get('/api/admin/accidents', adminAuth, async (req, res) => {
   try {
-    const { search, status, severity, page = 1, limit = 50, sortBy = 'accident_date', sortOrder = 'desc' } = req.query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { search, status, severity, sortBy = 'accident_date', sortOrder = 'desc' } = req.query;
+    const pageNum = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 50));
+    const offset = (pageNum - 1) * limitNum;
 
     if (supabase) {
       try {
@@ -1170,7 +1199,7 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
         }
         const finalSortBy = ['id', 'accident_date', 'severity', 'score'].includes(sortBy) ? sortBy : 'accident_date';
         query = query.order(finalSortBy, { ascending: sortOrder === 'asc', nullsFirst: false })
-          .range(offset, offset + Number(limit) - 1);
+          .range(offset, offset + limitNum - 1);
 
         const { data: rows, count, error } = await query;
         if (!error && rows) {
@@ -1207,7 +1236,7 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
               created_at: r.created_at || null
             };
           });
-          return res.json({ total: count ?? mapped.length, page: Number(page), limit: Number(limit), rows: mapped });
+          return res.json({ total: count ?? mapped.length, page: pageNum, limit: limitNum, rows: mapped });
         }
       } catch (sbErr) {
         console.warn('Supabase admin/accidents error:', sbErr.message);
@@ -1233,7 +1262,7 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
          FROM accidents ${whereSql}
          ORDER BY ${finalSortBy} ${dir} NULLS LAST
          LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-        [...params, Number(limit), offset]
+        [...params, limitNum, offset]
       );
 
       const total = rows.length ? Number(rows[0].total) : 0;
@@ -1244,13 +1273,13 @@ app.get('/api/admin/accidents', adminAuth, async (req, res) => {
         return { id: r.id, title: r.title, source: r.source, link: r.link, location: r.location, area: r.area, zone: r.zone, severity: r.severity, score: r.score, status: r.status, date: r.accident_date, date_raw: r.date_raw, lat, lng, reporter_id: r.reporter_id || null, rejection_reason: r.rejection_reason || null, proof_url: r.proof_url || null, description: r.description || null, created_at: r.created_at || null };
       });
 
-      return res.json({ total, page: Number(page), limit: Number(limit), rows: mapped });
+      return res.json({ total, page: pageNum, limit: limitNum, rows: mapped });
     }
 
-    return res.json({ total: 0, page: Number(page), limit: Number(limit), rows: [] });
+    return res.json({ total: 0, page: pageNum, limit: limitNum, rows: [] });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1357,7 +1386,7 @@ app.patch('/api/admin/accidents/:id', adminAuth, async (req, res) => {
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1377,7 +1406,7 @@ app.delete('/api/admin/accidents/:id', adminAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1411,7 +1440,7 @@ app.get('/api/admin/reports/pending', adminAuth, async (_req, res) => {
     res.json([]);
   } catch (e) {
     console.error('/api/admin/reports/pending error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1456,7 +1485,7 @@ app.post('/api/admin/accidents/bulk', adminAuth, async (req, res) => {
     res.status(400).json({ error: 'Unhandled action' });
   } catch (e) {
     console.error('/api/admin/accidents/bulk error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1477,7 +1506,7 @@ app.get('/api/admin/accidents/:id/duplicates', adminAuth, async (req, res) => {
     res.json(data || []);
   } catch (e) {
     console.error('/api/admin/accidents/:id/duplicates error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1503,7 +1532,7 @@ app.post('/api/hospital/alerts/:id/ack', hospitalAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.error('/api/hospital/alerts/:id/ack error:', e.message);
-    res.status(500).json({ error: 'Failed', detail: e.message });
+    res.status(500).json({ error: 'An unexpected error occurred' });
   }
 });
 
@@ -1516,11 +1545,12 @@ app.post('/api/admin/accidents', adminAuth, async (req, res) => {
     }
 
     if (link) {
-      const response = await fetch(link, {
+      const response = await safeFetch(link, {
         headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
       });
       if (!response.ok) throw new Error(`Failed to fetch URL (HTTP ${response.status})`);
-      content = stripHtml(await response.text());
+      const rawHtml = await readSafeResponseText(response, 2 * 1024 * 1024);
+      content = stripHtml(rawHtml);
       if (!content || content.length < 50) {
         return res.status(400).json({ error: 'Scraped content is too short or empty.' });
       }

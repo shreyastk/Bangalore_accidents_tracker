@@ -36,7 +36,7 @@
     el.setAttribute('role', 'alert');
 
     const icons = { success: '✓', error: '✕', warning: '⚠' };
-    el.innerHTML = `<span class="toast-icon">${icons[type] || icons.success}</span><span class="toast-msg">${message}</span>`;
+    el.innerHTML = `<span class="toast-icon">${icons[type] || icons.success}</span><span class="toast-msg">${esc(message)}</span>`;
 
     let timer;
     if (actionLabel && onAction) {
@@ -154,10 +154,8 @@
    */
   function hasAdminRole(user) {
     if (!user) return false;
-    // Check app_metadata.role first (preferred, set via Supabase admin API)
+    // Check app_metadata.role only (set securely via Supabase admin API / service role)
     if (user.app_metadata && user.app_metadata.role === 'admin') return true;
-    // Fallback: check user_metadata.role
-    if (user.user_metadata && user.user_metadata.role === 'admin') return true;
     return false;
   }
 
@@ -373,10 +371,12 @@
   }
 
   // Safely embed a JSON blob inside a single-quoted HTML attribute (data-row='...').
-  // JSON.stringify only escapes double quotes, so any apostrophe in free text
-  // (e.g. a citizen's report description) would otherwise break out of the attribute.
   function jsonAttr(obj) {
-    return JSON.stringify(obj).replace(/'/g, '&#39;');
+    return JSON.stringify(obj)
+      .replace(/&/g, '&amp;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   function renderTable(rows) {

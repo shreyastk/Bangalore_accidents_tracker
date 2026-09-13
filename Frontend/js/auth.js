@@ -229,6 +229,12 @@
     }
   }
 
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str == null ? '' : String(str)));
+    return div.innerHTML;
+  }
+
   /**
    * Render authenticated nav state with user initial avatar and logout button.
    * @param {HTMLElement} container - The nav auth links container
@@ -242,8 +248,8 @@
     container.innerHTML =
       '<div style="display: flex; gap: 12px; align-items: center;">' +
         '<a href="profile.html" class="nav-link" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">' +
-          '<span class="nav-avatar">' + initial + '</span>' +
-          '<span>' + displayName + '</span>' +
+          '<span class="nav-avatar">' + escapeHtml(initial) + '</span>' +
+          '<span>' + escapeHtml(displayName) + '</span>' +
         '</a>' +
         '<a href="#" class="btn btn-outline btn-sm" id="logout-btn">Logout</a>' +
       '</div>';

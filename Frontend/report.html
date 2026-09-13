@@ -228,13 +228,19 @@
     var user = supaSession.user;
     var userName = (user.user_metadata && user.user_metadata.name) || user.email || 'User';
 
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str == null ? '' : String(str);
+      return d.innerHTML;
+    }
+
     const page = document.getElementById('page-content');
 
     // User is authenticated, render the report form
     page.innerHTML = `
       <div class="report-header">
         <h1> Report an Accident</h1>
-        <p>Geotagging as <strong style="color:var(--color-primary);">${userName}</strong>. Click the map to place accident location.</p>
+        <p>Geotagging as <strong style="color:var(--color-primary);">${escapeHtml(userName)}</strong>. Click the map to place accident location.</p>
       </div>
 
       <div class="steps">
@@ -519,7 +525,7 @@
         showAlert('error', '️ File too large. Maximum 10MB allowed.');
         return;
       }
-      previewName.innerHTML = ` <strong>${file.name}</strong> (${(file.size/1024/1024).toFixed(2)}MB)`;
+      previewName.innerHTML = ` <strong>${escapeHtml(file.name)}</strong> (${(file.size/1024/1024).toFixed(2)}MB)`;
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = e => { previewImg.src = e.target.result; previewImg.style.display = 'block'; };

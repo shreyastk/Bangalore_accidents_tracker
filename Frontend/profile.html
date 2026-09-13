@@ -493,9 +493,19 @@
 
   // Lightbox
   function openLightbox(src) {
+    if (!src || typeof src !== 'string') return;
+    var safeSrc = String(src).trim();
+    if (!/^https?:\/\//i.test(safeSrc) && !safeSrc.startsWith('data:image/')) return;
     var lb = document.createElement('div');
     lb.className = 'lightbox';
-    lb.innerHTML = '<span class="lightbox-close">✕</span><img src="' + src + '" alt="Proof">';
+    var closeBtn = document.createElement('span');
+    closeBtn.className = 'lightbox-close';
+    closeBtn.textContent = '✕';
+    var img = document.createElement('img');
+    img.src = safeSrc;
+    img.alt = 'Proof';
+    lb.appendChild(closeBtn);
+    lb.appendChild(img);
     lb.addEventListener('click', function() { lb.remove(); });
     document.body.appendChild(lb);
   }
