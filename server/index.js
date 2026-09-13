@@ -177,6 +177,10 @@ const limiterPublic = rateLimit({
   legacyHeaders: false,
 });
 
+// Mutating public-safety routes are deliberately tighter than map reads.
+const limiterEmergency = rateLimit({ windowMs: 60 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false });
+const limiterContributions = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false });
+
 // ── Discrete Admin Access ───────────────────────────────────────────────────
 
 const frontendDir = path.join(__dirname, '..', 'Frontend');
@@ -205,12 +209,11 @@ if (fs.existsSync(frontendDir)) {
 // ── JWT Middleware ──────────────────────────────────────────────────────────
 
 /**
- * Validates a Supabase JWT by decoding the payload and checking expiration.
- * Supabase uses ES256 (asymmetric), so we trust tokens issued by Supabase
- * and verify expiration only. The token is obtained client-side from
- * Supabase Auth which handles cryptographic verification.
+ * Validates a bearer token with Supabase Auth. Decoding a JWT only reveals
+ * its contents; it never proves who signed it. getUser() verifies the token
+ * with Supabase before any role or user id is trusted.
  */
-function validateJwt(req, res, next) {
+async function validateJwt(req, res, next) {
   const auth = req.headers.authorization || '';
   if (!auth || !auth.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'missing authentication credentials' });
@@ -223,7 +226,24 @@ function validateJwt(req, res, next) {
       return res.status(401).json({ error: 'Authentication failed' });
     }
 
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+    if (!supabase) {
+      return res.status(503).json({ error: 'Authentication service is not configured' });
+    }
+
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data?.user) {
+      return res.status(401).json({ error: 'Authentication failed' });
+    }
+
+    // Claims are read only after the signature and issuer have been verified.
+    const claims = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+    const payload = {
+      ...claims,
+      sub: data.user.id,
+      role: data.user.role,
+      app_metadata: data.user.app_metadata || {},
+      user_metadata: data.user.user_metadata || {},
+    };
 
     if (payload.exp) {
       const now = Math.floor(Date.now() / 1000);
@@ -287,9 +307,7 @@ app.get('/api/accidents', limiterPublic, async (req, res) => {
     let data = null;
 
     try {
-      if (pool) {
-        data = await getAccidentsFC(from, to, severity, area, zone);
-      }
+      data = await getAccidentsFC(from, to, severity, area, zone);
     } catch (dbErr) {
       // Database query failed
     }
@@ -571,6 +589,102 @@ app.get('/api/stats/by-area', limiterPublic, async (_req, res) => {
   }
 });
 
+// ── Explainable risk outlook ──────────────────────────────────────────────
+// This is intentionally a transparent historical-risk score, not a claim that
+// an individual crash will occur. The factors returned let the UI explain every
+// score to the public.
+async function loadRiskRows() {
+  if (pool) {
+    try {
+      return await q(`SELECT area, zone, severity, accident_date, date_raw FROM accidents
+                       WHERE status = 'active' AND geom IS NOT NULL`);
+    } catch (_) { }
+  }
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from('accidents')
+        .select('area, zone, severity, accident_date, date_raw')
+        .eq('status', 'active').not('geom', 'is', null);
+      if (!error && data) return data;
+    } catch (_) { }
+  }
+  try { return JSON.parse(fs.readFileSync(JSON_PATH, 'utf8')); } catch (_) { return []; }
+}
+
+app.get('/api/risk/hotspots', limiterPublic, async (req, res) => {
+  try {
+    const hour = Number.isInteger(Number(req.query.hour)) ? Math.min(23, Math.max(0, Number(req.query.hour))) : new Date().getHours();
+    const groups = new Map();
+    for (const row of await loadRiskRows()) {
+      const area = row.area || 'Unknown area';
+      const zone = row.zone || inferZone(area);
+      const item = groups.get(area) || { area, zone, incidents: 0, weighted: 0, critical: 0, hourMatches: 0, latest: null };
+      item.incidents += 1;
+      item.weighted += row.severity === 'fatal' ? 5 : row.severity === 'serious' ? 3 : 1;
+      if (row.severity === 'fatal') item.critical += 1;
+      const time = String(row.date_raw || '').match(/(?:^|\s)([0-2]?\d):[0-5]\d/);
+      if (time && Number(time[1]) === hour) item.hourMatches += 1;
+      const date = String(row.accident_date || row.date || '').slice(0, 10);
+      if (date && (!item.latest || date > item.latest)) item.latest = date;
+      groups.set(area, item);
+    }
+    const maxWeighted = Math.max(1, ...[...groups.values()].map(x => x.weighted));
+    const hotspots = [...groups.values()].map(item => {
+      const score = Math.min(100, Math.round((item.weighted / maxWeighted) * 78 + Math.min(12, item.hourMatches * 3) + Math.min(10, item.critical * 2)));
+      const factors = [];
+      if (item.critical) factors.push(`${item.critical} recorded fatal incident${item.critical === 1 ? '' : 's'}`);
+      if (item.hourMatches) factors.push(`${item.hourMatches} incident${item.hourMatches === 1 ? '' : 's'} recorded around ${String(hour).padStart(2, '0')}:00`);
+      factors.push(`${item.incidents} recorded incident${item.incidents === 1 ? '' : 's'} overall`);
+      return { ...item, risk_score: score, risk_level: score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low', factors };
+    }).sort((a, b) => b.risk_score - a.risk_score).slice(0, 12);
+    res.json({ generated_at: new Date().toISOString(), hour, methodology: 'Historical severity-weighted incident concentration; not a real-time prediction.', hotspots });
+  } catch (e) {
+    console.error('/api/risk/hotspots error:', e.message);
+    res.status(500).json({ error: 'Failed to build risk outlook' });
+  }
+});
+
+// ── Civic action tracker and near-miss signals ────────────────────────────
+app.get('/api/civic/issues', limiterPublic, async (_req, res) => {
+  try {
+    const rows = await q(`SELECT id, type, title, description, area, lat, lng, status, action_note, created_at, updated_at
+                          FROM civic_issues ORDER BY CASE status WHEN 'open' THEN 0 WHEN 'in_progress' THEN 1 ELSE 2 END, created_at DESC LIMIT 200`);
+    res.json(rows || []);
+  } catch (e) {
+    console.error('/api/civic/issues error:', e.message);
+    res.status(500).json({ error: 'Civic tracking is not configured. Run the latest schema migration.' });
+  }
+});
+
+app.post('/api/civic/issues', limiterContributions, validateJwt, async (req, res) => {
+  const { type, title, description, area, lat, lng } = req.body || {};
+  if (!['near_miss', 'road_hazard', 'action_request'].includes(type)) return res.status(400).json({ error: 'Invalid issue type' });
+  if (!title || String(title).trim().length < 5 || String(title).trim().length > 120) return res.status(400).json({ error: 'Title must be 5–120 characters' });
+  if (!description || String(description).trim().length < 20 || String(description).trim().length > 1000) return res.status(400).json({ error: 'Description must be 20–1000 characters' });
+  const latN = Number(lat), lngN = Number(lng);
+  if (!Number.isFinite(latN) || !Number.isFinite(lngN) || latN < 12.5 || latN > 13.5 || lngN < 77 || lngN > 78.2) return res.status(400).json({ error: 'A valid Bangalore location is required' });
+  try {
+    const id = `civ_${crypto.randomUUID()}`;
+    await q(`INSERT INTO civic_issues (id, type, title, description, area, lat, lng, reporter_id)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [id, type, String(title).trim(), String(description).trim(), String(area || '').trim() || null, latN, lngN, req.jwtPayload.sub]);
+    res.status(201).json({ id, status: 'open' });
+  } catch (e) {
+    console.error('/api/civic/issues POST error:', e.message);
+    res.status(500).json({ error: 'Could not create civic issue' });
+  }
+});
+
+app.patch('/api/civic/issues/:id', adminAuth, async (req, res) => {
+  const { status, action_note } = req.body || {};
+  if (!['open', 'in_progress', 'resolved'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
+  try {
+    const rows = await q(`UPDATE civic_issues SET status = $2, action_note = $3, updated_at = now() WHERE id = $1
+                          RETURNING id, status, action_note, updated_at`, [req.params.id, status, action_note || null]);
+    if (!rows.length) return res.status(404).json({ error: 'Issue not found' });
+    res.json(rows[0]);
+  } catch (e) { res.status(500).json({ error: 'Could not update civic issue' }); }
+});
+
 // ── Hospitals & Emergency Endpoints ───────────────────────────────────────
 
 app.get('/api/hospitals/near', limiterPublic, async (req, res) => {
@@ -670,18 +784,38 @@ app.get('/api/hospitals', limiterPublic, async (req, res) => {
   }
 });
 
-app.post('/api/emergency', limiterPublic, async (req, res) => {
+async function nearestHospitalsWithFallback(lat, lng, limit) {
+  try {
+    if (pool) {
+      const rows = await getNearestHospitals(lat, lng, limit);
+      if (rows?.length) return rows;
+    }
+  } catch (_) { }
+  return getLocalHospitals()
+    .filter(h => h.lat != null && h.lng != null)
+    .map(h => ({ ...h, distance_km: Math.round(haversineDistanceKm(lat, lng, h.lat, h.lng) * 100) / 100 }))
+    .sort((a, b) => a.distance_km - b.distance_km)
+    .slice(0, limit);
+}
+
+app.post('/api/emergency', limiterEmergency, async (req, res) => {
   try {
     const { photo_url, lat, lng } = req.body || {};
-    if (!photo_url || lat === undefined || lng === undefined) return res.status(400).json({ error: 'photo_url, lat, lng required' });
+    if (lat === undefined || lng === undefined) return res.status(400).json({ error: 'lat and lng required' });
     const latN = parseFloat(lat), lngN = parseFloat(lng);
+    if (!Number.isFinite(latN) || !Number.isFinite(lngN) || latN < 12.5 || latN > 13.5 || lngN < 77 || lngN > 78.2) {
+      return res.status(400).json({ error: 'A valid Bangalore location is required' });
+    }
+    if (photo_url && !/^https:\/\//i.test(String(photo_url))) return res.status(400).json({ error: 'photo_url must use HTTPS' });
     const address = await reverseGeocode(latN, lngN) || null;
 
     // Vision LLM for severity + description
-    const vision = await callVisionLLM(photo_url);
+    const vision = photo_url
+      ? await callVisionLLM(photo_url)
+      : { severity: 'minor', description: 'No scene photo supplied; severity has not been estimated.' };
 
     // Find nearest hospitals
-    const hospitals = await getNearestHospitals(latN, lngN, 5) || [];
+    const hospitals = await nearestHospitalsWithFallback(latN, lngN, 5);
     const hospitalIds = (hospitals || []).map(h => h.id);
 
     // Insert emergency alert
@@ -697,11 +831,23 @@ app.post('/api/emergency', limiterPublic, async (req, res) => {
       status: 'new',
       notified_hospital_ids: hospitalIds
     };
-    await q(
-      `INSERT INTO emergency_alerts (id, photo_url, lat, lng, address, severity, description, status, notified_hospital_ids)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::text[])`,
-      [alertId, photo_url, latN, lngN, address, vision.severity || 'minor', vision.description || null, 'new', hospitalIds]
-    );
+    let alertSaved = false;
+    if (pool) {
+      await q(
+        `INSERT INTO emergency_alerts (id, photo_url, lat, lng, address, severity, description, status, notified_hospital_ids)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::text[])`,
+        [alertId, photo_url || null, latN, lngN, address, vision.severity || 'minor', vision.description || null, 'new', hospitalIds]
+      );
+      alertSaved = true;
+    } else if (supabase) {
+      const { error } = await supabase.from('emergency_alerts').insert({
+        id: alertId, photo_url: photo_url || null, lat: latN, lng: lngN, address,
+        severity: vision.severity || 'minor', description: vision.description || null,
+        status: 'new', notified_hospital_ids: hospitalIds
+      });
+      if (!error) alertSaved = true;
+    }
+    if (!alertSaved) throw new Error('Emergency alert storage is unavailable');
 
     // Fetch hospital contact details and send notifications asynchronously
     try {
@@ -813,7 +959,7 @@ function validateReportFields(body) {
   return { valid: errors.length === 0, errors };
 }
 
-app.post('/api/reports', validateJwt, async (req, res) => {
+app.post('/api/reports', limiterContributions, validateJwt, async (req, res) => {
   try {
     const validation = validateReportFields(req.body);
     if (!validation.valid) {

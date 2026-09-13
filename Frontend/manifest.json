@@ -1,0 +1,10 @@
+{
+  "name": "Bangalore Accident Tracker",
+  "short_name": "BAT Safety",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#dc2626",
+  "description": "A community road-safety and emergency-support companion for Bangalore.",
+  "icons": [{ "src": "logo.png", "sizes": "any", "type": "image/png" }]
+}

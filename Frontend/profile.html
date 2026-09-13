@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Profile — Bangalore Accidents Tracker</title>
   <meta name="description" content="View your submitted accident reports, geotagged locations, and verification status.">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/main.css">
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -217,6 +218,8 @@
     <li><a href="hospital.html" class="nav-link">Hospital</a></li>
     <li><a href="report.html" class="nav-link">Report Accident</a></li>
     <li><a href="profile.html" class="nav-link active">My Profile</a></li>
+    <li><a href="civic.html" class="nav-link">Civic Action</a></li>
+    <li><a href="emergency.html" class="nav-link" style="color:#b91c1c;font-weight:800">SOS</a></li>
   </ul>
   <div class="nav-auth" id="nav-auth-links"></div>
   <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
@@ -497,5 +500,7 @@
     document.body.appendChild(lb);
   }
 </script>
+<script src="js/pwa.js"></script>
+<script src="js/i18n.js"></script>
 </body>
 </html>

@@ -345,3 +345,25 @@ AS $$
 $$;
 
 COMMENT ON FUNCTION find_duplicates_by_point IS 'Return nearby accidents within radius from an arbitrary lat/lng; optionally match accident_date';
+
+-- ─── Civic action tracker / near-miss signals ─────────────────────────────
+-- These preventive observations stay separate from confirmed accidents so
+-- dashboard statistics remain trustworthy.
+CREATE TABLE IF NOT EXISTS civic_issues (
+  id          TEXT PRIMARY KEY,
+  type        TEXT NOT NULL CHECK (type IN ('near_miss', 'road_hazard', 'action_request')),
+  title       TEXT NOT NULL,
+  description TEXT NOT NULL,
+  area        TEXT,
+  lat         DOUBLE PRECISION NOT NULL,
+  lng         DOUBLE PRECISION NOT NULL,
+  reporter_id TEXT NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved')),
+  action_note TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS civic_issues_status_created_ix ON civic_issues (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS civic_issues_area_ix ON civic_issues (area);
+COMMENT ON TABLE civic_issues IS 'Community near-miss, road-hazard, and civic-action observations; deliberately separate from confirmed accidents';

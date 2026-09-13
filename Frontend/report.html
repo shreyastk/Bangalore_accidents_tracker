@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report Accident — Bangalore Accidents Tracker</title>
   <meta name="description" content="Submit a geotagged accident report for Bangalore. Upload proof and help improve road safety data.">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/main.css">
   <!-- MapLibre GL JS -->
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css">
@@ -171,6 +172,8 @@
       <li><a href="trends.html" class="nav-link">Trends</a></li>
       <li><a href="hospital.html" class="nav-link">Hospital</a></li>
       <li><a href="report.html" class="nav-link active">Report Accident</a></li>
+      <li><a href="civic.html" class="nav-link">Civic Action</a></li>
+      <li><a href="emergency.html" class="nav-link" style="color:#b91c1c;font-weight:800">SOS</a></li>
   </ul>
   <div class="nav-auth" id="nav-auth-links"></div>
   <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
@@ -613,8 +616,10 @@
           showAlert('error', ' ' + errorMsg);
           btn.disabled = false;
           btn.innerHTML = ' Submit Accident Report';
-        } else if (!response || response.status !== 400) {
-          // Unauthorized — session expired or invalid
+        } else if (!response) {
+          // Network outage: retain an API-ready report for automatic retry.
+          // Keep an API-ready copy for automatic retry when a connection returns.
+          window.OfflineReports?.queue?.(reportData);
           const localResult = window.DB && window.DB.addAccident
             ? window.DB.addAccident({ ...reportData, reportedBy: session.user.id, status: 'pending' })
             : null;
@@ -629,7 +634,7 @@
           showAlert('success', ' Report saved successfully! You can view it in your profile.');
           setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
         } else {
-          // Server error (500 or other)
+          // Server/auth error — do not masquerade as a successful offline save.
           showAlert('error', ' An unexpected error occurred. Please try again later.');
           btn.disabled = false;
           btn.innerHTML = ' Submit Accident Report';
@@ -649,5 +654,8 @@
     }
   })();
 </script>
+<script src="js/offline-report-queue.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/i18n.js"></script>
 </body>
 </html>

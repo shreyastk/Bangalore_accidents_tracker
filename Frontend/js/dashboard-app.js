@@ -5,6 +5,7 @@
   const API_BASE = (CFG.apiBase || '').replace(/\/$/, '');
 
   const SEV_COLOR = { fatal: '#ef4444', serious: '#f59e0b', minor: '#10b981' };
+  let urlFilterState = null;
 
   // ── Utilities ──────────────────────────────────────────────────────────────
 
@@ -575,19 +576,52 @@
     const distanceRaw = document.getElementById('filter-distance')?.value || 'all';
     return {
       severity:   document.getElementById('filter-severity')?.value || 'all',
-      area:       document.getElementById('filter-area')?.value     || 'all',
-      zone:       document.getElementById('filter-zone')?.value     || 'all',
+      area:       (document.getElementById('filter-area')?.value === 'all' && urlFilterState?.area) ? urlFilterState.area : (document.getElementById('filter-area')?.value || 'all'),
+      zone:       (document.getElementById('filter-zone')?.value === 'all' && urlFilterState?.zone) ? urlFilterState.zone : (document.getElementById('filter-zone')?.value || 'all'),
       from:       document.getElementById('filter-from')?.value     || '',
       to:         document.getElementById('filter-to')?.value       || '',
       distanceKm: distanceRaw !== 'all' ? parseFloat(distanceRaw) : null,
     };
   }
 
+  function restoreFiltersFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    urlFilterState = Object.fromEntries(params.entries());
+    const values = { severity: 'filter-severity', area: 'filter-area', zone: 'filter-zone', from: 'filter-from', to: 'filter-to', distance: 'filter-distance' };
+    Object.entries(values).forEach(([key, id]) => {
+      const el = document.getElementById(id); const value = params.get(key);
+      if (el && value) el.value = value;
+    });
+  }
+
+  function writeFiltersToUrl(filters) {
+    const params = new URLSearchParams();
+    if (filters.severity !== 'all') params.set('severity', filters.severity);
+    if (filters.area !== 'all') params.set('area', filters.area);
+    if (filters.zone !== 'all') params.set('zone', filters.zone);
+    if (filters.from) params.set('from', filters.from);
+    if (filters.to) params.set('to', filters.to);
+    if (filters.distanceKm) params.set('distance', String(filters.distanceKm));
+    const target = `${window.location.pathname}${params.toString() ? `?${params}` : ''}`;
+    window.history.replaceState(null, '', target);
+  }
+
+  async function loadRiskOutlook() {
+    const list = document.getElementById('risk-list'); const note = document.getElementById('risk-note');
+    if (!list || !API_BASE) return;
+    try {
+      const response = await fetch(`${API_BASE}/api/risk/hotspots?hour=${new Date().getHours()}`, { cache: 'no-store' });
+      const data = await response.json(); if (!response.ok) throw new Error(data.error);
+      note.textContent = data.methodology || 'Historical risk indicators.';
+      list.innerHTML = (data.hotspots || []).slice(0, 4).map(item => `<li class="hotspot-item"><span class="hotspot-rank" style="background:${item.risk_level === 'high' ? '#dc2626' : item.risk_level === 'medium' ? '#d97706' : '#0ea5a4'}">${item.risk_score}</span><span class="hotspot-info"><b>${esc(item.area)}</b><small>${esc(item.factors[0] || 'Historical incident concentration')}</small></span></li>`).join('') || '<li class="hotspot-empty">No risk data available.</li>';
+    } catch (error) { list.innerHTML = '<li class="hotspot-empty">Risk outlook unavailable offline.</li>'; }
+  }
+
   function fillSelect(id, values, current) {
     const sel = document.getElementById(id);
     if (!sel) return;
     const label = id === 'filter-zone' ? 'All Zones' : 'All Areas';
-    const prev  = sel.value || current;
+    const prev  = current && current !== 'all' ? current : (sel.value || 'all');
     sel.innerHTML = `<option value="all">${label}</option>`;
     values.forEach(v => {
       const o = document.createElement('option');
@@ -595,6 +629,7 @@
       sel.appendChild(o);
     });
     if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+    if (id === 'filter-area' || id === 'filter-zone') urlFilterState = null;
   }
 
   function unique(arr) {
@@ -636,10 +671,18 @@
       updateHotspots(fc);
       updateMap(fc);
       refreshNearYou(fc);
+      writeFiltersToUrl(filters);
+      loadRiskOutlook();
     }
     refreshDashboard = refresh;
 
     document.getElementById('apply-filters-btn')?.addEventListener('click', refresh);
+    document.getElementById('share-view-btn')?.addEventListener('click', async () => {
+      const button = document.getElementById('share-view-btn');
+      try { await navigator.clipboard.writeText(window.location.href); button.textContent = 'Link copied'; }
+      catch (_) { window.prompt('Copy this map view:', window.location.href); }
+      setTimeout(() => { button.textContent = 'Share this view'; }, 1600);
+    });
     document.getElementById('reset-filters-btn')?.addEventListener('click', () => {
       ['filter-severity', 'filter-area', 'filter-zone', 'filter-distance', 'filter-from', 'filter-to'].forEach(id => {
         const el = document.getElementById(id);
@@ -679,6 +722,7 @@
     // slow or failed API/map load can never prevent the permission prompt.
     requestLocation({ recenter: true, watch: true });
 
+    restoreFiltersFromUrl();
     try {
       await refresh();
     } catch (e) {

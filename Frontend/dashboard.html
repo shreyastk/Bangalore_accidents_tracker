@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — Bangalore Accidents Tracker</title>
   <meta name="description" content="Live accident map for Bangalore. View hotspots, filter by area, severity and date.">
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- MapLibre GL JS (free, open source vector maps) -->
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css">
@@ -26,6 +27,8 @@
     <li><a href="trends.html">Trends</a></li>
     <li><a href="hospital.html">Hospital</a></li>
     <li><a href="report.html">Report</a></li>
+    <li><a href="civic.html">Civic Action</a></li>
+    <li><a href="emergency.html" style="color:#b91c1c;font-weight:800">SOS</a></li>
   </ul>
   <div class="topbar-right" id="nav-auth-links"></div>
   <button class="nav-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
@@ -97,6 +100,7 @@
         <button class="btn-apply" id="apply-filters-btn">Apply</button>
         <button class="btn-reset" id="reset-filters-btn">Reset</button>
       </div>
+      <button class="btn-reset" id="share-view-btn" style="width:100%;margin-top:8px">Share this view</button>
     </div>
 
     <!-- Near You (live geolocation) -->
@@ -121,7 +125,16 @@
       </ul>
     </div>
 
+    <div class="sidebar-card" id="risk-card">
+      <div class="card-label">Road risk outlook <span class="zone-pill">Explainable</span></div>
+      <p id="risk-note" style="font-size:11px;color:#64748b;margin:0 0 8px">Loading historic risk factors…</p>
+      <ul class="hotspot-list" id="risk-list"><li class="hotspot-empty">Loading…</li></ul>
+    </div>
+
     <!-- Report CTA -->
+    <a href="emergency.html" class="report-cta" style="background:#b91c1c">
+      <span>SOS Emergency</span><span class="cta-arrow">→</span>
+    </a>
     <a href="report.html" class="report-cta">
       <span> Report an Accident</span>
       <span class="cta-arrow">→</span>
@@ -174,6 +187,8 @@
 <script src="js/dashboard-app.js"></script>
 <script src="js/nav-active.js"></script>
 <script src="js/page-effects.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/i18n.js"></script>
 <script>
   window.Auth?.updateNavAuth?.();
   document.getElementById('last-updated').textContent =

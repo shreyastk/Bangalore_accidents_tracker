@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
   <title>Hospital Directory — Bangalore Accidents Tracker</title>
   <meta name="description" content="Browse hospitals across Bangalore, search by name or area, and view emergency alerts for hospital responders.">
   <link rel="stylesheet" href="css/main.css">
@@ -22,6 +23,8 @@
       <li><a href="hospital.html" class="nav-link active">Hospital</a></li>
       <li><a href="report.html" class="nav-link">Report Accident</a></li>
       <li><a href="profile.html" class="nav-link">My Profile</a></li>
+      <li><a href="civic.html" class="nav-link">Civic Action</a></li>
+      <li><a href="emergency.html" class="nav-link" style="color:#b91c1c;font-weight:800">SOS</a></li>
     </ul>
     <div class="nav-auth" id="nav-auth-links"></div>
     <div class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
@@ -97,6 +100,8 @@
   <script src="js/nav-active.js"></script>
   <script src="js/page-effects.js"></script>
   <script type="module" src="js/hospital-app.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/i18n.js"></script>
   <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

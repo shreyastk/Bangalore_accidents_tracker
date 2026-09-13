@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
   <title>Bangalore Accidents Tracker</title>
   <meta name="description"
     content="Real-time accident heatmap, hotspot rankings, and community reporting for Bangalore road safety. Track, report, and analyze road accidents across Bangalore.">
@@ -219,6 +220,8 @@
       <li><a href="trends.html" class="nav-link">Trends</a></li>
       <li><a href="hospital.html" class="nav-link">Hospital</a></li>
       <li><a href="report.html" class="nav-link">Report Accident</a></li>
+      <li><a href="civic.html" class="nav-link">Civic Action</a></li>
+      <li><a href="emergency.html" class="nav-link" style="color:#b91c1c;font-weight:800">SOS</a></li>
     </ul>
     <div class="nav-auth" id="nav-auth-links"></div>
     <div class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
@@ -243,6 +246,7 @@
         <div class="hero-cta">
           <a href="dashboard.html" class="btn btn-primary btn-lg" id="hero-dashboard-btn">View Live Map</a>
           <a href="report.html" class="btn btn-outline btn-lg" id="hero-report-btn">Report Accident</a>
+          <a href="emergency.html" class="btn btn-lg" style="background:#b91c1c;color:#fff">SOS Emergency</a>
         </div>
       </div>
     </section>
@@ -354,6 +358,8 @@
   <script src="js/auth.js"></script>
   <script src="js/nav-active.js"></script>
   <script src="js/page-effects.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/i18n.js"></script>
   <script>
     // Nav scroll effect
     const nav = document.getElementById('main-nav');
