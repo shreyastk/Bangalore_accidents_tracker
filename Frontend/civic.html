@@ -1,12 +1,175 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Civic Action Tracker — BAT</title>
-<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/main.css"><style>
-.civic{max-width:1100px;margin:auto;padding:96px 20px 44px}.civic-grid{display:grid;grid-template-columns:370px 1fr;gap:22px}.civic-card{background:#fff;border:1px solid #dbe4ee;border-radius:16px;padding:20px;box-shadow:0 4px 20px #0f172a0d}.civic label{display:block;font-weight:700;margin-top:12px}.civic input,.civic textarea,.civic select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px}.issue{border-left:5px solid #f59e0b;border-bottom:1px solid #e2e8f0;padding:14px 0}.issue.resolved{border-color:#10b981}.issue.in_progress{border-color:#3b82f6}.pill{font-size:.75rem;border-radius:999px;background:#e0f2fe;color:#075985;padding:3px 8px}.note{color:#475569;font-size:.9rem}.nav{position:fixed;inset:0 0 auto;background:#fff;padding:16px 24px;border-bottom:1px solid #e2e8f0;z-index:2;display:flex;gap:20px}.status{margin-top:10px;color:#475569}@media(max-width:760px){.civic-grid{grid-template-columns:1fr}}
-</style></head><body>
-<nav class="nav"><a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a href="report.html">Report</a><a href="emergency.html">SOS Emergency</a></nav>
-<main class="civic"><h1>Civic Action Tracker</h1><p>Report near misses and road hazards before they become crashes. Confirmed accident statistics remain separate.</p><div class="civic-grid">
-<section class="civic-card"><h2>Flag a safety issue</h2><p class="note">Reports require an account and are reviewed before authority action.</p><form id="issue-form"><label>Issue type<select id="type"><option value="near_miss">Near miss</option><option value="road_hazard">Road hazard</option><option value="action_request">Request a safety improvement</option></select></label><label>Short title<input id="title" required minlength="5" maxlength="120" placeholder="Blind turn near school crossing"></label><label>What should be checked?<textarea id="description" required minlength="20" maxlength="1000" rows="5" placeholder="Explain what happened and why this is unsafe."></textarea></label><label>Area (optional)<input id="area" maxlength="80" placeholder="Koramangala"></label><button type="button" id="locate" class="btn btn-outline" style="margin-top:14px">Use my location</button><div id="loc" class="status">Location required before submitting.</div><button id="submit" class="btn btn-primary" disabled style="margin-top:14px;width:100%">Submit safety signal</button></form></section>
-<section class="civic-card"><div style="display:flex;justify-content:space-between;gap:10px"><h2>Public action board</h2><button id="refresh" class="btn btn-outline">Refresh</button></div><p class="note">Open = reported · In progress = assigned · Resolved = action recorded.</p><div id="issues" aria-live="polite">Loading…</div></section>
-</div></main>
-<script src="js/bat-config.js"></script><script type="module" src="js/supabase-auth.js"></script><script src="js/civic-app.js"></script><script src="js/pwa.js"></script><script src="js/i18n.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Civic Action Tracker — Bangalore Accidents Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+    .topbar-brand { display: flex; align-items: center; }
+    .topbar-links { display: flex; list-style: none; gap: 22px; margin: 0; padding: 0; align-items: center; }
+    .topbar-links a { color: #334155 !important; font-weight: 600; text-decoration: none; font-size: 0.95rem; transition: color 0.15s ease; }
+    .topbar-links a:hover { color: #0284c7 !important; }
+    .topbar-links a.active { color: #0284c7 !important; font-weight: 700; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-right a { color: #334155 !important; font-weight: 600; text-decoration: none; }
+    .topbar-right a:hover { color: #0284c7 !important; }
+    .nav-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+    @media (max-width: 860px) {
+      .topbar-links { display: none; }
+      .nav-toggle { display: block; }
+    }
+
+    .civic {
+      max-width: 1100px;
+      margin: auto;
+      padding: 96px 20px 44px;
+    }
+    .civic-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .civic-card {
+      background: #fff;
+      border: 1px solid #dbe4ee;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+    .civic label {
+      display: block;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 14px;
+      font-size: 0.9rem;
+    }
+    .civic input, .civic textarea, .civic select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-family: inherit;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
+    .civic input:focus, .civic textarea:focus, .civic select:focus {
+      outline: 2px solid #0284c7;
+      border-color: #0284c7;
+    }
+    .issue {
+      border-left: 4px solid #f59e0b;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 0;
+    }
+    .issue:last-child { border-bottom: none; }
+    .issue.resolved { border-color: #10b981; }
+    .issue.in_progress { border-color: #3b82f6; }
+    .issue h3 { margin: 8px 0 6px; font-size: 1.05rem; color: #0f172a; }
+    .issue p { margin: 4px 0; color: #475569; font-size: 0.92rem; line-height: 1.5; }
+    .pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 3px 10px;
+      display: inline-block;
+      text-transform: capitalize;
+    }
+    .note { color: #64748b; font-size: 0.88rem; margin-top: 4px; }
+    .status { margin-top: 10px; color: #475569; font-size: 0.88rem; }
+    @media (max-width: 768px) {
+      .civic-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top Navbar ─────────────────────────────────────────────── -->
+  <nav class="topbar" id="main-nav">
+    <a href="index.html" class="topbar-brand">
+      <img src="logo.png" alt="BAT Logo" style="height: 44px; width: auto; object-fit: contain;">
+    </a>
+    <ul class="topbar-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="trends.html">Trends</a></li>
+      <li><a href="hospital.html">Hospital</a></li>
+      <li><a href="report.html">Report</a></li>
+      <li><a href="civic.html" class="active">Civic Action</a></li>
+      <li><a href="emergency.html" style="color:#dc2626 !important;font-weight:800">SOS</a></li>
+    </ul>
+    <div class="topbar-right" id="nav-auth-links"></div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
+  </nav>
+
+  <main class="civic">
+    <h1>Civic Action Tracker</h1>
+    <p style="color: #64748b; margin-top: 6px;">Report near misses and road hazards before they become crashes. Confirmed accident statistics remain separate.</p>
+    
+    <div class="civic-grid">
+      <section class="civic-card">
+        <h2 style="font-size: 1.25rem;">Flag a safety issue</h2>
+        <p class="note">Reports require an account and are reviewed before authority action.</p>
+        <form id="issue-form">
+          <label>Issue type
+            <select id="type">
+              <option value="near_miss">Near miss</option>
+              <option value="road_hazard">Road hazard</option>
+              <option value="action_request">Request a safety improvement</option>
+            </select>
+          </label>
+          <label>Short title
+            <input id="title" required minlength="5" maxlength="120" placeholder="Blind turn near school crossing">
+          </label>
+          <label>What should be checked?
+            <textarea id="description" required minlength="20" maxlength="1000" rows="5" placeholder="Explain what happened and why this is unsafe."></textarea>
+          </label>
+          <label>Area (optional)
+            <input id="area" maxlength="80" placeholder="Koramangala">
+          </label>
+          <button type="button" id="locate" class="btn btn-outline" style="margin-top:14px; width:100%;">Use my location</button>
+          <div id="loc" class="status">Location required before submitting.</div>
+          <button id="submit" class="btn btn-primary" disabled style="margin-top:14px; width:100%;">Submit safety signal</button>
+        </form>
+      </section>
+
+      <section class="civic-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+          <h2 style="font-size: 1.25rem; margin:0;">Public action board</h2>
+          <button id="refresh" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem;">Refresh</button>
+        </div>
+        <p class="note">Open = reported · In progress = assigned · Resolved = action recorded.</p>
+        <div id="issues" aria-live="polite" style="margin-top: 16px;">Loading…</div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/bat-config.js"></script>
+  <script type="module" src="js/supabase-auth.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/civic-app.js"></script>
+  <script src="js/nav-active.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/i18n.js"></script>
+</body>
+</html>

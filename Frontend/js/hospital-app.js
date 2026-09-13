@@ -45,12 +45,60 @@ function setListState(el, html) {
   if (el) el.innerHTML = html;
 }
 
+let localHospitalsCache = null;
+async function getLocalHospitals() {
+  if (localHospitalsCache) return localHospitalsCache;
+  try {
+    const res = await fetch('hospitals.json', { cache: 'no-store' });
+    if (res.ok) {
+      const raw = await res.json();
+      localHospitalsCache = raw.map(h => {
+        let lat = null, lng = null;
+        if (h.location) {
+          const m = String(h.location).match(/POINT\s*\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+          if (m) { lng = parseFloat(m[1]); lat = parseFloat(m[2]); }
+        }
+        return {
+          id: h.id,
+          name: h.name,
+          phone: h.phone || null,
+          address: h.address || null,
+          lat: h.lat ?? lat,
+          lng: h.lng ?? lng
+        };
+      });
+      return localHospitalsCache;
+    }
+  } catch (_) {}
+  return [];
+}
+
 async function fetchHospitals(q, offset, limit) {
-  const qs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
-  if (q) qs.set('q', q);
-  const res = await fetch(`${API}/api/hospitals?${qs}`, { cache: 'no-store' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return await res.json();
+  if (API) {
+    try {
+      const qs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+      if (q) qs.set('q', q);
+      const res = await fetch(`${API}/api/hospitals?${qs}`, { cache: 'no-store' });
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        return await res.json();
+      }
+    } catch (_) {}
+  }
+
+  // Fallback to local hospitals.json
+  let list = await getLocalHospitals();
+  if (q) {
+    const s = q.toLowerCase();
+    list = list.filter(h =>
+      (h.name && h.name.toLowerCase().includes(s)) ||
+      (h.address && h.address.toLowerCase().includes(s)) ||
+      (h.phone && h.phone.toLowerCase().includes(s))
+    );
+  }
+  const total = list.length;
+  const paged = list.slice(offset, offset + limit);
+  return { total, offset, limit, hospitals: paged };
 }
 
 function renderHospitalCards(list, append) {
